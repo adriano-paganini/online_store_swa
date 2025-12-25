@@ -12,11 +12,13 @@ import {
 } from "./routes";
 import PrivateRoute from "./components/PrivateRoute";
 import { UserProvider } from "./Contexts/authenticatedUserContext";
+import { Toaster } from "sonner";
 
 const App: React.FC = () => {
   return (
     // Wrap the application in the UserProvider, which allows to access the authenticated user
     <UserProvider>
+      <Toaster richColors closeButton />
       <Suspense fallback={<div>Loading...</div>}>
         <BrowserRouter>
           <Routes>

@@ -17,6 +17,7 @@ import { Button } from "../ui/button";
 import { Plus } from "lucide-react";
 import { UserList } from "./UserList";
 import { UserDeleteDialog } from "./UserDeleteDialog";
+import { toast } from "sonner";
 
 /**
  * Component for managing users.
@@ -46,6 +47,7 @@ const UserTable = () => {
         setUsers(userxInstances);
       } catch (err: any) {
         console.error("Error fetching users:", err);
+        toast.error("Error fetching users");
       } finally {
         setLoading(false); // Set loading to false regardless of success or failure
       }
@@ -99,6 +101,7 @@ const UserTable = () => {
       // Display an error eventMessage or handle the validation error
       setValidation(validationResult);
       console.error("Please fill in all required fields.");
+      toast.error("Please fill in all required fields.");
       return;
     }
 
@@ -121,14 +124,11 @@ const UserTable = () => {
     try {
       const newUser: UserxTypes = await UserxApi.createUser(selectedUser);
       setUsers([...users, newUser]);
+
+      toast.success("User created successfully");
     } catch (err: any) {
       console.error("Error saving user:", err);
-      // toast.current?.show({
-      //   severity: "error",
-      //   summary: "Error",
-      //   detail: "Error saving user",
-      //   life: 3000,
-      // });
+      toast.error("Error saving user");
     }
   };
 
@@ -145,15 +145,11 @@ const UserTable = () => {
           user.id === updatedUser.id ? updatedUser : user,
         ),
       );
-      hideDialog();
+
+      toast.success("User updated successfully");
     } catch (err: any) {
       console.error("Error updating user:", err);
-      // toast.current?.show({
-      //   severity: "error",
-      //   summary: "Error",
-      //   detail: "Error updating user",
-      //   life: 3000,
-      // });
+      toast.error("Error updating user");
     }
   };
 
@@ -170,10 +166,10 @@ const UserTable = () => {
       );
 
       hideDialog();
-      // toast.success("User deleted successfully");
+      toast.success("User deleted successfully");
     } catch (error) {
       console.error("Error deleting user:", error);
-      // toast.error("Error deleting user");
+      toast.error("Error deleting user");
     } finally {
       setDeleteDialogVisible(false);
     }
