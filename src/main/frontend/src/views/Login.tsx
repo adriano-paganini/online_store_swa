@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { AxiosError } from 'axios';
 import { AlertCircle, LogIn } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useUser } from '../Contexts/authenticatedUserContext';
@@ -38,8 +39,13 @@ const Login = () => {
       await login({ username, password });
       // Redirect to home page
       navigate('/', { replace: true });
-    } catch (err: any) {
-      const status = err?.response?.status as number | undefined;
+    } catch (err: unknown) {
+      let status: number | undefined;
+
+      if (err && typeof err === 'object' && 'response' in err) {
+        const axiosErr = err as AxiosError;
+        status = axiosErr.response?.status;
+      }
 
       if (status === 401 || status === 403) {
         setError('Wrong username or password');
@@ -51,7 +57,7 @@ const Login = () => {
         setError('Login failed. Please try again.');
       }
 
-      console.error('Login failed:', error);
+      console.error('Login failed:', err);
     } finally {
       setPassword('');
       setLoading(false);

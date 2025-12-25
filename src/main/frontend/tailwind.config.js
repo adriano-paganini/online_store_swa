@@ -66,5 +66,5 @@ module.exports = {
       },
     },
   },
-  plugins: [require('tailwindcss-animate')], // eslint-disable-line global-require
+  plugins: [require('tailwindcss-animate')],
 };

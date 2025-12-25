@@ -1,12 +1,9 @@
-/**
- * This code is part of the skeleton project provided for students of the course "Software
- * Architecture" offered by Innsbruck University.
- */
+/* eslint-disable react-refresh/only-export-components */
 import { jwtDecode, JwtPayload } from 'jwt-decode';
 import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import { BEARER_TOKEN_LOCAL_STORAGE_KEY } from '../config/config';
-import { LoginDTO } from '../DTO/auth.types';
-import { UserDTO, UserxRole } from '../DTO/userx.types';
+import { TLoginDTO } from '../DTO/auth.types';
+import { TUserDTO, UserxRole } from '../DTO/userx.types';
 import { AuthApi } from '../utilities/authApi';
 import { UserxApi } from '../utilities/userxApi';
 
@@ -19,24 +16,24 @@ import { UserxApi } from '../utilities/userxApi';
  */
 
 /**
- * The UserContextType defines the shape of the context object, which is used to provide
+ * The TUserContextType defines the shape of the context object, which is used to provide
  * the current user state to the components in the component tree.
  */
-interface UserContextType {
-  currentUser: UserDTO | null;
-  login: (loginDto: LoginDTO) => Promise<void>;
+type TUserContextType = {
+  currentUser: TUserDTO | null;
+  login: (loginDto: TLoginDTO) => Promise<void>;
   logout: () => void;
   error: Error | null;
   isAdmin: boolean;
   isManager: boolean;
   isEmployee: boolean;
   userIsAuthenticated: () => Promise<boolean>;
-}
+};
 
 // Create a new context object
-export const UserContext = createContext<UserContextType | null>(null);
+export const UserContext = createContext<TUserContextType | null>(null);
 
-type CustomJwtPayload = JwtPayload & {
+type TCustomJwtPayload = JwtPayload & {
   roles: string[];
   name: string;
   username: string;
@@ -75,7 +72,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
    * Login the user by setting the bearer token in the state and local storage.
    * @param loginDto the login data
    */
-  const login = async (loginDto: LoginDTO): Promise<void> => {
+  const login = async (loginDto: TLoginDTO): Promise<void> => {
     const { bearerToken } = await AuthApi.login(loginDto);
     if (!bearerToken || bearerToken.length < 10) {
       setError(new Error('Missing or invalid bearer token in response!'));
@@ -93,7 +90,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
    * that this does not actually invalidate the token on the server side. It only removes the
    * token from the client side.
    */
-  const logout = async () => {
+  const logout = () => {
     localStorage.removeItem(BEARER_TOKEN_LOCAL_STORAGE_KEY);
     setToken(null);
   };
@@ -101,13 +98,13 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
   /**
    * Get the current user by decoding the bearer token stored in the local storage.
    */
-  const currentUser = useMemo<UserDTO | null>(() => {
+  const currentUser = useMemo<TUserDTO | null>(() => {
     if (!token) {
       return null;
     }
 
     try {
-      const decoded = jwtDecode<CustomJwtPayload>(token);
+      const decoded = jwtDecode<TCustomJwtPayload>(token);
 
       const fullName = decoded.name ?? '';
       const [firstName = '', lastName = ''] = fullName.split(' ');
@@ -133,11 +130,11 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
     }
 
     try {
-      const decodedUser = jwtDecode<CustomJwtPayload>(token);
+      const decodedUser = jwtDecode<TCustomJwtPayload>(token);
 
-      if (decodedUser.exp && Date.now() >= decodedUser.exp! * 1000) {
-        console.info('JWT Token expired at ' + decodedUser.exp! * 1000);
-        void logout(); // ignore the returned promise; void explicit so ESLint doesn’t complain
+      if (decodedUser.exp && Date.now() >= decodedUser.exp * 1000) {
+        console.info('JWT Token expired at ' + decodedUser.exp * 1000);
+        logout(); // ignore the returned promise; void explicit so ESLint doesn’t complain
         return false;
       }
 
@@ -147,12 +144,12 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
         return true;
       } else {
         setError(new Error('Authentication failed'));
-        void logout(); // ignore the returned promise; void explicit so ESLint doesn’t complain
+        logout(); // ignore the returned promise; void explicit so ESLint doesn’t complain
         return false;
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       setError(err instanceof Error ? err : new Error('Invalid Token'));
-      void logout(); // ignore the returned promise; void explicit so ESLint doesn’t complain
+      logout(); // ignore the returned promise; void explicit so ESLint doesn’t complain
       return false;
     }
   };

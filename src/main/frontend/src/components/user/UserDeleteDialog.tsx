@@ -1,4 +1,4 @@
-import { UserDTO } from '@/DTO/userx.types';
+import { TUserDTO } from '@/DTO/userx.types';
 import { Trash2, X } from 'lucide-react';
 import React from 'react';
 import { Button } from '../ui/button';
@@ -8,7 +8,7 @@ type TDeleteDialogProps = {
   visible: boolean;
   onHide: () => void;
   onDelete: () => void;
-  user: UserDTO | null;
+  user: TUserDTO | null;
 };
 
 /**

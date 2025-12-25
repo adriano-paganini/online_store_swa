@@ -24,7 +24,6 @@ const PrivateRoute = () => {
 
   const [authStatus, setAuthStatus] = useState(AuthStatus.UNKNOWN); // null -> Status unknonw, true/false for authentication
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     const checkAuthentication = async () => {
       try {
@@ -41,7 +40,7 @@ const PrivateRoute = () => {
       }
     };
     void checkAuthentication(); // to mark the returned Promise as explicitly and intentionally unawaited (ESLint)
-  }, [userIsAuthenticated]); // an empty dependency array signals that the effect is executed only once on mount
+  });
 
   // loading spinner
   if (authStatus === AuthStatus.UNKNOWN) {

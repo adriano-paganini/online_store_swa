@@ -15,7 +15,7 @@ export enum UserxRole {
 /**
  * User DTO
  */
-export interface UserDTO {
+export type TUserDTO = {
   id?: number;
   username: string;
   createUserId?: number | null;
@@ -29,12 +29,12 @@ export interface UserDTO {
   phone: string;
   enabled: boolean;
   roles: UserxRole[];
-}
+};
 
 /**
  * User class with methods for serialization
  */
-export class UserxTypes implements UserDTO {
+export class UserxTypes implements TUserDTO {
   id?: number;
   username: string;
   createUserId?: number | null;
@@ -46,14 +46,14 @@ export class UserxTypes implements UserDTO {
   lastName: string;
   email: string;
   phone: string;
-  enabled: boolean = true;
+  enabled = true;
   roles: UserxRole[];
 
   /**
    * Constructor for the User class
-   * @param data :UserDTO object
+   * @param data :TUserDTO object
    */
-  constructor(data: UserDTO) {
+  constructor(data: TUserDTO) {
     this.id = data.id;
     this.username = data.username;
     this.createUserId = data.createUserId ?? null;
@@ -82,7 +82,7 @@ export class UserxTypes implements UserDTO {
    * Serialize the User instance to JSON
    * @returns JSON object with the password field omitted
    */
-  toJSON(): Omit<UserDTO, 'password'> {
+  toJSON(): Omit<TUserDTO, 'password'> {
     return {
       id: this.id,
       username: this.username,
@@ -104,7 +104,7 @@ export class UserxTypes implements UserDTO {
    * @returns JSON object with the fields required for creating a new user
    */
   toCreateJSON(): Pick<
-    UserDTO,
+    TUserDTO,
     'username' | 'password' | 'firstName' | 'lastName' | 'email' | 'phone' | 'roles' | 'enabled'
   > {
     return {
@@ -123,7 +123,7 @@ export class UserxTypes implements UserDTO {
    * Serialize the User instance to JSON for updating an existing user
    * @returns JSON object with the fields required for updating a user
    */
-  toUpdateJSON(): Pick<UserDTO, 'id' | 'firstName' | 'lastName' | 'email' | 'phone' | 'roles' | 'enabled'> {
+  toUpdateJSON(): Pick<TUserDTO, 'id' | 'firstName' | 'lastName' | 'email' | 'phone' | 'roles' | 'enabled'> {
     return {
       id: this.id,
       firstName: this.firstName,
@@ -162,10 +162,11 @@ export class UserxTypes implements UserDTO {
    * @param json
    * @returns User instance
    */
-  static fromJSON(json: any): UserxTypes {
+  static fromJSON(json: unknown): UserxTypes {
     if (!json || typeof json !== 'object') {
       throw new Error('Invalid JSON for User');
     }
-    return new UserxTypes(json);
+
+    return new UserxTypes(json as TUserDTO);
   }
 }

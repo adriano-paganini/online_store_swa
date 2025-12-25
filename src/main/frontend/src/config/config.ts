@@ -17,11 +17,15 @@ globalAxios.interceptors.request.use(
   (request) => {
     const accessToken = localStorage.getItem(BEARER_TOKEN_LOCAL_STORAGE_KEY);
     if (accessToken) {
-      request.headers['Authorization'] = `Bearer ${accessToken}`;
+      request.headers.Authorization = `Bearer ${accessToken}`;
     }
     return request;
   },
-  (error) => {
-    return Promise.reject(error);
+  (error: unknown) => {
+    if (error instanceof Error) {
+      return Promise.reject(error);
+    }
+
+    return Promise.reject(new Error(String(error)));
   }
 );

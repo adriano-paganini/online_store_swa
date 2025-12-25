@@ -2,21 +2,21 @@
  * This code is part of the skeleton project provided for students of the course "Software
  * Architecture" offered by Innsbruck University.
  */
-import { UserDTO, UserxRole, UserxTypes } from '../DTO/userx.types';
+import { TUserDTO, UserxRole, UserxTypes } from '../DTO/userx.types';
 
-export type UserxValidationResult = {
+export type TUserxValidationResult = {
   valid: boolean;
   message?: string;
-  fieldErrors?: Partial<Record<keyof UserDTO, string>>;
+  fieldErrors?: Partial<Record<keyof TUserDTO, string>>;
 };
 
 /**
- * Create a UserxTypes object from a UserDTO object
+ * Create a UserxTypes object from a TUserDTO object
  * @param data
  *
  * @returns UserxTypes
  */
-export const createUserxFromInterfaces = (data: UserDTO): UserxTypes => {
+export const createUserxFromInterfaces = (data: TUserDTO): UserxTypes => {
   return new UserxTypes(data);
 };
 

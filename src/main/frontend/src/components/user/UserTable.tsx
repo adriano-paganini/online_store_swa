@@ -7,12 +7,12 @@ import React, { useEffect, useState } from 'react';
 import { CheckedState } from '@radix-ui/react-checkbox';
 import { Plus } from 'lucide-react';
 import { toast } from 'sonner';
-import { UserDTO, UserxTypes } from '../../DTO/userx.types';
+import { TUserDTO, UserxTypes } from '../../DTO/userx.types';
 import { UserxApi } from '../../utilities/userxApi';
 import {
   createUserxFromInterfaces,
   createUserxRoleArrayFromStrings,
-  UserxValidationResult,
+  TUserxValidationResult,
 } from '../../utilities/userxUtilities';
 import { Button } from '../ui/button';
 import { UserDeleteDialog } from './UserDeleteDialog';
@@ -25,11 +25,11 @@ import { UserList } from './UserList';
 const UserTable = () => {
   const [users, setUsers] = useState<UserxTypes[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const [selectedUser, setSelectedUser] = useState<UserDTO | null>(null);
+  const [selectedUser, setSelectedUser] = useState<TUserDTO | null>(null);
   const [isNewUser, setIsNewUser] = useState<boolean>(false);
   const [dialogVisible, setDialogVisible] = useState<boolean>(false);
   const [deleteDialogVisible, setDeleteDialogVisible] = useState<boolean>(false);
-  const [validation, setValidation] = useState<UserxValidationResult>({
+  const [validation, setValidation] = useState<TUserxValidationResult>({
     valid: true,
   });
 
@@ -40,9 +40,9 @@ const UserTable = () => {
     const fetchUsers = async () => {
       try {
         const userxData = await UserxApi.fetchAllUsers();
-        const userxInstances = userxData.map((user: UserDTO) => createUserxFromInterfaces(user));
+        const userxInstances = userxData.map((user: TUserDTO) => createUserxFromInterfaces(user));
         setUsers(userxInstances);
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error('Error fetching users:', err);
         toast.error('Error fetching users');
       } finally {
@@ -58,14 +58,14 @@ const UserTable = () => {
    * @param opts
    */
   const validateUser = (
-    user: UserDTO | null,
+    user: TUserDTO | null,
     opts: { requirePassword?: boolean } = { requirePassword: true }
-  ): UserxValidationResult => {
+  ): TUserxValidationResult => {
     if (!user) return { valid: false, message: 'No user selected' };
 
-    const required: (keyof UserDTO)[] = ['firstName', 'lastName', 'username'];
+    const required: (keyof TUserDTO)[] = ['firstName', 'lastName', 'username'];
     const { requirePassword = true } = opts; // password input on edit user not needed
-    const fieldErrors: Partial<Record<keyof UserDTO, string>> = {};
+    const fieldErrors: Partial<Record<keyof TUserDTO, string>> = {};
 
     required.forEach((k) => {
       const v = (user[k] as unknown as string) ?? '';
@@ -121,7 +121,7 @@ const UserTable = () => {
       setUsers([...users, newUser]);
 
       toast.success('User created successfully');
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error saving user:', err);
       toast.error('Error saving user');
     }
@@ -138,7 +138,7 @@ const UserTable = () => {
       setUsers(users.map((user: UserxTypes) => (user.id === updatedUser.id ? updatedUser : user)));
 
       toast.success('User updated successfully');
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error updating user:', err);
       toast.error('Error updating user');
     }
@@ -156,8 +156,8 @@ const UserTable = () => {
 
       hideDialog();
       toast.success('User deleted successfully');
-    } catch (error) {
-      console.error('Error deleting user:', error);
+    } catch (err: unknown) {
+      console.error('Error deleting user:', err);
       toast.error('Error deleting user');
     } finally {
       setDeleteDialogVisible(false);
@@ -273,7 +273,9 @@ const UserTable = () => {
         isNewUser={isNewUser}
         validation={validation}
         onHide={hideDialog}
-        onSubmit={handleSubmit}
+        onSubmit={() => {
+          void handleSubmit();
+        }}
         onInputChange={handleInputChange}
         onRolesChange={handleRolesChange}
         onUserEnabledChange={handleUserEnabledChange}
@@ -283,7 +285,7 @@ const UserTable = () => {
         visible={deleteDialogVisible}
         onHide={() => setDeleteDialogVisible(false)}
         onDelete={() => {
-          deleteUser();
+          void deleteUser();
         }}
         user={selectedUser}
       />

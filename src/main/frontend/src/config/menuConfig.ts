@@ -1,15 +1,15 @@
 import { UserxRole } from '../DTO/userx.types';
 import { ROUTES } from '../utilities/routes.paths';
 
-export type MenuItemConfig = {
+export type TMenuItemConfig = {
   label: string;
   icon?: string;
   route?: string;
   roles?: UserxRole[];
-  items?: MenuItemConfig[];
+  items?: TMenuItemConfig[];
 };
 
-export const menuConfig: MenuItemConfig[] = [
+export const menuConfig: TMenuItemConfig[] = [
   {
     label: 'Home',
     icon: 'pi pi-home',

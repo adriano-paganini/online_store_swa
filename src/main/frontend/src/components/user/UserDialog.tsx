@@ -11,8 +11,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { UserDTO } from '@/DTO/userx.types';
-import { UserxValidationResult } from '@/utilities/userxUtilities';
+import { TUserDTO } from '@/DTO/userx.types';
+import { TUserxValidationResult } from '@/utilities/userxUtilities';
 import { CheckedState } from '@radix-ui/react-checkbox';
 import { AlertTriangle, Check, X } from 'lucide-react';
 import React from 'react';
@@ -22,9 +22,9 @@ import { UserForm } from './UserForm';
 
 type TUserDialogProps = {
   visible: boolean;
-  user: UserDTO | null;
+  user: TUserDTO | null;
   isNewUser: boolean;
-  validation: UserxValidationResult;
+  validation: TUserxValidationResult;
   onHide: () => void;
   onSubmit: () => void;
   onInputChange: (event: React.ChangeEvent<HTMLInputElement>) => void;

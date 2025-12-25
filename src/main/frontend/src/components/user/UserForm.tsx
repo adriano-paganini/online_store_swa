@@ -3,7 +3,7 @@
  * Architecture" offered by Innsbruck University.
  */
 import { useUser } from '@/Contexts/authenticatedUserContext';
-import { UserDTO, UserxRole } from '@/DTO/userx.types';
+import { TUserDTO, UserxRole } from '@/DTO/userx.types';
 import { CheckedState } from '@radix-ui/react-checkbox';
 import React from 'react';
 import { Checkbox } from '../ui/checkbox';
@@ -11,9 +11,9 @@ import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 
 type TUserFormProps = {
-  user: UserDTO;
+  user: TUserDTO;
   isNewUser: boolean;
-  fieldErrors?: Partial<Record<keyof UserDTO, string>>;
+  fieldErrors?: Partial<Record<keyof TUserDTO, string>>;
   onInputChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onRolesChange: (event: { value: string[] }) => void;
   onUserEnabledChange: (checked: CheckedState, fieldName: string) => void;
@@ -137,10 +137,17 @@ export const UserForm: React.FC<TUserFormProps> = ({
                   disabled={isCurrentUserAdmin}
                   onCheckedChange={() => {
                     const updatedRoles = new Set(roleSet);
-                    hasRole ? updatedRoles.delete(role) : updatedRoles.add(role);
+
+                    if (hasRole) {
+                      updatedRoles.delete(role);
+                    } else {
+                      updatedRoles.add(role);
+                    }
+
                     onRolesChange({ value: Array.from(updatedRoles) });
                   }}
                 />
+
                 <Label
                   htmlFor={`role-${role}`}
                   className="text-sm"
