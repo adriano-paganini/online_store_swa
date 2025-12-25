@@ -12,6 +12,8 @@
     "lint:fix": "eslint . --fix",
     "prettier:write": "prettier --write .",
     "prettier:check": "prettier --check .",
+    "commit:pre": "lint-staged",
+    "prepare": "cd ../../../ && husky src/main/frontend/.husky",
     "test": "vitest"
   },
   "dependencies": {
@@ -53,6 +55,7 @@
     "eslint-plugin-testing-library": "^7.15.3",
     "globals": "^16.5.0",
     "jsdom": "^27.0.1",
+    "lint-staged": "^16.2.7",
     "postcss": "^8.5.6",
     "prettier": "3.7.4",
     "prettier-plugin-organize-imports": "^4.3.0",
