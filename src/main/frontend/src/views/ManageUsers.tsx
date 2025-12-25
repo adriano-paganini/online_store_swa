@@ -4,8 +4,8 @@
  */
 import React from "react";
 import { NavbarComponent } from "../components/NavbarComponent";
-import UserTableComponent from "../components/UserTableComponent";
 import { FooterComponent } from "../components/FooterComponent";
+import UserTable from "@/components/user/UserTable";
 
 /**
  * Component / View for managing users.
@@ -16,7 +16,7 @@ class ManageUsers extends React.Component {
     return (
       <div>
         <NavbarComponent />
-        <UserTableComponent />
+        <UserTable />
         <FooterComponent />
       </div>
     );
