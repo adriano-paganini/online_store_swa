@@ -2,9 +2,9 @@
  * This code is part of the skeleton project provided for students of the course "Software
  * Architecture" offered by Innsbruck University.
  */
-import globalAxios from "axios";
+import globalAxios from 'axios';
 
-export const BEARER_TOKEN_LOCAL_STORAGE_KEY = "bearerToken";
+export const BEARER_TOKEN_LOCAL_STORAGE_KEY = 'bearerToken';
 
 const API_HOST = window.location.hostname;
 const API_PORT = 8080;
@@ -17,11 +17,11 @@ globalAxios.interceptors.request.use(
   (request) => {
     const accessToken = localStorage.getItem(BEARER_TOKEN_LOCAL_STORAGE_KEY);
     if (accessToken) {
-      request.headers["Authorization"] = `Bearer ${accessToken}`;
+      request.headers['Authorization'] = `Bearer ${accessToken}`;
     }
     return request;
   },
   (error) => {
     return Promise.reject(error);
-  },
+  }
 );

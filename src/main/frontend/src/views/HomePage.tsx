@@ -2,21 +2,19 @@
  * This code is part of the skeleton project provided for students of the course "Software
  * Architecture" offered by Innsbruck University.
  */
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { NavbarComponent } from "@/components/NavbarComponent";
-import { FooterComponent } from "@/components/FooterComponent";
-import { CheckCircle } from "lucide-react";
+import { FooterComponent } from '@/components/FooterComponent';
+import { NavbarComponent } from '@/components/NavbarComponent';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { CheckCircle } from 'lucide-react';
 
 export default function HomePage() {
   return (
     <div className="flex min-h-screen flex-col">
       <NavbarComponent />
 
-      <main className="flex-1 flex flex-col items-center justify-center p-4 text-center space-y-6">
+      <main className="flex flex-1 flex-col items-center justify-center space-y-6 p-4 text-center">
         <div>
-          <h1 className="text-2xl font-semibold mb-2">
-            Welcome to the SWA Skeleton Project!
-          </h1>
+          <h1 className="mb-2 text-2xl font-semibold">Welcome to the SWA Skeleton Project!</h1>
           <a
             className="text-blue-600 hover:underline"
             href="https://reactjs.org"

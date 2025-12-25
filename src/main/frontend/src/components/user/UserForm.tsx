@@ -2,13 +2,13 @@
  * This code is part of the skeleton project provided for students of the course "Software
  * Architecture" offered by Innsbruck University.
  */
-import { UserDTO, UserxRole } from "@/DTO/userx.types";
-import { CheckedState } from "@radix-ui/react-checkbox";
-import React from "react";
-import { Label } from "../ui/label";
-import { Input } from "../ui/input";
-import { useUser } from "@/Contexts/authenticatedUserContext";
-import { Checkbox } from "../ui/checkbox";
+import { useUser } from '@/Contexts/authenticatedUserContext';
+import { UserDTO, UserxRole } from '@/DTO/userx.types';
+import { CheckedState } from '@radix-ui/react-checkbox';
+import React from 'react';
+import { Checkbox } from '../ui/checkbox';
+import { Input } from '../ui/input';
+import { Label } from '../ui/label';
 
 type TUserFormProps = {
   user: UserDTO;
@@ -47,9 +47,7 @@ export const UserForm: React.FC<TUserFormProps> = ({
             autoComplete="off"
             required
           />
-          {fieldErrors?.username && (
-            <p className="text-sm text-red-600">{fieldErrors.username}</p>
-          )}
+          {fieldErrors?.username && <p className="text-sm text-red-600">{fieldErrors.username}</p>}
         </div>
       )}
 
@@ -63,9 +61,7 @@ export const UserForm: React.FC<TUserFormProps> = ({
           placeholder="First Name"
           autoComplete="off"
         />
-        {fieldErrors?.firstName && (
-          <p className="text-sm text-red-600">{fieldErrors.firstName}</p>
-        )}
+        {fieldErrors?.firstName && <p className="text-sm text-red-600">{fieldErrors.firstName}</p>}
       </div>
 
       <div className="flex-auto space-y-1">
@@ -78,9 +74,7 @@ export const UserForm: React.FC<TUserFormProps> = ({
           placeholder="Last Name"
           autoComplete="off"
         />
-        {fieldErrors?.lastName && (
-          <p className="text-sm text-red-600">{fieldErrors.lastName}</p>
-        )}
+        {fieldErrors?.lastName && <p className="text-sm text-red-600">{fieldErrors.lastName}</p>}
       </div>
 
       <div className="flex-auto space-y-1">
@@ -88,14 +82,12 @@ export const UserForm: React.FC<TUserFormProps> = ({
         <Input
           id="email"
           name="email"
-          value={user.email ?? ""}
+          value={user.email ?? ''}
           onChange={onInputChange}
           placeholder="E-Mail"
           autoComplete="off"
         />
-        {fieldErrors?.email && (
-          <p className="text-sm text-red-600">{fieldErrors.email}</p>
-        )}
+        {fieldErrors?.email && <p className="text-sm text-red-600">{fieldErrors.email}</p>}
       </div>
 
       {isNewUser && (
@@ -110,9 +102,7 @@ export const UserForm: React.FC<TUserFormProps> = ({
             autoComplete="off"
             type="password"
           />
-          {fieldErrors?.password && (
-            <p className="text-sm text-red-600">{fieldErrors.password}</p>
-          )}
+          {fieldErrors?.password && <p className="text-sm text-red-600">{fieldErrors.password}</p>}
         </div>
       )}
 
@@ -121,14 +111,12 @@ export const UserForm: React.FC<TUserFormProps> = ({
         <Input
           id="phone"
           name="phone"
-          value={user.phone ?? ""}
+          value={user.phone ?? ''}
           onChange={onInputChange}
           placeholder="+43 123 1234567"
           autoComplete="off"
         />
-        {fieldErrors?.phone && (
-          <p className="text-sm text-red-600">{fieldErrors.phone}</p>
-        )}
+        {fieldErrors?.phone && <p className="text-sm text-red-600">{fieldErrors.phone}</p>}
       </div>
 
       <div className="flex-auto">
@@ -136,34 +124,34 @@ export const UserForm: React.FC<TUserFormProps> = ({
         <div className="space-y-2">
           {Object.values(UserxRole).map((role) => {
             const hasRole = roleSet.has(role);
-            const isCurrentUserAdmin =
-              user.username === currentUser?.username &&
-              role === UserxRole.ADMIN;
+            const isCurrentUserAdmin = user.username === currentUser?.username && role === UserxRole.ADMIN;
 
             return (
-              <div key={role} className="flex items-center gap-2">
+              <div
+                key={role}
+                className="flex items-center gap-2"
+              >
                 <Checkbox
                   id={`role-${role}`}
                   checked={hasRole}
                   disabled={isCurrentUserAdmin}
                   onCheckedChange={() => {
                     const updatedRoles = new Set(roleSet);
-                    hasRole
-                      ? updatedRoles.delete(role)
-                      : updatedRoles.add(role);
+                    hasRole ? updatedRoles.delete(role) : updatedRoles.add(role);
                     onRolesChange({ value: Array.from(updatedRoles) });
                   }}
                 />
-                <Label htmlFor={`role-${role}`} className="text-sm">
+                <Label
+                  htmlFor={`role-${role}`}
+                  className="text-sm"
+                >
                   {UserxRole[role] ?? role}
                 </Label>
               </div>
             );
           })}
         </div>
-        {fieldErrors?.roles && (
-          <p className="text-sm text-red-600 mt-1">{fieldErrors.roles}</p>
-        )}
+        {fieldErrors?.roles && <p className="mt-1 text-sm text-red-600">{fieldErrors.roles}</p>}
       </div>
 
       <div className="mt-2 flex flex-row items-center gap-2">
@@ -171,9 +159,12 @@ export const UserForm: React.FC<TUserFormProps> = ({
           id="enabled"
           name="enabled"
           checked={user.enabled ?? false}
-          onCheckedChange={(checked) => onUserEnabledChange(checked, "enabled")}
+          onCheckedChange={(checked) => onUserEnabledChange(checked, 'enabled')}
         />
-        <Label htmlFor="enabled" className="block font-bold">
+        <Label
+          htmlFor="enabled"
+          className="block font-bold"
+        >
           Enabled
         </Label>
       </div>

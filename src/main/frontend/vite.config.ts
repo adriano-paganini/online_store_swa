@@ -1,11 +1,11 @@
 /// <reference types="vitest" />
 
-import path from "path";
-import { defineConfig } from "vite";
+import path from 'path';
+import { defineConfig } from 'vite';
 
-import react from "@vitejs/plugin-react";
-import inspect from "vite-plugin-inspect";
-import svgr from "vite-plugin-svgr";
+import react from '@vitejs/plugin-react';
+import inspect from 'vite-plugin-inspect';
+import svgr from 'vite-plugin-svgr';
 
 // READ-MORE: https://vitejs.dev/config/
 export default defineConfig(() => {
@@ -22,8 +22,8 @@ export default defineConfig(() => {
       strictPort: true,
       open: false,
       esbuild: {
-        target: "esnext",
-        platform: "linux",
+        target: 'esnext',
+        platform: 'linux',
       },
     },
     preview: {
@@ -31,24 +31,24 @@ export default defineConfig(() => {
       strictPort: true,
       open: true,
     },
-    base: "/",
-    envDir: "./env",
+    base: '/',
+    envDir: './env',
     plugins,
     resolve: {
       alias: {
-        "@": path.resolve(__dirname, "./src"),
+        '@': path.resolve(__dirname, './src'),
       },
     },
     build: {
-      outDir: "dist",
+      outDir: 'dist',
       sourcemap: true,
       // READ-MORE:  https://vitejs.dev/config/build-options#build-target
-      target: "esnext",
+      target: 'esnext',
     },
     test: {
       globals: true, // Enables global test functions like `test`, `it`, etc.
-      environment: "jsdom", // for DOM-related tests
-      setupFiles: ["./src/setupTests.ts"],
+      environment: 'jsdom', // for DOM-related tests
+      setupFiles: ['./src/setupTests.ts'],
     },
   };
 });

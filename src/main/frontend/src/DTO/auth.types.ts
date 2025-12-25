@@ -3,6 +3,6 @@
  * Architecture" offered by Innsbruck University.
  */
 
-export type LoginDTO = { username: string; password: string; };
+export type LoginDTO = { username: string; password: string };
 
-export type LoginResponse = { bearerToken: string; };
+export type LoginResponse = { bearerToken: string };

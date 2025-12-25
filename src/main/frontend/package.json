@@ -8,6 +8,8 @@
     "build": "tsc && vite build",
     "preview": "vite preview",
     "ts:check": "tsc --noEmit",
+    "prettier:write": "prettier --write .",
+    "prettier:check": "prettier --check .",
     "test": "vitest"
   },
   "dependencies": {
@@ -40,6 +42,9 @@
     "autoprefixer": "^10.4.23",
     "jsdom": "^27.0.1",
     "postcss": "^8.5.6",
+    "prettier": "3.7.4",
+    "prettier-plugin-organize-imports": "^4.3.0",
+    "prettier-plugin-tailwindcss": "^0.7.2",
     "tailwindcss": "^3.4.19",
     "vite": "^6.4.1",
     "vite-plugin-inspect": "^11.3.3",

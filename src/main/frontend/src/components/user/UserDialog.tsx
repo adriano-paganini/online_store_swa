@@ -10,15 +10,15 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { Check, X, AlertTriangle } from "lucide-react";
-import React from "react";
-import { UserxValidationResult } from "@/utilities/userxUtilities";
-import { UserDTO } from "@/DTO/userx.types";
-import { CheckedState } from "@radix-ui/react-checkbox";
-import { Alert, AlertDescription, AlertTitle } from "../ui/alert";
-import { Button } from "../ui/button";
-import { UserForm } from "./UserForm";
+} from '@/components/ui/dialog';
+import { UserDTO } from '@/DTO/userx.types';
+import { UserxValidationResult } from '@/utilities/userxUtilities';
+import { CheckedState } from '@radix-ui/react-checkbox';
+import { AlertTriangle, Check, X } from 'lucide-react';
+import React from 'react';
+import { Alert, AlertDescription, AlertTitle } from '../ui/alert';
+import { Button } from '../ui/button';
+import { UserForm } from './UserForm';
 
 type TUserDialogProps = {
   visible: boolean;
@@ -55,18 +55,17 @@ export const UserDialog: React.FC<TUserDialogProps> = ({
     >
       <DialogContent className="sm:max-w-2xl">
         <DialogHeader>
-          <DialogTitle>
-            {isNewUser ? "Create New User" : "Edit User"}
-          </DialogTitle>
+          <DialogTitle>{isNewUser ? 'Create New User' : 'Edit User'}</DialogTitle>
           <DialogDescription>
-            {isNewUser
-              ? "Fill in the form below to create a new user."
-              : "Modify the fields and save your changes."}
+            {isNewUser ? 'Fill in the form below to create a new user.' : 'Modify the fields and save your changes.'}
           </DialogDescription>
         </DialogHeader>
 
         {validation.message && (
-          <Alert variant="destructive" className="mb-4">
+          <Alert
+            variant="destructive"
+            className="mb-4"
+          >
             <AlertTriangle className="h-5 w-5" />
             <AlertTitle>Error</AlertTitle>
             <AlertDescription>{validation.message}</AlertDescription>
@@ -86,15 +85,23 @@ export const UserDialog: React.FC<TUserDialogProps> = ({
 
         <DialogFooter className="mt-4">
           <DialogClose asChild>
-            <Button type="button" variant="outline">
+            <Button
+              type="button"
+              variant="outline"
+            >
               <X className="h-4 w-4" />
               Cancel
             </Button>
           </DialogClose>
 
-          <Button type="button" variant="default" onClick={onSubmit} autoFocus>
+          <Button
+            type="button"
+            variant="default"
+            onClick={onSubmit}
+            autoFocus
+          >
             <Check className="h-4 w-4" />
-            {isNewUser ? "Create" : "Save"}
+            {isNewUser ? 'Create' : 'Save'}
           </Button>
         </DialogFooter>
       </DialogContent>

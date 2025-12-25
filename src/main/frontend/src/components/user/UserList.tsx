@@ -1,9 +1,9 @@
-import React from "react";
+import React from 'react';
 
-import { LoaderCircle } from "lucide-react";
-import { UserLine } from "./UserLine";
-import { UserxTypes } from "@/DTO/userx.types";
-import { useUser } from "@/Contexts/authenticatedUserContext";
+import { useUser } from '@/Contexts/authenticatedUserContext';
+import { UserxTypes } from '@/DTO/userx.types';
+import { LoaderCircle } from 'lucide-react';
+import { UserLine } from './UserLine';
 
 type TUserListProps = {
   users: UserxTypes[];
@@ -19,12 +19,7 @@ type TUserListProps = {
  * @param onEditUser callback when a user is edited
  * @param onDeleteUser callback when a user is deleted
  */
-export const UserList: React.FC<TUserListProps> = ({
-  users,
-  loading,
-  onEditUser,
-  onDeleteUser,
-}) => {
+export const UserList: React.FC<TUserListProps> = ({ users, loading, onEditUser, onDeleteUser }) => {
   const { currentUser } = useUser();
 
   if (loading) {
@@ -36,11 +31,7 @@ export const UserList: React.FC<TUserListProps> = ({
   }
 
   if (!users || users.length == 0) {
-    return (
-      <div className="mt-5 w-full text-center text-muted-foreground">
-        No users yet.
-      </div>
-    );
+    return <div className="mt-5 w-full text-center text-muted-foreground">No users yet.</div>;
   }
 
   return (

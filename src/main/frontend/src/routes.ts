@@ -3,31 +3,30 @@
  * Architecture" offered by Innsbruck University.
  */
 
-import HomePage from "./views/HomePage";
-import ManageUsers from "./views/ManageUsers";
-import Login from "./views/Login";
-import Logout from "./views/Logout";
-import {ROUTES} from "./utilities/routes.paths";
+import { ROUTES } from './utilities/routes.paths';
+import HomePage from './views/HomePage';
+import Login from './views/Login';
+import Logout from './views/Logout';
+import ManageUsers from './views/ManageUsers';
 
 /**
  * Define the routes of the application.
  */
 
 export const HomePageRoute = {
-    url: ROUTES.HOME,
-    component: HomePage
-}
+  url: ROUTES.HOME,
+  component: HomePage,
+};
 
 export const ManageUsersRoute = {
-    url: ROUTES.MANAGE_USERS,
-    component: ManageUsers
-}
+  url: ROUTES.MANAGE_USERS,
+  component: ManageUsers,
+};
 export const LoginsRoute = {
-    url: ROUTES.LOGIN,
-    component: Login
-}
+  url: ROUTES.LOGIN,
+  component: Login,
+};
 export const LogoutsRoute = {
-    url: ROUTES.LOGOUT,
-    component: Logout
-}
-
+  url: ROUTES.LOGOUT,
+  component: Logout,
+};

@@ -2,10 +2,10 @@
  * This code is part of the skeleton project provided for students of the course "Software
  * Architecture" offered by Innsbruck University.
  */
-import { useNavigate } from "react-router-dom";
-import { useUser } from "../Contexts/authenticatedUserContext";
-import { useEffect } from "react";
-import { ROUTES } from "../utilities/routes.paths";
+import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useUser } from '../Contexts/authenticatedUserContext';
+import { ROUTES } from '../utilities/routes.paths';
 
 /**
  * Logout component

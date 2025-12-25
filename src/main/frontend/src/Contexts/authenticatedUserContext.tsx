@@ -2,19 +2,13 @@
  * This code is part of the skeleton project provided for students of the course "Software
  * Architecture" offered by Innsbruck University.
  */
-import React, {
-  createContext,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
-import { BEARER_TOKEN_LOCAL_STORAGE_KEY } from "../config/config";
-import { jwtDecode, JwtPayload } from "jwt-decode";
-import { UserxApi } from "../utilities/userxApi";
-import { UserDTO, UserxRole } from "../DTO/userx.types";
-import { LoginDTO } from "../DTO/auth.types";
-import { AuthApi } from "../utilities/authApi";
+import { jwtDecode, JwtPayload } from 'jwt-decode';
+import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
+import { BEARER_TOKEN_LOCAL_STORAGE_KEY } from '../config/config';
+import { LoginDTO } from '../DTO/auth.types';
+import { UserDTO, UserxRole } from '../DTO/userx.types';
+import { AuthApi } from '../utilities/authApi';
+import { UserxApi } from '../utilities/userxApi';
 
 /**
  * A context allows us to access the current user from any component in the component tree.
@@ -73,8 +67,8 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
       }
     };
 
-    window.addEventListener("storage", handler);
-    return () => window.removeEventListener("storage", handler);
+    window.addEventListener('storage', handler);
+    return () => window.removeEventListener('storage', handler);
   }, []);
 
   /**
@@ -84,8 +78,8 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
   const login = async (loginDto: LoginDTO): Promise<void> => {
     const { bearerToken } = await AuthApi.login(loginDto);
     if (!bearerToken || bearerToken.length < 10) {
-      setError(new Error("Missing or invalid bearer token in response!"));
-      console.log("Error: missing or invalid bearer token in response");
+      setError(new Error('Missing or invalid bearer token in response!'));
+      console.log('Error: missing or invalid bearer token in response');
       return;
     }
 
@@ -115,15 +109,15 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
     try {
       const decoded = jwtDecode<CustomJwtPayload>(token);
 
-      const fullName = decoded.name ?? "";
-      const [firstName = "", lastName = ""] = fullName.split(" ");
+      const fullName = decoded.name ?? '';
+      const [firstName = '', lastName = ''] = fullName.split(' ');
       const roles = decoded.roles ?? [];
       return {
-        username: decoded.username ?? "",
+        username: decoded.username ?? '',
         firstName,
         lastName,
-        email: "",
-        phone: "",
+        email: '',
+        phone: '',
         enabled: true,
         roles: roles.map((role) => role as UserxRole),
       };
@@ -142,7 +136,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
       const decodedUser = jwtDecode<CustomJwtPayload>(token);
 
       if (decodedUser.exp && Date.now() >= decodedUser.exp! * 1000) {
-        console.info("JWT Token expired at " + decodedUser.exp! * 1000);
+        console.info('JWT Token expired at ' + decodedUser.exp! * 1000);
         void logout(); // ignore the returned promise; void explicit so ESLint doesn’t complain
         return false;
       }
@@ -152,12 +146,12 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
       if (isAuthenticated) {
         return true;
       } else {
-        setError(new Error("Authentication failed"));
+        setError(new Error('Authentication failed'));
         void logout(); // ignore the returned promise; void explicit so ESLint doesn’t complain
         return false;
       }
     } catch (err: any) {
-      setError(err instanceof Error ? err : new Error("Invalid Token"));
+      setError(err instanceof Error ? err : new Error('Invalid Token'));
       void logout(); // ignore the returned promise; void explicit so ESLint doesn’t complain
       return false;
     }
@@ -195,7 +189,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
 export function useUser() {
   const context = useContext(UserContext);
   if (!context) {
-    throw new Error("useUser must be used within a UserProvider");
+    throw new Error('useUser must be used within a UserProvider');
   }
   return context;
 }

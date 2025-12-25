@@ -2,10 +2,10 @@
  * This code is part of the skeleton project provided for students of the course "Software
  * Architecture" offered by Innsbruck University.
  */
-import { useUser } from "@/Contexts/authenticatedUserContext";
-import { HomePageRoute, ManageUsersRoute } from "@/routes";
-import React from "react";
-import { Link } from "react-router-dom";
+import { useUser } from '@/Contexts/authenticatedUserContext';
+import { HomePageRoute, ManageUsersRoute } from '@/routes';
+import React from 'react';
+import { Link } from 'react-router-dom';
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -13,7 +13,7 @@ import {
   NavigationMenuLink,
   NavigationMenuList,
   NavigationMenuTrigger,
-} from "./ui/navigation-menu";
+} from './ui/navigation-menu';
 
 export const NavbarComponent: React.FC = () => {
   const { isAdmin } = useUser();

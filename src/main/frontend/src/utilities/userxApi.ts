@@ -2,9 +2,9 @@
  * This code is part of the skeleton project provided for students of the course "Software
  * Architecture" offered by Innsbruck University.
  */
-import globalAxios from "axios";
-import {UserDTO, UserxTypes} from "../DTO/userx.types";
-import {createUserxFromInterfaces} from "./userxUtilities";
+import globalAxios from 'axios';
+import { UserDTO, UserxTypes } from '../DTO/userx.types';
+import { createUserxFromInterfaces } from './userxUtilities';
 
 /**
  * This file provides utility functions for CRUD operations on users.
@@ -16,13 +16,13 @@ import {createUserxFromInterfaces} from "./userxUtilities";
  * @throws Error if the request fails
  */
 const fetchAllUsers = async (): Promise<UserDTO[]> => {
-    try {
-        const response = await globalAxios.get("/api/admin");
-        return response.data;
-    } catch (err: any) {
-        throw new Error(`Error fetching users: ${err?.message ?? String(err)}`);
-    }
-}
+  try {
+    const response = await globalAxios.get('/api/admin');
+    return response.data;
+  } catch (err: any) {
+    throw new Error(`Error fetching users: ${err?.message ?? String(err)}`);
+  }
+};
 
 /**
  * Create a new user
@@ -31,14 +31,14 @@ const fetchAllUsers = async (): Promise<UserDTO[]> => {
  * @throws Error if the request fails
  */
 const createUser = async (selectedUser: UserDTO): Promise<UserxTypes> => {
-    try {
-        const userxInstance = createUserxFromInterfaces(selectedUser);
-        const response = await globalAxios.post("/api/admin", userxInstance.toCreateJSON());
-        return UserxTypes.fromJSON(response.data);
-    } catch (err: any) {
-        throw new Error(`Error saving user: ${err?.message ?? String(err)}`);
-    }
-}
+  try {
+    const userxInstance = createUserxFromInterfaces(selectedUser);
+    const response = await globalAxios.post('/api/admin', userxInstance.toCreateJSON());
+    return UserxTypes.fromJSON(response.data);
+  } catch (err: any) {
+    throw new Error(`Error saving user: ${err?.message ?? String(err)}`);
+  }
+};
 
 /**
  * Update an existing user
@@ -47,14 +47,14 @@ const createUser = async (selectedUser: UserDTO): Promise<UserxTypes> => {
  * @throws Error if the request fails
  */
 const updateUser = async (selectedUser: UserDTO): Promise<UserxTypes> => {
-    try {
-        const userxInstance = createUserxFromInterfaces(selectedUser);
-        const response = await globalAxios.patch(`/api/admin/${selectedUser.id}`, userxInstance.toUpdateJSON());
-        return UserxTypes.fromJSON(response.data);
-    } catch (err: any) {
-        throw new Error(`Error updating user: ${err?.message ?? String(err)}`);
-    }
-}
+  try {
+    const userxInstance = createUserxFromInterfaces(selectedUser);
+    const response = await globalAxios.patch(`/api/admin/${selectedUser.id}`, userxInstance.toUpdateJSON());
+    return UserxTypes.fromJSON(response.data);
+  } catch (err: any) {
+    throw new Error(`Error updating user: ${err?.message ?? String(err)}`);
+  }
+};
 
 /**
  * Delete an existing user
@@ -63,12 +63,12 @@ const updateUser = async (selectedUser: UserDTO): Promise<UserxTypes> => {
  * @throws Error if the request fails
  */
 const deleteUser = async (selectedUser: UserDTO) => {
-    try {
-        return await globalAxios.delete(`/api/admin/${selectedUser.id}`);
-    } catch (err: any) {
-        throw new Error(`Error deleting user: ${err?.message ?? String(err)}`);
-    }
-}
+  try {
+    return await globalAxios.delete(`/api/admin/${selectedUser.id}`);
+  } catch (err: any) {
+    throw new Error(`Error deleting user: ${err?.message ?? String(err)}`);
+  }
+};
 
 /**
  * Return currently logged-in user or throw Error
@@ -76,34 +76,34 @@ const deleteUser = async (selectedUser: UserDTO) => {
  * @throws Error if the request fails (e.g. no user currently logged in)
  */
 const getCurrentUser = async (): Promise<UserxTypes> => {
-    try {
-        const response = await globalAxios.get<string>("/api/users/me");
-        return UserxTypes.fromJSON(response.data);
-    } catch (err: any) {
-        throw new Error(`Error determining current user: ${err?.message ?? String(err)}`);
-    }
-}
+  try {
+    const response = await globalAxios.get<string>('/api/users/me');
+    return UserxTypes.fromJSON(response.data);
+  } catch (err: any) {
+    throw new Error(`Error determining current user: ${err?.message ?? String(err)}`);
+  }
+};
 
 /**
  * Return true if user is authenticated
  * @throws otherwise
  */
 const isAuthenticated = async (): Promise<boolean> => {
-    try {
-        const res = await globalAxios.get("/api/users/authenticated");
-        return res.status >= 200 && res.status < 300; // make sure you stay in this range for user is authenticated or modify accordingly
-    } catch (err: any) {
-        // axios throws for 4xx/5xx; treat all as not authenticated
-        console.log("Catching error on trying isAuthenticated: ", err);
-        return false;
-    }
+  try {
+    const res = await globalAxios.get('/api/users/authenticated');
+    return res.status >= 200 && res.status < 300; // make sure you stay in this range for user is authenticated or modify accordingly
+  } catch (err: any) {
+    // axios throws for 4xx/5xx; treat all as not authenticated
+    console.log('Catching error on trying isAuthenticated: ', err);
+    return false;
+  }
 };
 
 export const UserxApi = {
-    createUser,
-    updateUser,
-    deleteUser,
-    fetchAllUsers,
-    getCurrentUser,
-    isAuthenticated,
-}
+  createUser,
+  updateUser,
+  deleteUser,
+  fetchAllUsers,
+  getCurrentUser,
+  isAuthenticated,
+};
