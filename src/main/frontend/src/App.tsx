@@ -5,7 +5,7 @@
 import React, { Suspense } from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { Toaster } from 'sonner';
-import PrivateRoute from './components/PrivateRoute';
+import PrivateRoute from './components/general/PrivateRoute';
 import { UserProvider } from './Contexts/authenticatedUserContext';
 import { HomePageRoute, LoginsRoute, LogoutsRoute, ManageUsersRoute } from './routes';
 

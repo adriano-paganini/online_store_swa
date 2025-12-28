@@ -5,9 +5,9 @@
 import React, { useEffect, useState } from 'react';
 
 import { CheckedState } from '@radix-ui/react-checkbox';
-import { Plus } from 'lucide-react';
+import { ChevronDown, Plus } from 'lucide-react';
 import { toast } from 'sonner';
-import { TUserDTO, UserxTypes } from '../../DTO/userx.types';
+import { TUserDTO, UserxRole, UserxTypes } from '../../DTO/userx.types';
 import { UserxApi } from '../../utilities/userxApi';
 import {
   createUserxFromInterfaces,
@@ -15,9 +15,12 @@ import {
   TUserxValidationResult,
 } from '../../utilities/userxUtilities';
 import { Button } from '../ui/button';
+import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuTrigger } from '../ui/dropdown-menu';
 import { UserDeleteDialog } from './UserDeleteDialog';
 import { UserDialog } from './UserDialog';
 import { UserList } from './UserList';
+
+const allRoles = Object.values(UserxRole);
 
 /**
  * Component for managing users.
@@ -32,6 +35,9 @@ const UserTable = () => {
   const [validation, setValidation] = useState<TUserxValidationResult>({
     valid: true,
   });
+
+  const [selectedRoles, setSelectedRoles] = useState<string[]>(allRoles);
+  const [filteredUsers, setFilteredUsers] = useState<UserxTypes[]>(users);
 
   /**
    * Fetch all users from the backend on mount once.
@@ -247,6 +253,20 @@ const UserTable = () => {
     setSelectedUser({ ...selectedUser, roles: roles });
   };
 
+  useEffect(() => {
+    if (selectedRoles.length === 0) {
+      setFilteredUsers([]);
+    } else {
+      setFilteredUsers(
+        users.filter((user) => user.roles && [...user.roles].some((role) => selectedRoles.includes(role)))
+      );
+    }
+  }, [selectedRoles, users]);
+
+  const toggleRole = (role: string, checked: boolean) => {
+    setSelectedRoles((prev) => (checked ? [...prev, role] : prev.filter((r) => r !== role)));
+  };
+
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-row items-center justify-between">
@@ -257,10 +277,33 @@ const UserTable = () => {
           <Plus />
           Add New User
         </Button>
+
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              variant="outline"
+              className="ml-auto"
+            >
+              Roles to show <ChevronDown className="ml-2 h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            {allRoles.map((role) => (
+              <DropdownMenuCheckboxItem
+                key={role}
+                className="capitalize"
+                checked={selectedRoles.includes(role)}
+                onCheckedChange={(value) => toggleRole(role, value)}
+              >
+                {role}
+              </DropdownMenuCheckboxItem>
+            ))}
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
 
       <UserList
-        users={users}
+        users={filteredUsers}
         loading={loading}
         onEditUser={openEditDialog}
         onDeleteUser={openDeleteDialog}

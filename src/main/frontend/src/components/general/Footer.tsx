@@ -1,8 +1,8 @@
+import { useUser } from '@/Contexts/authenticatedUserContext';
 import React from 'react';
-import { useUser } from '../Contexts/authenticatedUserContext';
 import { rolesBodyTemplate } from './rolesBodyTemplate';
 
-export const FooterComponent: React.FC = () => {
+export const Footer: React.FC = () => {
   // get user context
   const { currentUser } = useUser();
 

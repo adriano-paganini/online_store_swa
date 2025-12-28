@@ -1,5 +1,5 @@
-import { TUserDTO, UserxRole } from '../DTO/userx.types';
-import { Badge } from './ui/badge';
+import { TUserDTO, UserxRole } from '../../DTO/userx.types';
+import { Badge } from '../ui/badge';
 
 /**
  * Renders the roles of a user as tags (such beautiful).

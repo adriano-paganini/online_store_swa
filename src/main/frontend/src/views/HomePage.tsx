@@ -2,17 +2,17 @@
  * This code is part of the skeleton project provided for students of the course "Software
  * Architecture" offered by Innsbruck University.
  */
-import { FooterComponent } from '@/components/FooterComponent';
-import { NavbarComponent } from '@/components/NavbarComponent';
+import { Footer } from '@/components/general/Footer';
+import { Navbar } from '@/components/general/Navbar';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { CheckCircle } from 'lucide-react';
 
 export default function HomePage() {
   return (
     <div className="flex min-h-screen flex-col">
-      <NavbarComponent />
+      <Navbar />
 
-      <main className="flex flex-1 flex-col items-center justify-center space-y-6 p-4 text-center">
+      <main className="flex flex-col items-center justify-center space-y-6 p-4 text-center">
         <div>
           <h1 className="mb-2 text-2xl font-semibold">Welcome to the SWA Skeleton Project!</h1>
           <a
@@ -33,7 +33,7 @@ export default function HomePage() {
         </Alert>
       </main>
 
-      <FooterComponent />
+      <Footer />
     </div>
   );
 }

@@ -2,15 +2,15 @@
  * This code is part of the skeleton project provided for students of the course "Software
  * Architecture" offered by Innsbruck University.
  */
-import { ProgressSpinner } from 'primereact/progressspinner';
 import { useEffect, useState } from 'react';
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
 
-import { useUser } from '../Contexts/authenticatedUserContext';
-import { ROUTES } from '../utilities/routes.paths';
+import { useUser } from '../../Contexts/authenticatedUserContext';
+import { ROUTES } from '../../utilities/routes.paths';
 
 /**
- * Private route component that checks if the user is authenticated. Used to protect routes.
+ * Private route component that checks if the user is authenticated.
+ * Used to protect routes.
  */
 const PrivateRoute = () => {
   enum AuthStatus {
@@ -22,29 +22,31 @@ const PrivateRoute = () => {
   const { userIsAuthenticated } = useUser();
   const location = useLocation();
 
-  const [authStatus, setAuthStatus] = useState(AuthStatus.UNKNOWN); // null -> Status unknonw, true/false for authentication
+  const [authStatus, setAuthStatus] = useState<AuthStatus>(AuthStatus.UNKNOWN);
 
   useEffect(() => {
     const checkAuthentication = async () => {
       try {
         const isAuthenticated = await userIsAuthenticated();
-
-        if (isAuthenticated) {
-          setAuthStatus(AuthStatus.AUTHENTICATED);
-        } else {
-          setAuthStatus(AuthStatus.UNAUTHENTICATED);
-        }
-      } catch (err: any) {
+        setAuthStatus(isAuthenticated ? AuthStatus.AUTHENTICATED : AuthStatus.UNAUTHENTICATED);
+      } catch (err: unknown) {
         console.warn('Backend not available:', err);
         setAuthStatus(AuthStatus.UNAUTHENTICATED);
       }
     };
-    void checkAuthentication(); // to mark the returned Promise as explicitly and intentionally unawaited (ESLint)
-  });
 
-  // loading spinner
+    void checkAuthentication();
+  }, [userIsAuthenticated]);
+
   if (authStatus === AuthStatus.UNKNOWN) {
-    return <ProgressSpinner />;
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <div
+          className="h-8 w-8 animate-spin rounded-full border-4 border-muted border-t-primary"
+          aria-label="Loading"
+        />
+      </div>
+    );
   }
 
   return authStatus === AuthStatus.AUTHENTICATED ? (
@@ -55,7 +57,7 @@ const PrivateRoute = () => {
       replace
       state={{ from: location }}
     />
-  ); // return to location in case of
+  );
 };
 
 export default PrivateRoute;
