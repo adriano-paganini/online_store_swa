@@ -2,28 +2,25 @@
  * This code is part of the skeleton project provided for students of the course "Software
  * Architecture" offered by Innsbruck University.
  */
-import '../styles/App.css';
-import "primereact/resources/themes/lara-light-cyan/theme.css";
-import React from "react";
-import NavbarComponent from "../components/NavbarComponent";
-import UserTableComponent from "../components/UserTableComponent";
-import {FooterComponent} from "../components/FooterComponent";
+import { Footer } from '@/components/general/Footer';
+import { Navbar } from '@/components/general/Navbar';
+import UserTable from '@/components/user/UserTable';
+import React from 'react';
 
 /**
  * Component / View for managing users.
  */
 
 class ManageUsers extends React.Component {
-
-    render() {
-        return (
-            <div>
-                <NavbarComponent />
-                <UserTableComponent />
-                <FooterComponent />
-            </div>
-        );
-    }
+  render() {
+    return (
+      <div>
+        <Navbar isAdminPage={true} />
+        <UserTable />
+        <Footer />
+      </div>
+    );
+  }
 }
 
 export default ManageUsers;

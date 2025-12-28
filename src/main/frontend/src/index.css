@@ -1,13 +1,80 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #ffffff;
+  --foreground: #0a0a0b;
+  --card: #ffffff;
+  --card-foreground: #0a0a0b;
+  --popover: #ffffff;
+  --popover-foreground: #0a0a0b;
+  --primary: #1a1b1c;
+  --primary-foreground: #fafafa;
+  --secondary: #f2f2f5;
+  --secondary-foreground: #1a1b1c;
+  --muted: #f2f2f5;
+  --muted-foreground: #737378;
+  --accent: #f2f2f5;
+  --accent-foreground: #1a1b1c;
+  --destructive: #e63946;
+  --destructive-foreground: #fafafa;
+  --border: #e3e3e6;
+  --input: #e3e3e6;
+  --ring: #1a1b1c;
+  --radius: 0.5rem;
+  --chart-1: #e66b2f;
+  --chart-2: #188f72;
+  --chart-3: #154c5a;
+  --chart-4: #e6b730;
+  --chart-5: #f5ae42;
+}
+
+.dark {
+  --background: #0a0a0b;
+  --foreground: #fafafa;
+  --card: #0a0a0b;
+  --card-foreground: #fafafa;
+  --popover: #0a0a0b;
+  --popover-foreground: #fafafa;
+  --primary: #fafafa;
+  --primary-foreground: #1a1b1c;
+  --secondary: #262629;
+  --secondary-foreground: #fafafa;
+  --muted: #262629;
+  --muted-foreground: #a3a3ad;
+  --accent: #262629;
+  --accent-foreground: #fafafa;
+  --destructive: #781a1a;
+  --destructive-foreground: #fafafa;
+  --border: #262629;
+  --input: #262629;
+  --ring: #a6a6b8;
+  --chart-1: #2272e6;
+  --chart-2: #20b48d;
+  --chart-3: #e69e4c;
+  --chart-4: #9c2de6;
+  --chart-5: #e62d5a;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  font-family:
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans',
+    'Helvetica Neue', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
 }

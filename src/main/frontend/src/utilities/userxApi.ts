@@ -1,109 +1,101 @@
-/**
- * This code is part of the skeleton project provided for students of the course "Software
- * Architecture" offered by Innsbruck University.
- */
-import globalAxios from "axios";
-import {UserDTO, UserxTypes} from "../DTO/userx.types";
-import {createUserxFromInterfaces} from "./userxUtilities";
+import axios from 'axios';
+import { TUserDTO, UserxTypes } from '../DTO/userx.types';
+import { createUserxFromInterfaces } from './userxUtilities';
+
+// hopefully?
+type TBackendError = { message: string };
 
 /**
- * This file provides utility functions for CRUD operations on users.
+ * Extract a safe error message from unknown errors
  */
+const getErrorMessage = (err: unknown): string => {
+  if (axios.isAxiosError<TBackendError>(err)) {
+    return err.response?.data?.message ?? err.message;
+  }
+  if (err instanceof Error) {
+    return err.message;
+  }
+  return String(err);
+};
 
 /**
  * Fetch all users from the backend
- * @returns Promise<UserDTO[]> a promise that resolves with an array of UserDTO objects
- * @throws Error if the request fails
  */
-const fetchAllUsers = async (): Promise<UserDTO[]> => {
-    try {
-        const response = await globalAxios.get("/api/admin");
-        return response.data;
-    } catch (err: any) {
-        throw new Error(`Error fetching users: ${err?.message ?? String(err)}`);
-    }
-}
+const fetchAllUsers = async (): Promise<TUserDTO[]> => {
+  try {
+    const response = await axios.get<TUserDTO[]>('/api/admin');
+    return response.data;
+  } catch (err: unknown) {
+    throw new Error(`Error fetching users: ${getErrorMessage(err)}`);
+  }
+};
 
 /**
  * Create a new user
- * @param selectedUser the user to create
- * @returns Promise<UserxTypes> a promise that resolves with the created user
- * @throws Error if the request fails
  */
-const createUser = async (selectedUser: UserDTO): Promise<UserxTypes> => {
-    try {
-        const userxInstance = createUserxFromInterfaces(selectedUser);
-        const response = await globalAxios.post("/api/admin", userxInstance.toCreateJSON());
-        return UserxTypes.fromJSON(response.data);
-    } catch (err: any) {
-        throw new Error(`Error saving user: ${err?.message ?? String(err)}`);
-    }
-}
+const createUser = async (selectedUser: TUserDTO): Promise<UserxTypes> => {
+  try {
+    const userxInstance = createUserxFromInterfaces(selectedUser);
+    const response = await axios.post<TUserDTO>('/api/admin', userxInstance.toCreateJSON());
+    return UserxTypes.fromJSON(response.data);
+  } catch (err: unknown) {
+    throw new Error(`Error saving user: ${getErrorMessage(err)}`);
+  }
+};
 
 /**
  * Update an existing user
- * @param selectedUser the user to update
- * @returns Promise<UserxTypes> a promise that resolves with the updated user
- * @throws Error if the request fails
  */
-const updateUser = async (selectedUser: UserDTO): Promise<UserxTypes> => {
-    try {
-        const userxInstance = createUserxFromInterfaces(selectedUser);
-        const response = await globalAxios.patch(`/api/admin/${selectedUser.id}`, userxInstance.toUpdateJSON());
-        return UserxTypes.fromJSON(response.data);
-    } catch (err: any) {
-        throw new Error(`Error updating user: ${err?.message ?? String(err)}`);
-    }
-}
+const updateUser = async (selectedUser: TUserDTO): Promise<UserxTypes> => {
+  try {
+    const userxInstance = createUserxFromInterfaces(selectedUser);
+    const response = await axios.patch<TUserDTO>(`/api/admin/${selectedUser.id}`, userxInstance.toUpdateJSON());
+    return UserxTypes.fromJSON(response.data);
+  } catch (err: unknown) {
+    throw new Error(`Error updating user: ${getErrorMessage(err)}`);
+  }
+};
 
 /**
  * Delete an existing user
- * @param selectedUser the user to delete
- * @returns Promise<any> a promise that resolves with the response data
- * @throws Error if the request fails
  */
-const deleteUser = async (selectedUser: UserDTO) => {
-    try {
-        return await globalAxios.delete(`/api/admin/${selectedUser.id}`);
-    } catch (err: any) {
-        throw new Error(`Error deleting user: ${err?.message ?? String(err)}`);
-    }
-}
+const deleteUser = async (selectedUser: TUserDTO): Promise<void> => {
+  try {
+    await axios.delete(`/api/admin/${selectedUser.id}`);
+  } catch (err: unknown) {
+    throw new Error(`Error deleting user: ${getErrorMessage(err)}`);
+  }
+};
 
 /**
- * Return currently logged-in user or throw Error
- * @returns Promise<UserxTypes> a promise that resolves with the response data
- * @throws Error if the request fails (e.g. no user currently logged in)
+ * Return currently logged-in user
  */
 const getCurrentUser = async (): Promise<UserxTypes> => {
-    try {
-        const response = await globalAxios.get<string>("/api/users/me");
-        return UserxTypes.fromJSON(response.data);
-    } catch (err: any) {
-        throw new Error(`Error determining current user: ${err?.message ?? String(err)}`);
-    }
-}
+  try {
+    const response = await axios.get<TUserDTO>('/api/users/me');
+    return UserxTypes.fromJSON(response.data);
+  } catch (err: unknown) {
+    throw new Error(`Error determining current user: ${getErrorMessage(err)}`);
+  }
+};
 
 /**
  * Return true if user is authenticated
- * @throws otherwise
  */
 const isAuthenticated = async (): Promise<boolean> => {
-    try {
-        const res = await globalAxios.get("/api/users/authenticated");
-        return res.status >= 200 && res.status < 300; // make sure you stay in this range for user is authenticated or modify accordingly
-    } catch (err: any) {
-        // axios throws for 4xx/5xx; treat all as not authenticated
-        console.log("Catching error on trying isAuthenticated: ", err);
-        return false;
-    }
+  try {
+    const response = await axios.get('/api/users/authenticated');
+    return response.status >= 200 && response.status < 300;
+  } catch {
+    return false;
+  }
 };
 
 export const UserxApi = {
-    createUser,
-    updateUser,
-    deleteUser,
-    fetchAllUsers,
-    getCurrentUser,
-    isAuthenticated,
-}
+  fetchAllUsers,
+  createUser,
+  updateUser,
+  deleteUser,
+  getCurrentUser,
+  isAuthenticated,
+};
