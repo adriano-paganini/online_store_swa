@@ -2,13 +2,14 @@
 
 import { Pagination } from '@/components/general/Pagination';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import type { TReviewCreateDTO, TReviewDTO } from '@/DTO/review.types';
 import { ReviewApi } from '@/utilities/reviewApi';
+import { Star } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { ReviewFilters } from './ReviewFilters';
+import { StarRating } from './StarRating';
 
 type TProductReviewsProps = {
   productId: number;
@@ -87,6 +88,7 @@ export function ReviewsList({ productId }: TProductReviewsProps) {
 
       setReviews((prev) => [created, ...prev]);
       setNewReview({ score: 5, content: '' });
+      toast.success('Review submitted successfully!');
     } catch (err) {
       console.error(err instanceof Error ? err.message : 'Failed to create review');
       toast.error('Error submitting review. Please try again later.');
@@ -111,13 +113,13 @@ export function ReviewsList({ productId }: TProductReviewsProps) {
         <div className="space-y-4 rounded-lg border p-4">
           <h3 className="font-medium">Write a review</h3>
 
-          <Input
-            type="number"
-            min={1}
-            max={5}
-            value={newReview.score}
-            onChange={(e) => setNewReview({ ...newReview, score: Number(e.target.value) })}
-          />
+          <div className="space-y-1">
+            <span className="text-sm font-medium">Your rating</span>
+            <StarRating
+              value={newReview.score}
+              onChange={(value) => setNewReview({ ...newReview, score: value })}
+            />
+          </div>
 
           <Textarea
             placeholder="Share your experience…"
@@ -127,7 +129,7 @@ export function ReviewsList({ productId }: TProductReviewsProps) {
 
           <Button
             onClick={() => void handleCreateReview()}
-            disabled={creating}
+            disabled={creating || !newReview.content.trim()}
           >
             {creating ? 'Submitting…' : 'Submit review'}
           </Button>
@@ -143,16 +145,20 @@ export function ReviewsList({ productId }: TProductReviewsProps) {
           {reviews.map((review) => (
             <div
               key={`${review.authorName}-${review.timestamp}`}
-              className="rounded-lg border p-4"
+              className="space-y-2 rounded-lg border p-4"
             >
               <div className="flex items-center justify-between">
                 <span className="font-medium">{review.authorName}</span>
                 <span className="text-sm text-muted-foreground">{new Date(review.timestamp).toLocaleDateString()}</span>
               </div>
 
-              <div className="mt-1 text-sm">Rating: {review.score} / 5</div>
+              <div className="flex items-center gap-1 text-xs">
+                <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                <span className="font-medium text-foreground">{review.score}</span>
+                <span className="text-muted-foreground">/ 5</span>
+              </div>
 
-              <p className="mt-2 text-sm">{review.content}</p>
+              <p className="text-sm">{review.content}</p>
             </div>
           ))}
         </div>
