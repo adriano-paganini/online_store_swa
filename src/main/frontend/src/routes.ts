@@ -3,6 +3,7 @@ import HomePage from './views/HomePage';
 import Login from './views/Login';
 import Logout from './views/Logout';
 import ManageUsers from './views/ManageUsers';
+import ProductsPage from './views/ProductsPage';
 
 export const HomePageRoute = {
   url: ROUTES.HOME,
@@ -12,6 +13,11 @@ export const HomePageRoute = {
 export const ManageUsersRoute = {
   url: ROUTES.ADMIN_USERS,
   component: ManageUsers,
+};
+
+export const ProductsPageRoute = {
+  url: ROUTES.PRODUCTS,
+  component: ProductsPage,
 };
 
 export const LoginsRoute = {
@@ -25,10 +31,6 @@ export const LogoutsRoute = {
 };
 
 // ofr the future routes
-// export const ProductsPageRoute = {
-//   url: ROUTES.PRODUCTS,
-//   component: ProductsPage,
-// }
 //
 // export const ProductDetailPageRoute = {
 //   url: ROUTES.PRODUCT_DETAIL,
@@ -71,7 +73,7 @@ export const allRoutes = [
   ManageUsersRoute,
   LoginsRoute,
   LogoutsRoute,
-  // ProductsPageRoute,
+  ProductsPageRoute,
   // ProductDetailPageRoute,
   // CartPageRoute,
   // CheckoutPageRoute,

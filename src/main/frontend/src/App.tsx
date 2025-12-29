@@ -8,7 +8,7 @@ import { Toaster } from 'sonner';
 import { MainLayout } from './components/general/MainLayout';
 import PrivateRoute from './components/general/PrivateRoute';
 import { UserProvider } from './Contexts/authenticatedUserContext';
-import { HomePageRoute, LoginsRoute, LogoutsRoute, ManageUsersRoute } from './routes';
+import { HomePageRoute, LoginsRoute, LogoutsRoute, ManageUsersRoute, ProductsPageRoute } from './routes';
 
 const App: React.FC = () => {
   return (
@@ -31,6 +31,10 @@ const App: React.FC = () => {
                 <Route
                   path={HomePageRoute.url}
                   Component={HomePageRoute.component}
+                />
+                <Route
+                  path={ProductsPageRoute.url}
+                  element={<ProductsPageRoute.component />}
                 />
                 <Route
                   path={ManageUsersRoute.url}

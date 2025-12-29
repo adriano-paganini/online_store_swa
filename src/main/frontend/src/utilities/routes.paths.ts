@@ -1,11 +1,11 @@
 export const ROUTES = {
   HOME: '/',
+  PRODUCTS: '/products',
+  ADMIN_USERS: '/admin/users',
   LOGIN: '/login',
   LOGOUT: '/logout',
-  ADMIN_USERS: '/admin/users',
 
   // future routes
-  // PRODUCTS: '/products',
   // PRODUCT_DETAIL: '/products/:id',
   // CART: '/cart',
   // CHECKOUT: '/checkout',

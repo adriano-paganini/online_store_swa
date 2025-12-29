@@ -3,10 +3,9 @@ import { ROUTES } from '../../utilities/routes.paths';
 
 export function Footer() {
   return (
-    <footer className="bg-muted/50 mt-2 border-t">
+    <footer className="mt-2 border-t bg-muted/50">
       <div className="container mx-auto p-4">
         <div className="grid gap-8 md:grid-cols-4">
-          {/* Column 1 */}
           <div className="text-left md:text-center">
             <h3 className="mb-4 text-lg font-semibold">Shop</h3>
             <p className="text-sm text-muted-foreground">
@@ -14,13 +13,12 @@ export function Footer() {
             </p>
           </div>
 
-          {/* Column 2 */}
           <div className="text-left md:text-center">
             <h4 className="mb-4 font-semibold">Products</h4>
             <ul className="flex flex-col items-start space-y-2 text-sm md:items-center">
               <li>
                 <Link
-                  to={ROUTES.HOME}
+                  to={ROUTES.PRODUCTS}
                   className="text-muted-foreground hover:text-foreground"
                 >
                   All Products
@@ -28,7 +26,7 @@ export function Footer() {
               </li>
               <li>
                 <Link
-                  to={ROUTES.HOME}
+                  to={ROUTES.PRODUCTS}
                   className="text-muted-foreground hover:text-foreground"
                 >
                   New Arrivals
@@ -36,7 +34,7 @@ export function Footer() {
               </li>
               <li>
                 <Link
-                  to={ROUTES.HOME}
+                  to={ROUTES.PRODUCTS}
                   className="text-muted-foreground hover:text-foreground"
                 >
                   Best Sellers
@@ -45,7 +43,6 @@ export function Footer() {
             </ul>
           </div>
 
-          {/* Column 3 */}
           <div className="text-left md:text-center">
             <h4 className="mb-4 font-semibold">Account</h4>
             <ul className="flex flex-col items-start space-y-2 text-sm md:items-center">

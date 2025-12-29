@@ -29,3 +29,21 @@ globalAxios.interceptors.request.use(
     return Promise.reject(new Error(String(error)));
   }
 );
+
+export const getErrorMessage = (err: unknown): string => {
+  if (globalAxios.isAxiosError(err)) {
+    const data = err.response?.data as { message?: unknown } | undefined;
+
+    if (typeof data?.message === 'string') {
+      return data.message;
+    }
+
+    return err.message;
+  }
+
+  if (err instanceof Error) {
+    return err.message;
+  }
+
+  return String(err);
+};
