@@ -7,6 +7,7 @@ import { Textarea } from '@/components/ui/textarea';
 import type { TReviewCreateDTO, TReviewDTO } from '@/DTO/review.types';
 import { ReviewApi } from '@/utilities/reviewApi';
 import { useEffect, useState } from 'react';
+import { toast } from 'sonner';
 import { ReviewFilters } from './ReviewFilters';
 
 type TProductReviewsProps = {
@@ -18,8 +19,8 @@ export function ReviewsList({ productId }: TProductReviewsProps) {
   const [limit, setLimit] = useState(6);
   const [totalPages, setTotalPages] = useState(0);
 
-  const [minRating, setMinRating] = useState<number | undefined>();
-  const [maxRating, setMaxRating] = useState<number | undefined>();
+  const [minRating, setMinRating] = useState<number | undefined>(0);
+  const [maxRating, setMaxRating] = useState<number | undefined>(5);
   const [sort, setSort] = useState<string>('timestamp,desc');
 
   const [appliedFilters, setAppliedFilters] = useState<{
@@ -34,7 +35,6 @@ export function ReviewsList({ productId }: TProductReviewsProps) {
 
   const [reviews, setReviews] = useState<TReviewDTO[]>([]);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
   const [newReview, setNewReview] = useState<TReviewCreateDTO>({
     score: 5,
@@ -45,7 +45,6 @@ export function ReviewsList({ productId }: TProductReviewsProps) {
   useEffect(() => {
     const fetchReviews = async () => {
       setLoading(true);
-      setError(null);
 
       try {
         const response = await ReviewApi.getProductReviews(productId, {
@@ -59,7 +58,8 @@ export function ReviewsList({ productId }: TProductReviewsProps) {
         setReviews(response.data);
         setTotalPages(response.totalPages);
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to load reviews');
+        console.error(err instanceof Error ? err.message : 'Failed to load reviews');
+        toast.error('Error loading reviews. Please try again later.');
       } finally {
         setLoading(false);
       }
@@ -81,7 +81,6 @@ export function ReviewsList({ productId }: TProductReviewsProps) {
     if (!newReview.content.trim()) return;
 
     setCreating(true);
-    setError(null);
 
     try {
       const created = await ReviewApi.createReview(productId, newReview);
@@ -89,7 +88,8 @@ export function ReviewsList({ productId }: TProductReviewsProps) {
       setReviews((prev) => [created, ...prev]);
       setNewReview({ score: 5, content: '' });
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to create review');
+      console.error(err instanceof Error ? err.message : 'Failed to create review');
+      toast.error('Error submitting review. Please try again later.');
     } finally {
       setCreating(false);
     }
@@ -126,7 +126,7 @@ export function ReviewsList({ productId }: TProductReviewsProps) {
           />
 
           <Button
-            onClick={void handleCreateReview}
+            onClick={() => void handleCreateReview()}
             disabled={creating}
           >
             {creating ? 'Submitting…' : 'Submit review'}
@@ -135,9 +135,9 @@ export function ReviewsList({ productId }: TProductReviewsProps) {
 
         {loading && <p className="text-sm text-muted-foreground">Loading reviews…</p>}
 
-        {error && <p className="text-sm text-destructive">{error}</p>}
-
-        {!loading && reviews.length === 0 && <p className="text-sm text-muted-foreground">No reviews yet.</p>}
+        {!loading && reviews.length === 0 && (
+          <p className="text-sm text-muted-foreground">No reviews yet. You can be the first!</p>
+        )}
 
         <div className="space-y-4">
           {reviews.map((review) => (
