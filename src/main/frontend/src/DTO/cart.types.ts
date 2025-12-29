@@ -2,7 +2,7 @@ export type TCartItemDTO = {
   id: number;
   productId: number;
   quantity: number;
-  appliedDiscount: number;
+  appliedDiscount: number | null;
   currentPrice: number;
 };
 

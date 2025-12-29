@@ -36,6 +36,8 @@ const PrivateRoute = () => {
     };
 
     void checkAuthentication();
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userIsAuthenticated]);
 
   if (authStatus === AuthStatus.UNKNOWN) {

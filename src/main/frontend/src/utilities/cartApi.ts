@@ -37,9 +37,18 @@ const removeCartItem = async (id: number): Promise<void> => {
   }
 };
 
+const clearCart = async (): Promise<void> => {
+  try {
+    await axios.delete('/cart/items');
+  } catch (err: unknown) {
+    throw new Error(`Error clearing cart: ${getErrorMessage(err)}`);
+  }
+};
+
 export const CartApi = {
   getCart,
   addItemToCart,
   updateCartItem,
   removeCartItem,
+  clearCart,
 };
