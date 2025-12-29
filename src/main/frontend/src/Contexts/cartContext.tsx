@@ -77,7 +77,6 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     try {
       const updatedCart = await CartApi.addItemToCart(item);
       setCart(updatedCart);
-      toast.success('Item added to cart');
     } catch (error) {
       console.error('Failed to add item to cart:', error);
       toast.error('Failed to add item to cart');

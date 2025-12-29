@@ -1,11 +1,10 @@
 'use client';
 
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { useCart } from '@/Contexts/cartContext';
 import { mockProducts } from '@/mocks/mockProducts';
-import { Minus, Plus, Trash } from 'lucide-react';
+import { CartItemRow } from './CartItemRow';
 
 export function CartSidebar() {
   const { cart, loading, incrementItem, decrementItem, removeItem, clearCart, itemLoadingIds, clearingCart } =
@@ -27,7 +26,7 @@ export function CartSidebar() {
   }, 0);
 
   return (
-    <div className="flex h-full flex-col">
+    <div className="flex h-full flex-col pb-4">
       <div className="flex-1 space-y-4 overflow-auto px-4">
         {cart.items.map((item) => {
           const product = mockProducts.find((p): p is (typeof mockProducts)[number] => p.id === item.productId);
@@ -35,79 +34,23 @@ export function CartSidebar() {
 
           const isItemLoading = itemLoadingIds.has(item.id);
 
-          const discountedPrice = item.currentPrice - (item.appliedDiscount ?? 0);
-
-          const hasDiscount = item.appliedDiscount !== null && item.appliedDiscount > 0;
-
           return (
-            <div
+            <CartItemRow
               key={item.id}
-              className="flex gap-4 rounded-md border p-3"
-            >
-              <img
-                src={product.images[0]}
-                alt={product.name}
-                className="h-16 w-16 rounded-md object-cover"
-              />
-
-              <div className="flex flex-1 flex-col gap-1">
-                <span className="text-sm font-medium">{product.name}</span>
-
-                <div className="flex items-center gap-2 text-sm">
-                  <span className="font-semibold">${discountedPrice.toFixed(2)}</span>
-
-                  {hasDiscount && (
-                    <>
-                      <span className="text-xs text-muted-foreground line-through">${product.price.toFixed(2)}</span>
-                      <Badge
-                        variant="destructive"
-                        className="text-xs"
-                      >
-                        -{Math.round(product.discount * 100)}%
-                      </Badge>
-                    </>
-                  )}
-                </div>
-
-                <div className="mt-2 flex items-center gap-2">
-                  <Button
-                    size="icon"
-                    variant="outline"
-                    disabled={isItemLoading}
-                    onClick={() => void decrementItem(item.id)}
-                  >
-                    <Minus className="h-3 w-3" />
-                  </Button>
-
-                  <span className="w-6 text-center text-sm">{item.quantity}</span>
-
-                  <Button
-                    size="icon"
-                    variant="outline"
-                    disabled={isItemLoading}
-                    onClick={() => void incrementItem(item.id)}
-                  >
-                    <Plus className="h-3 w-3" />
-                  </Button>
-                </div>
-              </div>
-
-              <Button
-                size="icon"
-                variant="ghost"
-                disabled={isItemLoading}
-                onClick={() => void removeItem(item.id)}
-              >
-                <Trash className="h-4 w-4 text-destructive" />
-              </Button>
-            </div>
+              item={item}
+              product={product}
+              isLoading={isItemLoading}
+              onIncrement={() => void incrementItem(item.id)}
+              onDecrement={() => void decrementItem(item.id)}
+              onRemove={() => void removeItem(item.id)}
+            />
           );
         })}
       </div>
 
       <Separator className="my-4" />
 
-      <div className="space-y-3 px-4 pb-4">
+      <div className="mb-4 space-y-3 px-4">
         <div className="flex items-center justify-between text-sm font-medium">
           <span>Subtotal</span>
           <span>${subtotal.toFixed(2)}</span>

@@ -1,6 +1,5 @@
 'use client';
 
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useUser } from '@/Contexts/authenticatedUserContext';
@@ -40,7 +39,9 @@ export function Header() {
         >
           <ShoppingCart className="h-5 w-5" />
           {cartItemCount > 0 && (
-            <Badge className="absolute -right-1 -top-1 h-5 w-5 rounded-full p-0 text-xs">{cartItemCount}</Badge>
+            <div className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-foreground p-0 text-xs text-background">
+              <span>{cartItemCount}</span>
+            </div>
           )}
         </Button>
       </SheetTrigger>
