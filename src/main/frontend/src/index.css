@@ -3,58 +3,59 @@
 @tailwind utilities;
 
 :root {
-  --background: #ffffff;
-  --foreground: #0a0a0b;
-  --card: #ffffff;
-  --card-foreground: #0a0a0b;
-  --popover: #ffffff;
-  --popover-foreground: #0a0a0b;
-  --primary: #1a1b1c;
-  --primary-foreground: #fafafa;
-  --secondary: #f2f2f5;
-  --secondary-foreground: #1a1b1c;
-  --muted: #f2f2f5;
-  --muted-foreground: #737378;
-  --accent: #f2f2f5;
-  --accent-foreground: #1a1b1c;
-  --destructive: #e63946;
-  --destructive-foreground: #fafafa;
-  --border: #e3e3e6;
-  --input: #e3e3e6;
-  --ring: #1a1b1c;
+  --background: 0 0% 100%;
+  --foreground: 240 10% 4%;
+
+  --card: 0 0% 100%;
+  --card-foreground: 240 10% 4%;
+
+  --popover: 0 0% 100%;
+  --popover-foreground: 240 10% 4%;
+
+  --primary: 240 5% 10%;
+  --primary-foreground: 0 0% 98%;
+
+  --secondary: 240 5% 96%;
+  --secondary-foreground: 240 5% 10%;
+
+  --muted: 240 5% 96%;
+  --muted-foreground: 240 4% 46%;
+
+  --accent: 240 5% 96%;
+  --accent-foreground: 240 5% 10%;
+
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 0 0% 98%;
+
+  --border: 240 6% 90%;
+  --input: 240 6% 90%;
+  --ring: 240 5% 10%;
+
   --radius: 0.5rem;
-  --chart-1: #e66b2f;
-  --chart-2: #188f72;
-  --chart-3: #154c5a;
-  --chart-4: #e6b730;
-  --chart-5: #f5ae42;
 }
 
 .dark {
-  --background: #0a0a0b;
-  --foreground: #fafafa;
-  --card: #0a0a0b;
-  --card-foreground: #fafafa;
-  --popover: #0a0a0b;
-  --popover-foreground: #fafafa;
-  --primary: #fafafa;
-  --primary-foreground: #1a1b1c;
-  --secondary: #262629;
-  --secondary-foreground: #fafafa;
-  --muted: #262629;
-  --muted-foreground: #a3a3ad;
-  --accent: #262629;
-  --accent-foreground: #fafafa;
-  --destructive: #781a1a;
-  --destructive-foreground: #fafafa;
-  --border: #262629;
-  --input: #262629;
-  --ring: #a6a6b8;
-  --chart-1: #2272e6;
-  --chart-2: #20b48d;
-  --chart-3: #e69e4c;
-  --chart-4: #9c2de6;
-  --chart-5: #e62d5a;
+  --background: 240 10% 4%;
+  --foreground: 0 0% 98%;
+
+  --card: 240 10% 4%;
+  --card-foreground: 0 0% 98%;
+
+  --secondary: 240 4% 16%;
+  --secondary-foreground: 0 0% 98%;
+
+  --muted: 240 4% 16%;
+  --muted-foreground: 240 5% 65%;
+
+  --accent: 240 4% 16%;
+  --accent-foreground: 0 0% 98%;
+
+  --destructive: 0 62% 30%;
+  --destructive-foreground: 0 0% 98%;
+
+  --border: 240 4% 16%;
+  --input: 240 4% 16%;
+  --ring: 240 5% 65%;
 }
 
 @layer base {

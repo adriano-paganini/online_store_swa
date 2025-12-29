@@ -1,11 +1,14 @@
 'use client';
 
+import { useCallback, useEffect, useState } from 'react';
+
 import { Pagination } from '@/components/general/Pagination';
 import { ProductFilters } from '@/components/product/ProductFilters';
 import { ProductGrid } from '@/components/product/ProductGrid';
-import { useCallback, useEffect, useState } from 'react';
+import { MockProductApi as ProductApi } from '@/mocks/mockProductApi'; // change to real api when BE implemented
+
+import { toast } from 'sonner';
 import type { TProductDTO } from '../DTO/product.types';
-import { ProductApi } from '../utilities/productApi';
 
 export default function ProductsPage() {
   const [products, setProducts] = useState<TProductDTO[]>([]);
@@ -14,9 +17,15 @@ export default function ProductsPage() {
   const [page, setPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
 
-  const [priceRange, setPriceRange] = useState<[number, number]>([0, 1000]);
-  const [inStockOnly, setInStockOnly] = useState(false);
-  const [minRating, setMinRating] = useState(0);
+  const [draftPriceRange, setDraftPriceRange] = useState<[number, number]>([0, 1000]);
+  const [draftInStockOnly, setDraftInStockOnly] = useState(false);
+  const [draftMinRating, setDraftMinRating] = useState(0);
+
+  const [appliedFilters, setAppliedFilters] = useState({
+    priceRange: [0, 1000] as [number, number],
+    inStockOnly: false,
+    minRating: 0,
+  });
 
   const loadProducts = useCallback(async () => {
     try {
@@ -25,20 +34,21 @@ export default function ProductsPage() {
       const response = await ProductApi.fetchProducts({
         page,
         limit: 12,
-        minPrice: priceRange[0],
-        maxPrice: priceRange[1],
-        inStock: inStockOnly || undefined,
-        minRating: minRating || undefined,
+        minPrice: appliedFilters.priceRange[0],
+        maxPrice: appliedFilters.priceRange[1],
+        inStock: appliedFilters.inStockOnly || undefined,
+        minRating: appliedFilters.minRating || undefined,
       });
 
       setProducts(response.data);
       setTotalPages(response.totalPages);
     } catch (err) {
       console.error('Failed to load products', err);
+      toast.error('Failed to load products. Please try again later.');
     } finally {
       setLoading(false);
     }
-  }, [page, priceRange, inStockOnly, minRating]);
+  }, [page, appliedFilters]);
 
   useEffect(() => {
     void loadProducts();
@@ -46,7 +56,11 @@ export default function ProductsPage() {
 
   const handleApplyFilters = () => {
     setPage(0);
-    void loadProducts();
+    setAppliedFilters({
+      priceRange: draftPriceRange,
+      inStockOnly: draftInStockOnly,
+      minRating: draftMinRating,
+    });
   };
 
   return (
@@ -55,12 +69,12 @@ export default function ProductsPage() {
 
       <div className="flex flex-col gap-8 lg:flex-row">
         <ProductFilters
-          priceRange={priceRange}
-          setPriceRange={setPriceRange}
-          inStockOnly={inStockOnly}
-          setInStockOnly={setInStockOnly}
-          minRating={minRating}
-          setMinRating={setMinRating}
+          priceRange={draftPriceRange}
+          setPriceRange={setDraftPriceRange}
+          inStockOnly={draftInStockOnly}
+          setInStockOnly={setDraftInStockOnly}
+          minRating={draftMinRating}
+          setMinRating={setDraftMinRating}
           onApplyFilters={handleApplyFilters}
         />
 

@@ -1,12 +1,15 @@
 'use client';
 
+import { ShoppingCartIcon, Star } from 'lucide-react';
 import type React from 'react';
+import { Link } from 'react-router-dom';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardFooter } from '@/components/ui/card';
-import { ShoppingCart, Star } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Card, CardContent } from '@/components/ui/card';
+import { Separator } from '@/components/ui/separator';
+import { cn } from '@/lib/utils';
+
 import { toast } from 'sonner';
 import type { TProductDTO } from '../../DTO/product.types';
 
@@ -15,8 +18,8 @@ type TProductCardProps = {
 };
 
 export function ProductCard({ product }: TProductCardProps) {
-  const discountedPrice = product.price * (1 - product.discount);
   const hasDiscount = product.discount > 0;
+  const discountedPrice = product.price * (1 - product.discount);
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -25,56 +28,78 @@ export function ProductCard({ product }: TProductCardProps) {
 
   return (
     <Link to={`/products/${product.id}`}>
-      <Card className="group overflow-hidden transition-shadow hover:shadow-lg">
-        <div className="relative aspect-square overflow-hidden bg-muted">
-          <img
-            src={product.images[0] || `/placeholder.svg?height=400&width=400&query=${encodeURIComponent(product.name)}`}
-            alt={product.name}
-            className="h-full w-full object-cover transition-transform group-hover:scale-105"
-          />
+      <Card
+        className={cn('group border-none bg-muted/40 shadow-sm transition-all', 'hover:bg-muted/60 hover:shadow-md')}
+      >
+        <CardContent className="flex flex-col gap-2 p-4">
+          <div className="relative overflow-hidden rounded-md bg-background">
+            <div className="absolute left-3 top-3 z-10 flex items-center gap-1 px-2.5 py-0.5 text-xs">
+              <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+              <span className="font-medium text-foreground">{product.avgScore.toFixed(1)}</span>
+              <span className="text-muted-foreground">/ 5</span>
+            </div>
 
-          {hasDiscount && (
-            <Badge className="absolute right-2 top-2 bg-destructive text-destructive-foreground">
-              {Math.round(product.discount * 100)}% OFF
-            </Badge>
-          )}
+            {hasDiscount && (
+              <Badge className="absolute right-3 top-3 z-10 bg-destructive/80 text-destructive-foreground">
+                {Math.round(product.discount * 100)}% OFF
+              </Badge>
+            )}
 
-          {product.stock === 0 && (
-            <Badge className="absolute right-2 top-2 bg-muted text-muted-foreground">Out of Stock</Badge>
-          )}
-        </div>
+            {product.stock === 0 && (
+              <Badge className="absolute bottom-3 left-1/2 z-10 -translate-x-1/2 -translate-y-1/2 cursor-default bg-orange-400/90 text-sm text-white">
+                Out of Stock
+              </Badge>
+            )}
 
-        <CardContent className="p-4">
-          <h3 className="mb-2 line-clamp-2 font-semibold">{product.name}</h3>
-          <p className="mb-3 line-clamp-2 text-sm text-muted-foreground">{product.description}</p>
+            <img
+              src={
+                product.images[0] || `/placeholder.svg?height=400&width=400&query=${encodeURIComponent(product.name)}`
+              }
+              alt={product.name}
+              className="aspect-square w-full object-cover transition-transform duration-300 group-hover:scale-105"
+            />
 
-          <div className="mb-2 flex items-center gap-2">
-            <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-            <span className="text-sm font-medium">{product.avgScore.toFixed(1)}</span>
+            <div
+              className={cn(
+                'absolute inset-0 flex items-center justify-center p-4 text-center',
+                'bg-background/80 backdrop-blur-sm',
+                'translate-y-full transition-transform duration-300 ease-out',
+                'group-hover:translate-y-0'
+              )}
+            >
+              <p className="line-clamp-6">{product.description}</p>
+            </div>
           </div>
 
-          <div className="flex items-center gap-2">
-            {hasDiscount ? (
-              <>
-                <span className="text-lg font-bold">${discountedPrice.toFixed(2)}</span>
-                <span className="text-sm text-muted-foreground line-through">${product.price.toFixed(2)}</span>
-              </>
-            ) : (
-              <span className="text-lg font-bold">${product.price.toFixed(2)}</span>
-            )}
+          <div className="space-y-2">
+            <h3 className="text-center text-lg font-semibold">{product.name}</h3>
+
+            <Separator />
+
+            <div className="flex items-center justify-between">
+              {!hasDiscount && <span className="text-xl font-semibold">${product.price.toFixed(2)}</span>}
+
+              {hasDiscount && (
+                <div className="flex items-center gap-2">
+                  <span className="text-xl font-semibold">${discountedPrice.toFixed(2)}</span>
+                  <span className="text-sm font-medium text-muted-foreground line-through">
+                    ${product.price.toFixed(2)}
+                  </span>
+                </div>
+              )}
+
+              <Button
+                variant="ghost"
+                size="icon"
+                disabled={product.stock === 0}
+                onClick={handleAddToCart}
+                aria-label="Add to cart"
+              >
+                <ShoppingCartIcon />
+              </Button>
+            </div>
           </div>
         </CardContent>
-
-        <CardFooter className="p-4 pt-0">
-          <Button
-            className="w-full"
-            disabled={product.stock === 0}
-            onClick={handleAddToCart}
-          >
-            <ShoppingCart className="mr-2 h-4 w-4" />
-            {product.stock === 0 ? 'Out of Stock' : 'Add to Cart'}
-          </Button>
-        </CardFooter>
       </Card>
     </Link>
   );

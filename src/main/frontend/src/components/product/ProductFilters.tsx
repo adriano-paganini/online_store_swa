@@ -2,9 +2,9 @@
 
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
+import { DualRangeSlider } from '@/components/ui/dual-range-slider';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Slider } from '@/components/ui/slider';
 
 type TProductFiltersProps = {
   priceRange: [number, number];
@@ -33,12 +33,15 @@ export function ProductFilters({
         <div className="space-y-6">
           <div>
             <Label className="mb-3 block">Price Range</Label>
-            <Slider
+
+            <DualRangeSlider
               value={priceRange}
               onValueChange={(v) => setPriceRange(v as [number, number])}
+              min={0}
               max={1000}
               step={10}
             />
+
             <div className="mt-2 flex justify-between text-sm text-muted-foreground">
               <span>${priceRange[0]}</span>
               <span>${priceRange[1]}</span>
