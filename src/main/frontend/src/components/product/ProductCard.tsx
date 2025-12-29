@@ -59,7 +59,7 @@ export function ProductCard({ product }: TProductCardProps) {
             )}
 
             {product.stock === 0 && (
-              <Badge className="absolute bottom-3 left-1/2 z-10 -translate-x-1/2 bg-orange-400/90 text-sm text-white">
+              <Badge className="absolute bottom-3 left-1/2 z-10 -translate-x-1/2 bg-gray-700/90 text-sm text-white">
                 Out of Stock
               </Badge>
             )}

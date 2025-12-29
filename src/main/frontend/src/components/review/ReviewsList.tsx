@@ -149,7 +149,9 @@ export function ReviewsList({ productId }: TProductReviewsProps) {
             >
               <div className="flex items-center justify-between">
                 <span className="font-medium">{review.authorName}</span>
-                <span className="text-sm text-muted-foreground">{new Date(review.timestamp).toLocaleDateString()}</span>
+                <span className="text-sm text-muted-foreground">
+                  {new Date(review.timestamp).toLocaleDateString('de')}
+                </span>
               </div>
 
               <div className="flex items-center gap-1 text-xs">

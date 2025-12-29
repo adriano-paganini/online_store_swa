@@ -1,5 +1,5 @@
 import type { TCartDTO, TCartItemCreateDTO, TCartItemUpdateDTO } from '@/DTO/cart.types';
-import { mockProducts } from '../mockProducts';
+import { mockProducts } from '../product/mockProducts';
 import { createCartItem, mockCartStore } from './mockCartStore';
 
 const delay = (ms = 300) => new Promise((res) => setTimeout(res, ms));
