@@ -13,6 +13,8 @@ type TProductFiltersProps = {
   setInStockOnly: (value: boolean) => void;
   minRating: number;
   setMinRating: (value: number) => void;
+  sort: string;
+  setSort: (value: string) => void;
   onApplyFilters: () => void;
 };
 
@@ -23,13 +25,13 @@ export function ProductFilters({
   setInStockOnly,
   minRating,
   setMinRating,
+  sort,
+  setSort,
   onApplyFilters,
 }: TProductFiltersProps) {
   return (
     <aside className="w-full space-y-6 lg:w-64">
       <div className="rounded-lg border p-4">
-        <h3 className="mb-4 font-semibold">Filters</h3>
-
         <div className="space-y-6">
           <div>
             <Label className="mb-3 block">Price Range</Label>
@@ -46,6 +48,31 @@ export function ProductFilters({
               <span>${priceRange[0]}</span>
               <span>${priceRange[1]}</span>
             </div>
+          </div>
+
+          <div>
+            <Label
+              htmlFor="sort"
+              className="mb-2 block"
+            >
+              Sort By
+            </Label>
+            <select
+              id="sort"
+              value={sort}
+              onChange={(e) => setSort(e.target.value)}
+              className="w-full rounded-md border px-3 py-2 text-sm"
+            >
+              <option value="id,asc">Default</option>
+              <option value="price,asc">Price: Ascending</option>
+              <option value="price,desc">Price: Descending</option>
+              <option value="avgScore,asc">Rating: Ascending</option>
+              <option value="avgScore,desc">Rating: Descending</option>
+              <option value="discount,asc">Discount: Ascending</option>
+              <option value="discount,desc">Discount: Descending</option>
+              <option value="name,asc">Name: A to Z</option>
+              <option value="name,desc">Name: Z to A</option>
+            </select>
           </div>
 
           <div className="flex items-center space-x-2">
@@ -79,7 +106,7 @@ export function ProductFilters({
             className="w-full"
             onClick={onApplyFilters}
           >
-            Apply Filters
+            Apply
           </Button>
         </div>
       </div>

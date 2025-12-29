@@ -10,5 +10,4 @@ export type TPaginationParams = {
   page?: number;
   limit?: number;
   sort?: string;
-  sortDir?: 'ASC' | 'DESC';
 };

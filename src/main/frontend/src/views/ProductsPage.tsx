@@ -16,11 +16,14 @@ export default function ProductsPage() {
 
   const [page, setPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
+  const [limit, setLimit] = useState(12);
 
   const [draftPriceRange, setDraftPriceRange] = useState<[number, number]>([0, 1000]);
   const [draftInStockOnly, setDraftInStockOnly] = useState(false);
   const [draftMinRating, setDraftMinRating] = useState(0);
+  const [draftSort, setDraftSort] = useState('id,asc');
 
+  const [appliedSort, setAppliedSort] = useState('id,asc');
   const [appliedFilters, setAppliedFilters] = useState({
     priceRange: [0, 1000] as [number, number],
     inStockOnly: false,
@@ -33,7 +36,8 @@ export default function ProductsPage() {
 
       const response = await ProductApi.fetchProducts({
         page,
-        limit: 12,
+        limit,
+        sort: appliedSort,
         minPrice: appliedFilters.priceRange[0],
         maxPrice: appliedFilters.priceRange[1],
         inStock: appliedFilters.inStockOnly || undefined,
@@ -48,7 +52,7 @@ export default function ProductsPage() {
     } finally {
       setLoading(false);
     }
-  }, [page, appliedFilters]);
+  }, [page, limit, appliedFilters, appliedSort]);
 
   useEffect(() => {
     void loadProducts();
@@ -61,7 +65,12 @@ export default function ProductsPage() {
       inStockOnly: draftInStockOnly,
       minRating: draftMinRating,
     });
+    setAppliedSort(draftSort);
   };
+
+  useEffect(() => {
+    setPage(0);
+  }, [limit]);
 
   return (
     <>
@@ -75,6 +84,8 @@ export default function ProductsPage() {
           setInStockOnly={setDraftInStockOnly}
           minRating={draftMinRating}
           setMinRating={setDraftMinRating}
+          sort={draftSort}
+          setSort={setDraftSort}
           onApplyFilters={handleApplyFilters}
         />
 
@@ -86,6 +97,8 @@ export default function ProductsPage() {
 
           <Pagination
             page={page}
+            limit={limit}
+            onLimitChange={setLimit}
             totalPages={totalPages}
             onPageChange={setPage}
           />

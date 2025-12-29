@@ -11,7 +11,9 @@ type TFetchParams = TPaginationParams & {
 
 export const MockProductApi = {
   async fetchProducts(params?: TFetchParams): Promise<TPageResponseDTO<TProductDTO>> {
-    const { page = 0, limit = 12, minPrice, maxPrice, inStock, minRating } = params ?? {};
+    console.log('MockProductApi.fetchProducts called with params:', params);
+
+    const { page = 0, limit = 12, sort = 'id,asc', minPrice, maxPrice, inStock, minRating } = params ?? {};
 
     let filtered = [...mockProducts];
 
@@ -30,6 +32,26 @@ export const MockProductApi = {
     if (minRating !== undefined) {
       filtered = filtered.filter((p) => p.avgScore >= minRating);
     }
+
+    const [sortField, sortDirection] = sort.split(',');
+    const isAsc = sortDirection === 'asc';
+
+    filtered.sort((a, b) => {
+      const aValue = a[sortField as keyof TProductDTO];
+      const bValue = b[sortField as keyof TProductDTO];
+
+      if (aValue == null || bValue == null) return 0;
+
+      if (typeof aValue === 'number' && typeof bValue === 'number') {
+        return isAsc ? aValue - bValue : bValue - aValue;
+      }
+
+      if (typeof aValue === 'string' && typeof bValue === 'string') {
+        return isAsc ? aValue.localeCompare(bValue) : bValue.localeCompare(aValue);
+      }
+
+      return 0;
+    });
 
     const totalElements = filtered.length;
     const totalPages = Math.ceil(totalElements / limit);
