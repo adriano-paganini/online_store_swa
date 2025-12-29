@@ -1,3 +1,4 @@
+import { MockCartApi } from '@/mocks/cart/mockCartApi';
 import axios from 'axios';
 import type { TCartDTO, TCartItemCreateDTO, TCartItemUpdateDTO } from '../DTO/cart.types';
 import { getErrorMessage } from '../config/config';
@@ -45,10 +46,12 @@ const clearCart = async (): Promise<void> => {
   }
 };
 
-export const CartApi = {
-  getCart,
-  addItemToCart,
-  updateCartItem,
-  removeCartItem,
-  clearCart,
-};
+export const CartApi = import.meta.env.DEV
+  ? MockCartApi
+  : {
+      getCart,
+      addItemToCart,
+      updateCartItem,
+      removeCartItem,
+      clearCart,
+    };

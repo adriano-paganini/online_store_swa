@@ -1,12 +1,14 @@
 'use client';
 
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { useCart } from '@/Contexts/cartContext';
+import { mockProducts } from '@/mocks/mockProducts';
 import { Minus, Plus, Trash } from 'lucide-react';
 
 export function CartSidebar() {
-  const { cart, loading, updateItem, removeItem, clearCart } = useCart();
+  const { cart, loading, updateItem, removeItem, clearCart, itemLoadingIds, clearingCart } = useCart();
 
   if (loading) {
     return <div className="flex h-full items-center justify-center text-sm text-muted-foreground">Loading cart…</div>;
@@ -14,37 +16,63 @@ export function CartSidebar() {
 
   if (!cart || cart.items.length === 0) {
     return (
-      <div className="flex h-full flex-col items-center justify-center gap-4 text-center">
-        <span className="text-sm text-muted-foreground">Your cart is empty</span>
-      </div>
+      <div className="flex h-full items-center justify-center text-sm text-muted-foreground">Your cart is empty</div>
     );
   }
 
-  const subtotal = cart.items.reduce(
-    (sum, item) => sum + item.quantity * (item.currentPrice - (item.appliedDiscount ?? 0)),
-    0
-  );
+  const subtotal = cart.items.reduce((sum, item) => {
+    const price = item.currentPrice - (item.appliedDiscount ?? 0);
+    return sum + price * item.quantity;
+  }, 0);
 
   return (
     <div className="flex h-full flex-col">
-      <div className="flex-1 space-y-4 overflow-auto pr-2">
+      <div className="flex-1 space-y-4 overflow-auto px-4">
         {cart.items.map((item) => {
-          const price = item.currentPrice - (item.appliedDiscount ?? 0);
+          const product = mockProducts.find((p): p is (typeof mockProducts)[number] => p.id === item.productId);
+          if (!product) return null;
+
+          const isItemLoading = itemLoadingIds.has(item.id);
+
+          const discountedPrice = item.currentPrice - (item.appliedDiscount ?? 0);
+
+          const hasDiscount = item.appliedDiscount !== null && item.appliedDiscount > 0;
 
           return (
             <div
               key={item.id}
-              className="flex items-start justify-between gap-4"
+              className="flex gap-4 rounded-md border p-3"
             >
-              <div className="flex flex-col gap-1">
-                <span className="text-sm font-medium">Product #{item.productId}</span>
+              <img
+                src={product.images[0]}
+                alt={product.name}
+                className="h-16 w-16 rounded-md object-cover"
+              />
 
-                <span className="text-sm text-muted-foreground">${price.toFixed(2)}</span>
+              <div className="flex flex-1 flex-col gap-1">
+                <span className="text-sm font-medium">{product.name}</span>
+
+                <div className="flex items-center gap-2 text-sm">
+                  <span className="font-semibold">${discountedPrice.toFixed(2)}</span>
+
+                  {hasDiscount && (
+                    <>
+                      <span className="text-xs text-muted-foreground line-through">${product.price.toFixed(2)}</span>
+                      <Badge
+                        variant="destructive"
+                        className="text-xs"
+                      >
+                        -{Math.round(product.discount * 100)}%
+                      </Badge>
+                    </>
+                  )}
+                </div>
 
                 <div className="mt-2 flex items-center gap-2">
                   <Button
                     size="icon"
                     variant="outline"
+                    disabled={isItemLoading}
                     onClick={() =>
                       void updateItem(item.id, {
                         quantity: Math.max(1, item.quantity - 1),
@@ -59,6 +87,7 @@ export function CartSidebar() {
                   <Button
                     size="icon"
                     variant="outline"
+                    disabled={isItemLoading}
                     onClick={() =>
                       void updateItem(item.id, {
                         quantity: item.quantity + 1,
@@ -73,6 +102,7 @@ export function CartSidebar() {
               <Button
                 size="icon"
                 variant="ghost"
+                disabled={isItemLoading}
                 onClick={() => void removeItem(item.id)}
               >
                 <Trash className="h-4 w-4 text-destructive" />
@@ -84,7 +114,7 @@ export function CartSidebar() {
 
       <Separator className="my-4" />
 
-      <div className="space-y-3">
+      <div className="space-y-3 px-4 pb-4">
         <div className="flex items-center justify-between text-sm font-medium">
           <span>Subtotal</span>
           <span>${subtotal.toFixed(2)}</span>
@@ -95,9 +125,10 @@ export function CartSidebar() {
         <Button
           variant="ghost"
           className="w-full text-destructive"
-          onClick={void clearCart}
+          disabled={clearingCart}
+          onClick={() => void clearCart()}
         >
-          Clear cart
+          {clearingCart ? 'Clearing…' : 'Clear cart'}
         </Button>
       </div>
     </div>

@@ -10,6 +10,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { cn } from '@/lib/utils';
 
+import { useCart } from '@/Contexts/cartContext';
 import { toast } from 'sonner';
 import type { TProductDTO } from '../../DTO/product.types';
 
@@ -18,12 +19,24 @@ type TProductCardProps = {
 };
 
 export function ProductCard({ product }: TProductCardProps) {
+  const { addItem, loading } = useCart();
+
   const hasDiscount = product.discount > 0;
   const discountedPrice = product.price * (1 - product.discount);
 
-  const handleAddToCart = (e: React.MouseEvent) => {
+  const handleAddToCart = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    toast.success('Action to be implemented');
+    e.stopPropagation();
+
+    if (product.stock === 0) {
+      toast.error('This product is out of stock');
+      return;
+    }
+
+    void addItem({
+      productId: product.id,
+      quantity: 1,
+    });
   };
 
   return (
@@ -33,24 +46,28 @@ export function ProductCard({ product }: TProductCardProps) {
       >
         <CardContent className="flex flex-col gap-2 p-4">
           <div className="relative overflow-hidden rounded-md bg-background">
+            {/* Rating */}
             <div className="absolute left-3 top-3 z-10 flex items-center gap-1 px-2.5 py-0.5 text-xs">
               <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
               <span className="font-medium text-foreground">{product.avgScore.toFixed(1)}</span>
               <span className="text-muted-foreground">/ 5</span>
             </div>
 
+            {/* Discount */}
             {hasDiscount && (
               <Badge className="absolute right-3 top-3 z-10 bg-destructive/80 text-destructive-foreground">
                 {Math.round(product.discount * 100)}% OFF
               </Badge>
             )}
 
+            {/* Stock */}
             {product.stock === 0 && (
-              <Badge className="absolute bottom-3 left-1/2 z-10 -translate-x-1/2 -translate-y-1/2 cursor-default bg-orange-400/90 text-sm text-white">
+              <Badge className="absolute bottom-3 left-1/2 z-10 -translate-x-1/2 bg-orange-400/90 text-sm text-white">
                 Out of Stock
               </Badge>
             )}
 
+            {/* Image */}
             <img
               src={
                 product.images[0] || `/placeholder.svg?height=400&width=400&query=${encodeURIComponent(product.name)}`
@@ -59,6 +76,7 @@ export function ProductCard({ product }: TProductCardProps) {
               className="aspect-square w-full object-cover transition-transform duration-300 group-hover:scale-105"
             />
 
+            {/* Hover description */}
             <div
               className={cn(
                 'absolute inset-0 flex items-center justify-center p-4 text-center',
@@ -91,9 +109,9 @@ export function ProductCard({ product }: TProductCardProps) {
               <Button
                 variant="ghost"
                 size="icon"
-                disabled={product.stock === 0}
-                onClick={handleAddToCart}
                 aria-label="Add to cart"
+                disabled={product.stock === 0 || loading}
+                onClick={handleAddToCart}
               >
                 <ShoppingCartIcon />
               </Button>

@@ -47,10 +47,10 @@ export function Header() {
 
       <SheetContent
         side="right"
-        className="w-full max-w-md"
+        className="w-full max-w-md px-0"
       >
         <SheetHeader>
-          <SheetTitle>Your Cart</SheetTitle>
+          <SheetTitle className="py-2">Your Cart</SheetTitle>
         </SheetHeader>
 
         <CartSidebar />

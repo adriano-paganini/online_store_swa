@@ -13,6 +13,8 @@ import { useUser } from './authenticatedUserContext';
 type TCartContextType = {
   cart: TCartDTO | null;
   loading: boolean;
+  itemLoadingIds: Set<number>;
+  clearingCart: boolean;
 
   cartItemCount: number;
 
@@ -30,7 +32,22 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const isAuthenticated = !!currentUser;
 
   const [cart, setCart] = useState<TCartDTO | null>(null);
+
   const [loading, setLoading] = useState(false);
+  const [itemLoadingIds, setItemLoadingIds] = useState<Set<number>>(new Set());
+  const [clearingCart, setClearingCart] = useState(false);
+
+  const markItemLoading = (id: number) => {
+    setItemLoadingIds((prev) => new Set(prev).add(id));
+  };
+
+  const unmarkItemLoading = (id: number) => {
+    setItemLoadingIds((prev) => {
+      const next = new Set(prev);
+      next.delete(id);
+      return next;
+    });
+  };
 
   const refreshCart = async () => {
     if (!isAuthenticated) {
@@ -57,15 +74,12 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     }
 
     try {
-      setLoading(true);
       const updatedCart = await CartApi.addItemToCart(item);
       setCart(updatedCart);
       toast.success('Item added to cart');
     } catch (error) {
       console.error('Failed to add item to cart:', error);
       toast.error('Failed to add item to cart');
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -73,15 +87,14 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     if (!isAuthenticated) return;
 
     try {
-      setLoading(true);
+      markItemLoading(id);
       const updatedCart = await CartApi.updateCartItem(id, item);
       setCart(updatedCart);
-      toast.success('Cart updated');
     } catch (error) {
       console.error('Failed to update cart item:', error);
       toast.error('Failed to update cart item');
     } finally {
-      setLoading(false);
+      unmarkItemLoading(id);
     }
   };
 
@@ -89,17 +102,14 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     if (!isAuthenticated) return;
 
     try {
-      setLoading(true);
+      markItemLoading(id);
       await CartApi.removeCartItem(id);
-
-      setCart((prev) => (prev ? { ...prev, items: prev.items.filter((item) => item.id !== id) } : prev));
-
-      toast.success('Item removed from cart');
+      setCart((prev) => (prev ? { ...prev, items: prev.items.filter((i) => i.id !== id) } : prev));
     } catch (error) {
       console.error('Failed to remove cart item:', error);
       toast.error('Failed to remove cart item');
     } finally {
-      setLoading(false);
+      unmarkItemLoading(id);
     }
   };
 
@@ -107,7 +117,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     if (!isAuthenticated) return;
 
     try {
-      setLoading(true);
+      setClearingCart(true);
       await CartApi.clearCart();
       setCart({ items: [] });
       toast.success('Cart cleared');
@@ -115,13 +125,12 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       console.error('Failed to clear cart:', error);
       toast.error('Failed to clear cart');
     } finally {
-      setLoading(false);
+      setClearingCart(false);
     }
   };
 
   useEffect(() => {
     void refreshCart();
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated]);
 
@@ -130,6 +139,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const value: TCartContextType = {
     cart,
     loading,
+    itemLoadingIds,
+    clearingCart,
     cartItemCount,
     refreshCart,
     addItem,
