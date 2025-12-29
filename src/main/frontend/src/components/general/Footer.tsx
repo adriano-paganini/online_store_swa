@@ -3,7 +3,7 @@ import { ROUTES } from '../../utilities/routes.paths';
 
 export function Footer() {
   return (
-    <footer className="bg-muted/50 mt-2 border-t">
+    <footer className="mt-2 border-t bg-muted/50">
       <div className="container mx-auto p-4">
         <div className="grid gap-8 md:grid-cols-4">
           <div className="text-left md:text-center">
