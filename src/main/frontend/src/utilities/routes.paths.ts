@@ -1,13 +1,13 @@
 export const ROUTES = {
   HOME: '/',
   PRODUCTS: '/products',
+  CART: '/cart',
   ADMIN_USERS: '/admin/users',
   LOGIN: '/login',
   LOGOUT: '/logout',
 
   // future routes
   // PRODUCT_DETAIL: '/products/:id',
-  // CART: '/cart',
   // CHECKOUT: '/checkout',
   // ORDER_CONFIRMATION: '/order-confirmation',
   // ORDERS: '/orders',

@@ -10,14 +10,19 @@ export const HomePageRoute = {
   component: HomePage,
 };
 
-export const ManageUsersRoute = {
-  url: ROUTES.ADMIN_USERS,
-  component: ManageUsers,
-};
-
 export const ProductsPageRoute = {
   url: ROUTES.PRODUCTS,
   component: ProductsPage,
+};
+
+// export const CartPageRoute = {
+//   url: ROUTES.CART,
+//   component: CartPage,
+// };
+
+export const ManageUsersRoute = {
+  url: ROUTES.ADMIN_USERS,
+  component: ManageUsers,
 };
 
 export const LoginsRoute = {
@@ -35,11 +40,6 @@ export const LogoutsRoute = {
 // export const ProductDetailPageRoute = {
 //   url: ROUTES.PRODUCT_DETAIL,
 //   component: ProductDetailPage,
-// }
-//
-// export const CartPageRoute = {
-//   url: ROUTES.CART,
-//   component: CartPage,
 // }
 //
 // export const CheckoutPageRoute = {
@@ -70,12 +70,12 @@ export const LogoutsRoute = {
 // Array of all routes for easy iteration
 export const allRoutes = [
   HomePageRoute,
+  ProductsPageRoute,
+  // CartPageRoute,
   ManageUsersRoute,
   LoginsRoute,
   LogoutsRoute,
-  ProductsPageRoute,
   // ProductDetailPageRoute,
-  // CartPageRoute,
   // CheckoutPageRoute,
   // OrderConfirmationPageRoute,
   // ProfilePageRoute,
