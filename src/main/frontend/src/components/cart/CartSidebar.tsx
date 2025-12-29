@@ -3,7 +3,7 @@
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { useCart } from '@/Contexts/cartContext';
-import { mockProducts } from '@/mocks/mockProducts';
+import { mockProducts } from '@/mocks/product/mockProducts';
 import { CartItemRow } from './CartItemRow';
 
 export function CartSidebar() {

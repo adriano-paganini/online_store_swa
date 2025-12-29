@@ -5,8 +5,8 @@ import { useCallback, useEffect, useState } from 'react';
 import { Pagination } from '@/components/general/Pagination';
 import { ProductFilters } from '@/components/product/ProductFilters';
 import { ProductGrid } from '@/components/product/ProductGrid';
-import { MockProductApi as ProductApi } from '@/mocks/mockProductApi'; // change to real api when BE implemented
 
+import { ProductApi } from '@/utilities/productApi';
 import { toast } from 'sonner';
 import type { TProductDTO } from '../DTO/product.types';
 

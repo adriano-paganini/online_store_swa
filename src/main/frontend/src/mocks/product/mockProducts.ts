@@ -28,7 +28,7 @@ export const mockProducts: TProductDTO[] = [
     name: 'Gaming Mouse',
     description: 'Ergonomic gaming mouse with adjustable DPI.',
     price: 59.99,
-    stock: 30,
+    stock: 9,
     discount: 0.1,
     avgScore: 4.8,
     images: ['https://cdn.shadcnstudio.com/ss-assets/blocks/ecommerce/product-list/image-4.png'],

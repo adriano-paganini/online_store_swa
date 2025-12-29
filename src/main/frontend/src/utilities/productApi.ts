@@ -1,4 +1,5 @@
 import { getErrorMessage } from '@/config/config';
+import { MockProductApi } from '@/mocks/product/mockProductApi';
 import axios from 'axios';
 import type { TPageResponseDTO, TPaginationParams } from '../DTO/pagination.types';
 import type { TProductCreateDTO, TProductDTO, TProductUpdateDTO } from '../DTO/product.types';
@@ -54,10 +55,12 @@ const deleteProduct = async (id: number): Promise<void> => {
   }
 };
 
-export const ProductApi = {
-  fetchProducts,
-  fetchProductById,
-  createProduct,
-  updateProduct,
-  deleteProduct,
-};
+export const ProductApi = import.meta.env.DEV
+  ? MockProductApi
+  : {
+      fetchProducts,
+      fetchProductById,
+      createProduct,
+      updateProduct,
+      deleteProduct,
+    };

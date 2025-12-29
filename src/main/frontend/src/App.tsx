@@ -9,7 +9,14 @@ import { MainLayout } from './components/general/MainLayout';
 import PrivateRoute from './components/general/PrivateRoute';
 import { UserProvider } from './Contexts/authenticatedUserContext';
 import { CartProvider } from './Contexts/cartContext';
-import { HomePageRoute, LoginsRoute, LogoutsRoute, ManageUsersRoute, ProductsPageRoute } from './routes';
+import {
+  HomePageRoute,
+  LoginsRoute,
+  LogoutsRoute,
+  ManageUsersRoute,
+  ProductDetailPageRoute,
+  ProductsPageRoute,
+} from './routes';
 
 const App: React.FC = () => {
   return (
@@ -38,6 +45,10 @@ const App: React.FC = () => {
                   <Route
                     path={ProductsPageRoute.url}
                     element={<ProductsPageRoute.component />}
+                  />
+                  <Route
+                    path={ProductDetailPageRoute.url}
+                    element={<ProductDetailPageRoute.component />}
                   />
                   <Route
                     path={ManageUsersRoute.url}
