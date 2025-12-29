@@ -1,19 +1,113 @@
-import { useUser } from '@/Contexts/authenticatedUserContext';
-import React from 'react';
-import { rolesBodyTemplate } from './rolesBodyTemplate';
+import { Link } from 'react-router-dom';
+import { ROUTES } from '../../utilities/routes.paths';
 
-export const Footer: React.FC = () => {
-  // get user context
-  const { currentUser } = useUser();
-
+export function Footer() {
   return (
-    <footer className="border-lightgrey fixed bottom-0 left-0 flex h-[45px] w-full items-center justify-between border-t bg-[#fff8f3] text-black">
-      <span className="px-5">
-        Logged in as: {currentUser?.firstName} {currentUser?.lastName} ({currentUser?.username})
-      </span>
-      <span className="flex flex-row items-center gap-2 px-5">
-        Roles:&ensp; {currentUser ? rolesBodyTemplate(currentUser) : null}
-      </span>
+    <footer className="bg-muted/50 mt-2 border-t">
+      <div className="container mx-auto p-4">
+        <div className="grid gap-8 md:grid-cols-4">
+          {/* Column 1 */}
+          <div className="text-left md:text-center">
+            <h3 className="mb-4 text-lg font-semibold">Shop</h3>
+            <p className="text-sm text-muted-foreground">
+              Your one-stop destination for quality products at great prices.
+            </p>
+          </div>
+
+          {/* Column 2 */}
+          <div className="text-left md:text-center">
+            <h4 className="mb-4 font-semibold">Products</h4>
+            <ul className="flex flex-col items-start space-y-2 text-sm md:items-center">
+              <li>
+                <Link
+                  to={ROUTES.HOME}
+                  className="text-muted-foreground hover:text-foreground"
+                >
+                  All Products
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to={ROUTES.HOME}
+                  className="text-muted-foreground hover:text-foreground"
+                >
+                  New Arrivals
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to={ROUTES.HOME}
+                  className="text-muted-foreground hover:text-foreground"
+                >
+                  Best Sellers
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Column 3 */}
+          <div className="text-left md:text-center">
+            <h4 className="mb-4 font-semibold">Account</h4>
+            <ul className="flex flex-col items-start space-y-2 text-sm md:items-center">
+              <li>
+                <Link
+                  to={ROUTES.HOME}
+                  className="text-muted-foreground hover:text-foreground"
+                >
+                  My Profile
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to={ROUTES.HOME}
+                  className="text-muted-foreground hover:text-foreground"
+                >
+                  Order History
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to={ROUTES.HOME}
+                  className="text-muted-foreground hover:text-foreground"
+                >
+                  Addresses
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Column 4 */}
+          <div className="text-left md:text-center">
+            <h4 className="mb-4 font-semibold">Support</h4>
+            <ul className="flex flex-col items-start space-y-2 text-sm md:items-center">
+              <li>
+                <a
+                  href="#"
+                  className="text-muted-foreground hover:text-foreground"
+                >
+                  Contact Us
+                </a>
+              </li>
+              <li>
+                <a
+                  href="#"
+                  className="text-muted-foreground hover:text-foreground"
+                >
+                  FAQ
+                </a>
+              </li>
+              <li>
+                <a
+                  href="#"
+                  className="text-muted-foreground hover:text-foreground"
+                >
+                  Shipping Info
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
     </footer>
   );
-};
+}

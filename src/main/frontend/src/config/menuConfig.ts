@@ -23,7 +23,7 @@ export const menuConfig: TMenuItemConfig[] = [
       {
         label: 'Manage Users',
         icon: 'pi pi-star',
-        route: ROUTES.MANAGE_USERS,
+        route: ROUTES.ADMIN_USERS,
         roles: [UserxRole.ADMIN],
       },
     ],

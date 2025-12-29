@@ -5,6 +5,7 @@
 import React, { Suspense } from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { Toaster } from 'sonner';
+import { MainLayout } from './components/general/MainLayout';
 import PrivateRoute from './components/general/PrivateRoute';
 import { UserProvider } from './Contexts/authenticatedUserContext';
 import { HomePageRoute, LoginsRoute, LogoutsRoute, ManageUsersRoute } from './routes';
@@ -25,19 +26,21 @@ const App: React.FC = () => {
               Component={LoginsRoute.component}
             />
             {/* Protected Routes (authentication required) */}
-            <Route element={<PrivateRoute />}>
-              <Route
-                path={HomePageRoute.url}
-                Component={HomePageRoute.component}
-              />
-              <Route
-                path={ManageUsersRoute.url}
-                Component={ManageUsersRoute.component}
-              />
-              <Route
-                path={LogoutsRoute.url}
-                Component={LogoutsRoute.component}
-              />
+            <Route element={<MainLayout />}>
+              <Route element={<PrivateRoute />}>
+                <Route
+                  path={HomePageRoute.url}
+                  Component={HomePageRoute.component}
+                />
+                <Route
+                  path={ManageUsersRoute.url}
+                  Component={ManageUsersRoute.component}
+                />
+                <Route
+                  path={LogoutsRoute.url}
+                  Component={LogoutsRoute.component}
+                />
+              </Route>
             </Route>
             {/* end of protected routes */}
           </Routes>
