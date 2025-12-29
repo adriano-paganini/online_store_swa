@@ -8,7 +8,8 @@ import { mockProducts } from '@/mocks/mockProducts';
 import { Minus, Plus, Trash } from 'lucide-react';
 
 export function CartSidebar() {
-  const { cart, loading, updateItem, removeItem, clearCart, itemLoadingIds, clearingCart } = useCart();
+  const { cart, loading, incrementItem, decrementItem, removeItem, clearCart, itemLoadingIds, clearingCart } =
+    useCart();
 
   if (loading) {
     return <div className="flex h-full items-center justify-center text-sm text-muted-foreground">Loading cart…</div>;
@@ -73,11 +74,7 @@ export function CartSidebar() {
                     size="icon"
                     variant="outline"
                     disabled={isItemLoading}
-                    onClick={() =>
-                      void updateItem(item.id, {
-                        quantity: Math.max(1, item.quantity - 1),
-                      })
-                    }
+                    onClick={() => void decrementItem(item.id)}
                   >
                     <Minus className="h-3 w-3" />
                   </Button>
@@ -88,11 +85,7 @@ export function CartSidebar() {
                     size="icon"
                     variant="outline"
                     disabled={isItemLoading}
-                    onClick={() =>
-                      void updateItem(item.id, {
-                        quantity: item.quantity + 1,
-                      })
-                    }
+                    onClick={() => void incrementItem(item.id)}
                   >
                     <Plus className="h-3 w-3" />
                   </Button>

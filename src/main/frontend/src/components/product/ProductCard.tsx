@@ -46,28 +46,24 @@ export function ProductCard({ product }: TProductCardProps) {
       >
         <CardContent className="flex flex-col gap-2 p-4">
           <div className="relative overflow-hidden rounded-md bg-background">
-            {/* Rating */}
             <div className="absolute left-3 top-3 z-10 flex items-center gap-1 px-2.5 py-0.5 text-xs">
               <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
               <span className="font-medium text-foreground">{product.avgScore.toFixed(1)}</span>
               <span className="text-muted-foreground">/ 5</span>
             </div>
 
-            {/* Discount */}
             {hasDiscount && (
               <Badge className="absolute right-3 top-3 z-10 bg-destructive/80 text-destructive-foreground">
                 {Math.round(product.discount * 100)}% OFF
               </Badge>
             )}
 
-            {/* Stock */}
             {product.stock === 0 && (
               <Badge className="absolute bottom-3 left-1/2 z-10 -translate-x-1/2 bg-orange-400/90 text-sm text-white">
                 Out of Stock
               </Badge>
             )}
 
-            {/* Image */}
             <img
               src={
                 product.images[0] || `/placeholder.svg?height=400&width=400&query=${encodeURIComponent(product.name)}`
@@ -76,7 +72,6 @@ export function ProductCard({ product }: TProductCardProps) {
               className="aspect-square w-full object-cover transition-transform duration-300 group-hover:scale-105"
             />
 
-            {/* Hover description */}
             <div
               className={cn(
                 'absolute inset-0 flex items-center justify-center p-4 text-center',

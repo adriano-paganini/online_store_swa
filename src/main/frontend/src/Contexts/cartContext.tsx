@@ -4,7 +4,7 @@
 import type React from 'react';
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 
-import type { TCartDTO, TCartItemCreateDTO, TCartItemUpdateDTO } from '../DTO/cart.types';
+import type { TCartDTO, TCartItemCreateDTO } from '../DTO/cart.types';
 
 import { toast } from 'sonner';
 import { CartApi } from '../utilities/cartApi';
@@ -20,7 +20,8 @@ type TCartContextType = {
 
   refreshCart: () => Promise<void>;
   addItem: (item: TCartItemCreateDTO) => Promise<void>;
-  updateItem: (id: number, item: TCartItemUpdateDTO) => Promise<void>;
+  incrementItem: (id: number) => Promise<void>;
+  decrementItem: (id: number) => Promise<void>;
   removeItem: (id: number) => Promise<void>;
   clearCart: () => Promise<void>;
 };
@@ -83,15 +84,44 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const updateItem = async (id: number, item: TCartItemUpdateDTO) => {
-    if (!isAuthenticated) return;
+  const incrementItem = async (id: number) => {
+    if (!isAuthenticated || !cart) return;
+
+    const item = cart.items.find((i) => i.id === id);
+    if (!item) return;
 
     try {
       markItemLoading(id);
-      const updatedCart = await CartApi.updateCartItem(id, item);
+      const updatedCart = await CartApi.updateCartItem(id, {
+        quantity: item.quantity + 1,
+      });
       setCart(updatedCart);
-    } catch (error) {
-      console.error('Failed to update cart item:', error);
+    } catch {
+      toast.error('Failed to update cart item');
+    } finally {
+      unmarkItemLoading(id);
+    }
+  };
+
+  const decrementItem = async (id: number) => {
+    if (!isAuthenticated || !cart) return;
+
+    const item = cart.items.find((i) => i.id === id);
+    if (!item) return;
+
+    try {
+      markItemLoading(id);
+
+      if (item.quantity === 1) {
+        await CartApi.removeCartItem(id);
+        setCart((prev) => (prev ? { ...prev, items: prev.items.filter((i) => i.id !== id) } : prev));
+      } else {
+        const updatedCart = await CartApi.updateCartItem(id, {
+          quantity: item.quantity - 1,
+        });
+        setCart(updatedCart);
+      }
+    } catch {
       toast.error('Failed to update cart item');
     } finally {
       unmarkItemLoading(id);
@@ -144,7 +174,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     cartItemCount,
     refreshCart,
     addItem,
-    updateItem,
+    incrementItem,
+    decrementItem,
     removeItem,
     clearCart,
   };
