@@ -32,7 +32,7 @@ export function ProductFilters({
   return (
     <aside className="w-full space-y-6 lg:w-64">
       <div className="rounded-lg border p-4">
-        <div className="space-y-6">
+        <div className="space-y-3">
           <div>
             <Label className="mb-3 block">Price Range</Label>
 
