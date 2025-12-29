@@ -15,11 +15,6 @@ export const ProductsPageRoute = {
   component: ProductsPage,
 };
 
-// export const CartPageRoute = {
-//   url: ROUTES.CART,
-//   component: CartPage,
-// };
-
 export const ManageUsersRoute = {
   url: ROUTES.ADMIN_USERS,
   component: ManageUsers,
@@ -71,7 +66,6 @@ export const LogoutsRoute = {
 export const allRoutes = [
   HomePageRoute,
   ProductsPageRoute,
-  // CartPageRoute,
   ManageUsersRoute,
   LoginsRoute,
   LogoutsRoute,
