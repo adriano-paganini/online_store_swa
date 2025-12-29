@@ -7,7 +7,6 @@ export const ROUTES = {
 
   // future routes
   // PRODUCT_DETAIL: '/products/:id',
-  // CART: '/cart',
   // CHECKOUT: '/checkout',
   // ORDER_CONFIRMATION: '/order-confirmation',
   // ORDERS: '/orders',

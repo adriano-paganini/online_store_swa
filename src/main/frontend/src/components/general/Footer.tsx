@@ -73,7 +73,6 @@ export function Footer() {
             </ul>
           </div>
 
-          {/* Column 4 */}
           <div className="text-left md:text-center">
             <h4 className="mb-4 font-semibold">Support</h4>
             <ul className="flex flex-col items-start space-y-2 text-sm md:items-center">

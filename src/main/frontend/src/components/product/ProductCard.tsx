@@ -10,6 +10,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { cn } from '@/lib/utils';
 
+import { useCart } from '@/Contexts/cartContext';
 import { toast } from 'sonner';
 import type { TProductDTO } from '../../DTO/product.types';
 
@@ -18,12 +19,24 @@ type TProductCardProps = {
 };
 
 export function ProductCard({ product }: TProductCardProps) {
+  const { addItem, loading } = useCart();
+
   const hasDiscount = product.discount > 0;
   const discountedPrice = product.price * (1 - product.discount);
 
-  const handleAddToCart = (e: React.MouseEvent) => {
+  const handleAddToCart = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    toast.success('Action to be implemented');
+    e.stopPropagation();
+
+    if (product.stock === 0) {
+      toast.error('This product is out of stock');
+      return;
+    }
+
+    void addItem({
+      productId: product.id,
+      quantity: 1,
+    });
   };
 
   return (
@@ -46,7 +59,7 @@ export function ProductCard({ product }: TProductCardProps) {
             )}
 
             {product.stock === 0 && (
-              <Badge className="absolute bottom-3 left-1/2 z-10 -translate-x-1/2 -translate-y-1/2 cursor-default bg-orange-400/90 text-sm text-white">
+              <Badge className="absolute bottom-3 left-1/2 z-10 -translate-x-1/2 bg-orange-400/90 text-sm text-white">
                 Out of Stock
               </Badge>
             )}
@@ -91,9 +104,9 @@ export function ProductCard({ product }: TProductCardProps) {
               <Button
                 variant="ghost"
                 size="icon"
-                disabled={product.stock === 0}
-                onClick={handleAddToCart}
                 aria-label="Add to cart"
+                disabled={product.stock === 0 || loading}
+                onClick={handleAddToCart}
               >
                 <ShoppingCartIcon />
               </Button>
