@@ -1,4 +1,3 @@
-import { MockCartApi } from '@/mocks/cart/mockCartApi';
 import axios from 'axios';
 import type { TCartDTO, TCartItemCreateDTO, TCartItemUpdateDTO } from '../DTO/cart.types';
 import { getErrorMessage } from '../config/config';
@@ -46,12 +45,12 @@ const clearCart = async (): Promise<void> => {
   }
 };
 
-export const CartApi = import.meta.env.DEV
-  ? MockCartApi
-  : {
-      getCart,
-      addItemToCart,
-      updateCartItem,
-      removeCartItem,
-      clearCart,
-    };
+// Temporarily using real API for testing backend endpoints
+// Change back to: import.meta.env.DEV ? MockCartApi : {...}
+export const CartApi = {
+  getCart,
+  addItemToCart,
+  updateCartItem,
+  removeCartItem,
+  clearCart,
+};
