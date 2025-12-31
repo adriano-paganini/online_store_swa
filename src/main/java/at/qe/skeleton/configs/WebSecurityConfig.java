@@ -79,10 +79,12 @@ public class WebSecurityConfig {
                             .requestMatchers("/h2-console/**").access(devOnly())
                             .requestMatchers("/authentication/**").permitAll()
                             .requestMatchers(HttpMethod.GET, "/products/*/reviews").permitAll() // GET reviews is public
+                            .requestMatchers(HttpMethod.GET, "/products").permitAll() // GET all products is public
+                            .requestMatchers(HttpMethod.GET, "/products/*").permitAll() // GET product by ID is public
                             .requestMatchers("/api/admin/**").hasAnyAuthority("ADMIN")
                             .requestMatchers("/api/**").authenticated()
                             .requestMatchers("/cart/**").authenticated()
-                            .requestMatchers("/products/**").authenticated() // POST reviews and other product endpoints require auth
+                            .requestMatchers("/products/**").authenticated() // POST, PUT, DELETE product endpoints require auth
                             .anyRequest().authenticated()
                     )
                     // Add the token authentication filter before the UsernamePasswordAuthenticationFilter
