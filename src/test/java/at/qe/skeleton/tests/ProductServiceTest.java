@@ -52,7 +52,7 @@ public class ProductServiceTest {
         testUser.setFirstName("Test");
         testUser.setLastName("User");
 
-        testProduct = createTestProduct(testProductId, "Test Product", "Description", 99.99, 10, 0.1, 4.5, false);
+        testProduct = createTestProduct(testProductId, "Test Product", "Test Description", 99.99, 10, 0.1, 4.5, false);
 
         Mockito.when(authenticatedUserService.getAuthenticatedUser()).thenReturn(testUser);
     }
@@ -323,10 +323,17 @@ public class ProductServiceTest {
         );
 
         Mockito.when(authenticatedUserService.getAuthenticatedUser()).thenReturn(null);
+        Mockito.when(productRepository.save(Mockito.any(Product.class)))
+                .thenAnswer(invocation -> {
+                    Product product = invocation.getArgument(0);
+                    product.setId(2L);
+                    return product;
+                });
 
         Product result = productService.createProduct(createDTO);
 
         Assertions.assertNotNull(result, "Product should still be created");
+        Assertions.assertEquals("New Product", result.getName(), "Name should match");
         // Create user might be null if not authenticated
     }
 

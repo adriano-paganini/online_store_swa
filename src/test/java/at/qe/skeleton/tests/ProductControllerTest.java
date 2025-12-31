@@ -10,6 +10,7 @@ import at.qe.skeleton.dtos.ProductUpdateDTO;
 import at.qe.skeleton.mappers.ProductMapper;
 import at.qe.skeleton.model.Product;
 import at.qe.skeleton.services.ProductService;
+import at.qe.skeleton.services.UserxService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
@@ -59,6 +60,9 @@ public class ProductControllerTest {
     private JwtConfig jwtConfig;
 
     @MockitoBean
+    private UserxService userService;
+
+    @MockitoBean
     private ProductService productService;
 
     @MockitoBean
@@ -96,6 +100,8 @@ public class ProductControllerTest {
                 null, null, null, null
         );
 
+        // Configure filter to allow requests through without authentication
+        // Security will be handled by Spring Security based on endpoint configuration
         Mockito.doAnswer(invocation -> {
             HttpServletRequest request = invocation.getArgument(0);
             HttpServletResponse response = invocation.getArgument(1);
@@ -108,16 +114,24 @@ public class ProductControllerTest {
                 Mockito.any(FilterChain.class)
         );
 
-        @SuppressWarnings("unchecked")
-        Jws<Claims> mockJws = (Jws<Claims>) Mockito.mock(Jws.class);
-        Claims mockClaims = Mockito.mock(Claims.class);
-        Mockito.when(mockClaims.getSubject()).thenReturn("testuser");
-        Mockito.when(mockJws.getPayload()).thenReturn(mockClaims);
+        // Only return token when Authorization header is present
         Mockito.when(jwtTokenProvider.validateTokenAndGetJws(Mockito.anyString()))
-                .thenReturn(Optional.of(mockJws));
+                .thenAnswer(invocation -> {
+                    String token = invocation.getArgument(0);
+                    if (token != null && !token.isEmpty()) {
+                        @SuppressWarnings("unchecked")
+                        Jws<Claims> mockJws = (Jws<Claims>) Mockito.mock(Jws.class);
+                        Claims mockClaims = Mockito.mock(Claims.class);
+                        Mockito.when(mockClaims.getSubject()).thenReturn("testuser");
+                        Mockito.when(mockJws.getPayload()).thenReturn(mockClaims);
+                        return Optional.of(mockJws);
+                    }
+                    return Optional.empty();
+                });
     }
 
     @Test
+    @WithMockUser(username = "anonymous")
     void getAllProductsPublic() throws Exception {
         int page = 0;
         int limit = 12;
@@ -126,7 +140,7 @@ public class ProductControllerTest {
 
         Mockito.when(productService.getAllProducts(page, limit, null, null, null, null, null))
                 .thenReturn(productPage);
-        Mockito.when(productMapper.mapTo(Mockito.any(Product.class), Mockito.isNull()))
+        Mockito.when(productMapper.mapTo(Mockito.any(Product.class), Mockito.any()))
                 .thenReturn(testProductDTO);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/products"))
@@ -142,6 +156,7 @@ public class ProductControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "anonymous")
     void getAllProductsWithFilters() throws Exception {
         int page = 0;
         int limit = 12;
@@ -156,7 +171,7 @@ public class ProductControllerTest {
 
         Mockito.when(productService.getAllProducts(page, limit, minPrice, maxPrice, inStock, minRating, sort))
                 .thenReturn(productPage);
-        Mockito.when(productMapper.mapTo(Mockito.any(Product.class), Mockito.isNull()))
+        Mockito.when(productMapper.mapTo(Mockito.any(Product.class), Mockito.any()))
                 .thenReturn(testProductDTO);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/products")
@@ -170,6 +185,7 @@ public class ProductControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "anonymous")
     void getAllProductsWithPagination() throws Exception {
         int page = 1;
         int limit = 6;
@@ -189,6 +205,7 @@ public class ProductControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "anonymous")
     void getAllProductsEmpty() throws Exception {
         int page = 0;
         int limit = 12;
@@ -206,10 +223,11 @@ public class ProductControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "anonymous")
     void getProductByIdPublic() throws Exception {
         Mockito.when(productService.getProductById(testProductId))
                 .thenReturn(Optional.of(testProduct));
-        Mockito.when(productMapper.mapTo(testProduct, null))
+        Mockito.when(productMapper.mapTo(Mockito.eq(testProduct), Mockito.any()))
                 .thenReturn(testProductDTO);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/products/{id}", testProductId))
@@ -221,6 +239,7 @@ public class ProductControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "anonymous")
     void getProductByIdNotFound() throws Exception {
         Long nonExistentId = 999L;
         Mockito.when(productService.getProductById(nonExistentId))
@@ -252,7 +271,7 @@ public class ProductControllerTest {
 
         Mockito.when(productService.getProductById(testProductId))
                 .thenReturn(Optional.of(testProduct));
-        Mockito.when(productMapper.mapTo(testProduct, authorities))
+        Mockito.when(productMapper.mapTo(Mockito.eq(testProduct), Mockito.eq(authorities)))
                 .thenReturn(adminProductDTO);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/products/{id}", testProductId))
@@ -295,7 +314,7 @@ public class ProductControllerTest {
         );
 
         Mockito.when(productService.createProduct(createDTO)).thenReturn(newProduct);
-        Mockito.when(productMapper.mapTo(newProduct, Mockito.any()))
+        Mockito.when(productMapper.mapTo(Mockito.eq(newProduct), Mockito.any()))
                 .thenReturn(newProductDTO);
 
         mockMvc.perform(MockMvcRequestBuilders.post("/products")
@@ -413,7 +432,7 @@ public class ProductControllerTest {
         );
 
         Mockito.when(productService.updateProduct(testProductId, updateDTO)).thenReturn(updatedProduct);
-        Mockito.when(productMapper.mapTo(updatedProduct, Mockito.any()))
+        Mockito.when(productMapper.mapTo(Mockito.eq(updatedProduct), Mockito.any()))
                 .thenReturn(updatedProductDTO);
 
         mockMvc.perform(MockMvcRequestBuilders.put("/products/{id}", testProductId)
@@ -459,7 +478,7 @@ public class ProductControllerTest {
         );
 
         Mockito.when(productService.updateProduct(testProductId, updateDTO)).thenReturn(updatedProduct);
-        Mockito.when(productMapper.mapTo(updatedProduct, Mockito.any()))
+        Mockito.when(productMapper.mapTo(Mockito.eq(updatedProduct), Mockito.any()))
                 .thenReturn(updatedProductDTO);
 
         mockMvc.perform(MockMvcRequestBuilders.put("/products/{id}", testProductId)
