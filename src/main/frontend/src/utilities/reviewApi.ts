@@ -15,6 +15,7 @@ const getProductReviews = async (
         limit: params.limit,
         minRating: params.minRating,
         maxRating: params.maxRating,
+        sort: params.sort,
       },
     });
     return response.data;
