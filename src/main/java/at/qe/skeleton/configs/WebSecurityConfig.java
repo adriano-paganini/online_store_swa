@@ -73,12 +73,13 @@ public class WebSecurityConfig {
                     .csrf(AbstractHttpConfigurer::disable).headers(
                             headers -> headers.frameOptions(FrameOptionsConfig::sameOrigin)) // needed for H2 console
                     // backend endpoints we want to handle here
-                    .securityMatcher("/api/**", "/authentication/**", "/h2-console/**")
+                    .securityMatcher("/api/**", "/authentication/**", "/cart/**", "/h2-console/**")
                     .authorizeHttpRequests(authorize -> authorize
                             .requestMatchers("/h2-console/**").access(devOnly())
                             .requestMatchers("/authentication/**").permitAll()
                             .requestMatchers("/api/admin/**").hasAnyAuthority("ADMIN")
                             .requestMatchers("/api/**").authenticated()
+                            .requestMatchers("/cart/**").authenticated()
                             .anyRequest().authenticated()
                     )
                     // Add the token authentication filter before the UsernamePasswordAuthenticationFilter
