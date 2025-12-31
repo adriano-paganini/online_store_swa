@@ -69,5 +69,12 @@ public class ProductServiceImpl implements ProductService {
         Integer stock = MOCK_STOCK.getOrDefault(productId, 10);
         return stock >= quantity;
     }
+
+    @Override
+    public void updateProductAverageScore(Long productId, Double averageScore) {
+        // TODO: Implement when Product entity is created
+        // For now, this is a placeholder that does nothing
+        // When Product entity exists, update: product.setAvgScore(averageScore)
+    }
 }
 

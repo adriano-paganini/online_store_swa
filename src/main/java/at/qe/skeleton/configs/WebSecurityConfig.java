@@ -5,6 +5,7 @@ import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authorization.AuthorizationDecision;
@@ -73,13 +74,15 @@ public class WebSecurityConfig {
                     .csrf(AbstractHttpConfigurer::disable).headers(
                             headers -> headers.frameOptions(FrameOptionsConfig::sameOrigin)) // needed for H2 console
                     // backend endpoints we want to handle here
-                    .securityMatcher("/api/**", "/authentication/**", "/cart/**", "/h2-console/**")
+                    .securityMatcher("/api/**", "/authentication/**", "/cart/**", "/products/**", "/h2-console/**")
                     .authorizeHttpRequests(authorize -> authorize
                             .requestMatchers("/h2-console/**").access(devOnly())
                             .requestMatchers("/authentication/**").permitAll()
+                            .requestMatchers(HttpMethod.GET, "/products/*/reviews").permitAll() // GET reviews is public
                             .requestMatchers("/api/admin/**").hasAnyAuthority("ADMIN")
                             .requestMatchers("/api/**").authenticated()
                             .requestMatchers("/cart/**").authenticated()
+                            .requestMatchers("/products/**").authenticated() // POST reviews and other product endpoints require auth
                             .anyRequest().authenticated()
                     )
                     // Add the token authentication filter before the UsernamePasswordAuthenticationFilter

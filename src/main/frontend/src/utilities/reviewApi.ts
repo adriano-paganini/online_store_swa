@@ -1,5 +1,4 @@
 import { getErrorMessage } from '@/config/config';
-import { MockReviewApi } from '@/mocks/review/mockReviewApi';
 import axios from 'axios';
 import type { TPageResponseDTO, TPaginationParams } from '../DTO/pagination.types';
 import type { TReviewCreateDTO, TReviewDTO } from '../DTO/review.types';
@@ -15,6 +14,7 @@ const getProductReviews = async (
         limit: params.limit,
         minRating: params.minRating,
         maxRating: params.maxRating,
+        sort: params.sort,
       },
     });
     return response.data;
@@ -32,9 +32,7 @@ const createReview = async (productId: number, review: TReviewCreateDTO): Promis
   }
 };
 
-export const ReviewApi = import.meta.env.DEV
-  ? MockReviewApi
-  : {
-      getProductReviews,
-      createReview,
-    };
+export const ReviewApi = {
+  getProductReviews,
+  createReview,
+};
