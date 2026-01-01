@@ -20,8 +20,6 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '../u
 
 export function Header() {
   const { currentUser, isAdmin } = useUser();
-  console.log('Current User:', currentUser, ', is admin:', isAdmin);
-
   const isAuthenticated = !!currentUser;
 
   const userName =
