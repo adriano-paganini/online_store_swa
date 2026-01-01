@@ -9,7 +9,7 @@ const Logout = () => {
 
   useEffect(() => {
     logout();
-    navigate(ROUTES.LOGIN);
+    navigate(ROUTES.HOME);
   }, [logout, navigate]);
 
   return null;

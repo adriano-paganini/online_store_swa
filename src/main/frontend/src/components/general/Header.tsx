@@ -38,7 +38,7 @@ export function Header() {
           className="relative"
         >
           <ShoppingCart className="h-5 w-5" />
-          {cartItemCount > 0 && (
+          {isAuthenticated && cartItemCount > 0 && (
             <div className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-foreground p-0 text-xs text-background">
               <span>{cartItemCount}</span>
             </div>
@@ -48,13 +48,39 @@ export function Header() {
 
       <SheetContent
         side="right"
-        className="w-full max-w-md px-0"
+        className="flex h-full max-w-md flex-col p-4 px-0"
       >
         <SheetHeader>
           <SheetTitle className="py-2 text-center">Your Cart</SheetTitle>
         </SheetHeader>
 
-        <CartSidebar />
+        {isAuthenticated ? (
+          <CartSidebar />
+        ) : (
+          <div className="flex h-full flex-col items-center justify-center gap-4 px-6 text-center">
+            <ShoppingCart className="h-10 w-10 text-muted-foreground" />
+            <p className="text-sm text-muted-foreground">You need to be logged in to use the cart.</p>
+
+            <Link
+              to={ROUTES.LOGIN}
+              className="w-full"
+            >
+              <Button className="w-full">Log in</Button>
+            </Link>
+
+            <Link
+              to={ROUTES.HOME}
+              className="w-full"
+            >
+              <Button
+                variant="outline"
+                className="w-full"
+              >
+                Sign up
+              </Button>
+            </Link>
+          </div>
+        )}
       </SheetContent>
     </Sheet>
   );
@@ -73,7 +99,7 @@ export function Header() {
 
       <SheetContent
         side="right"
-        className="max-w-[400px] px-0"
+        className="flex h-full max-w-[400px] flex-col gap-0 px-0"
       >
         <SheetHeader>
           <div className="mt-4 flex items-center gap-3 px-4">
@@ -85,7 +111,7 @@ export function Header() {
             </Avatar>
 
             <div className="flex flex-col">
-              <span className="text-sm font-medium">{isAuthenticated ? userName : 'Guest'}</span>
+              <span className="text-start text-sm font-medium">{isAuthenticated ? userName : 'Guest'}</span>
               <span className="text-xs text-muted-foreground">{isAuthenticated ? 'Account' : 'Not signed in'}</span>
             </div>
           </div>
@@ -100,7 +126,7 @@ export function Header() {
           />
         </div>
 
-        <nav className="mt-6 flex flex-col gap-1 px-4">
+        <nav className="mb-auto mt-6 flex flex-1 flex-col gap-1 px-4">
           <Link to={ROUTES.HOME}>
             <Button
               variant="ghost"
@@ -123,9 +149,9 @@ export function Header() {
           )}
         </nav>
 
-        <div className="mt-6 border-t px-4 pt-4">
+        <div className="mt-auto border-t px-4 pt-4">
           {isAuthenticated ? (
-            <Link to="/logout">
+            <Link to={ROUTES.LOGOUT}>
               <Button
                 variant="ghost"
                 className="w-full justify-start"
@@ -137,15 +163,16 @@ export function Header() {
           ) : (
             <>
               <Link to={ROUTES.LOGIN}>
-                <Button
-                  variant="ghost"
-                  className="w-full justify-start"
-                >
-                  Log in
-                </Button>
+                <Button className="mb-2 w-full">Log in</Button>
               </Link>
+
               <Link to={ROUTES.HOME}>
-                <Button className="mt-2 w-full">Sign up</Button>
+                <Button
+                  variant="outline"
+                  className="w-full"
+                >
+                  Sign up
+                </Button>
               </Link>
             </>
           )}
@@ -182,7 +209,7 @@ export function Header() {
           <div className="hidden md:block">{CartSheet}</div>
           <div className="md:hidden">{CartSheet}</div>
 
-          {isAuthenticated && (
+          {isAuthenticated ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
@@ -202,6 +229,12 @@ export function Header() {
               <DropdownMenuContent align="end">
                 <div className="px-2 py-1.5 text-sm font-medium">{userName}</div>
                 <DropdownMenuSeparator />
+                {isAdmin && (
+                  <DropdownMenuItem asChild>
+                    <Link to={ROUTES.ADMIN_USERS}>Manage Users</Link>
+                  </DropdownMenuItem>
+                )}
+                <DropdownMenuSeparator />
                 <DropdownMenuItem asChild>
                   <Link to="/logout">
                     <LogOut className="mr-2 h-4 w-4" />
@@ -210,6 +243,15 @@ export function Header() {
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
+          ) : (
+            <div className="hidden md:flex md:items-center md:gap-2">
+              <Link to={ROUTES.LOGIN}>
+                <Button className="px-3">Log in</Button>
+              </Link>
+              <Link to={ROUTES.HOME}>
+                <Button variant="outline">Sign up</Button>
+              </Link>
+            </div>
           )}
 
           {MenuSheet}
