@@ -3,6 +3,7 @@ import HomePage from './views/HomePage';
 import Login from './views/Login';
 import Logout from './views/Logout';
 import ManageUsers from './views/ManageUsers';
+import NotFoundPage from './views/NotFoundPage';
 import ProductDetailsPage from './views/ProductDetailsPage';
 import ProductsPage from './views/ProductsPage';
 
@@ -34,6 +35,11 @@ export const LoginsRoute = {
 export const LogoutsRoute = {
   url: ROUTES.LOGOUT,
   component: Logout,
+};
+
+export const NotFoundRoute = {
+  url: '*',
+  component: NotFoundPage,
 };
 
 // ofr the future routes

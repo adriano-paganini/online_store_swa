@@ -26,7 +26,7 @@ export function CartSidebar() {
   }, 0);
 
   return (
-    <div className="flex h-full flex-col pb-4">
+    <div className="flex h-full flex-col">
       <div className="flex-1 space-y-4 overflow-auto px-4">
         {cart.items.map((item) => {
           const product = mockProducts.find((p): p is (typeof mockProducts)[number] => p.id === item.productId);
@@ -50,7 +50,7 @@ export function CartSidebar() {
 
       <Separator className="my-4" />
 
-      <div className="mb-4 space-y-3 px-4">
+      <div className="space-y-3 px-4">
         <div className="flex items-center justify-between text-sm font-medium">
           <span>Subtotal</span>
           <span>${subtotal.toFixed(2)}</span>
@@ -59,7 +59,7 @@ export function CartSidebar() {
         <Button className="w-full">Checkout</Button>
 
         <Button
-          variant="ghost"
+          variant="outline"
           className="w-full text-destructive"
           disabled={clearingCart}
           onClick={() => void clearCart()}

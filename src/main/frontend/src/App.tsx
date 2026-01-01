@@ -6,7 +6,9 @@ import React, { Suspense } from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { Toaster } from 'sonner';
 import { MainLayout } from './components/general/MainLayout';
-import PrivateRoute from './components/general/PrivateRoute';
+import AdminRoute from './components/routes/AdminRoute';
+import ManagerRoute from './components/routes/ManagerRoute';
+import PrivateRoute from './components/routes/PrivateRoute';
 import { UserProvider } from './Contexts/authenticatedUserContext';
 import { CartProvider } from './Contexts/cartContext';
 import {
@@ -14,6 +16,7 @@ import {
   LoginsRoute,
   LogoutsRoute,
   ManageUsersRoute,
+  NotFoundRoute,
   ProductDetailPageRoute,
   ProductsPageRoute,
 } from './routes';
@@ -31,36 +34,79 @@ const App: React.FC = () => {
         <Suspense fallback={<div>Loading...</div>}>
           <BrowserRouter>
             <Routes>
+              {/* public routes */}
               <Route
                 path={LoginsRoute.url}
                 Component={LoginsRoute.component}
               />
-              {/* Protected Routes (authentication required) */}
+
               <Route element={<MainLayout />}>
+                <Route
+                  path={HomePageRoute.url}
+                  Component={HomePageRoute.component}
+                />
+                <Route
+                  path={ProductsPageRoute.url}
+                  Component={ProductsPageRoute.component}
+                />
+                <Route
+                  path={ProductDetailPageRoute.url}
+                  Component={ProductDetailPageRoute.component}
+                />
+
+                {/* authenticated routes */}
                 <Route element={<PrivateRoute />}>
-                  <Route
-                    path={HomePageRoute.url}
-                    Component={HomePageRoute.component}
-                  />
-                  <Route
-                    path={ProductsPageRoute.url}
-                    element={<ProductsPageRoute.component />}
-                  />
-                  <Route
-                    path={ProductDetailPageRoute.url}
-                    element={<ProductDetailPageRoute.component />}
-                  />
-                  <Route
-                    path={ManageUsersRoute.url}
-                    Component={ManageUsersRoute.component}
-                  />
                   <Route
                     path={LogoutsRoute.url}
                     Component={LogoutsRoute.component}
                   />
+
+                  {/* future */}
+                  {/*
+                  <Route
+                    path={CheckoutPageRoute.url}
+                    Component={CheckoutPageRoute.component}
+                  />
+                  <Route
+                    path={ProfilePageRoute.url}
+                    Component={ProfilePageRoute.component}
+                  />
+                  <Route
+                    path={OrdersPageRoute.url}
+                    Component={OrdersPageRoute.component}
+                  />
+                  <Route
+                    path={NotificationsPageRoute.url}
+                    Component={NotificationsPageRoute.component}
+                  />
+                  */}
                 </Route>
+
+                {/* manager routes */}
+                <Route element={<ManagerRoute />}>
+                  {/* future */}
+                  {/*
+                  <Route
+                    path={ROUTES.ADMIN_PRODUCTS}
+                    Component={AdminProductsPage}
+                  />
+                  */}
+                </Route>
+
+                {/* admin routes */}
+                <Route element={<AdminRoute />}>
+                  <Route
+                    path={ManageUsersRoute.url}
+                    Component={ManageUsersRoute.component}
+                  />
+                </Route>
+
+                {/* catch all 404, must remain last */}
+                <Route
+                  path={NotFoundRoute.url}
+                  Component={NotFoundRoute.component}
+                />
               </Route>
-              {/* end of protected routes */}
             </Routes>
           </BrowserRouter>
         </Suspense>
