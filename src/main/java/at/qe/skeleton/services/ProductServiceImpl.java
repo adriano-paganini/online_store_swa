@@ -2,9 +2,11 @@ package at.qe.skeleton.services;
 
 import at.qe.skeleton.dtos.ProductCreateDTO;
 import at.qe.skeleton.dtos.ProductUpdateDTO;
+import at.qe.skeleton.events.*;
 import at.qe.skeleton.model.Product;
 import at.qe.skeleton.model.Userx;
 import at.qe.skeleton.repositories.ProductRepository;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -24,12 +26,14 @@ public class ProductServiceImpl implements ProductService {
 
     private final ProductRepository productRepository;
     private final AuthenticatedUserService authenticatedUserService;
+    private final ApplicationEventPublisher applicationEventPublisher;
 
     public ProductServiceImpl(
             ProductRepository productRepository,
-            AuthenticatedUserService authenticatedUserService) {
+            AuthenticatedUserService authenticatedUserService, ApplicationEventPublisher applicationEventPublisher) {
         this.productRepository = productRepository;
         this.authenticatedUserService = authenticatedUserService;
+        this.applicationEventPublisher = applicationEventPublisher;
     }
 
     @Override
@@ -112,18 +116,31 @@ public class ProductServiceImpl implements ProductService {
                         HttpStatus.NOT_FOUND, "Product not found"));
 
         if (updateDTO.name() != null) {
+            applicationEventPublisher.publishEvent(new ProductNameUpdateEvent(
+                    product, product.getName(), updateDTO.name()));
             product.setName(updateDTO.name());
         }
         if (updateDTO.description() != null) {
+            applicationEventPublisher.publishEvent(new ProductDescriptionUpdateEvent(
+                    product, product.getDescription(), updateDTO.description()));
             product.setDescription(updateDTO.description());
         }
         if (updateDTO.price() != null) {
+            applicationEventPublisher.publishEvent(new ProductPriceUpdateEvent(
+                    product, product.getPrice(), updateDTO.price()));
             product.setPrice(updateDTO.price());
         }
         if (updateDTO.stock() != null) {
+            Integer oldValue = product.getStock();
+            Integer newValue = updateDTO.stock();
+            if (oldValue < newValue) {
+                applicationEventPublisher.publishEvent(new ProductRestockEvent(product, oldValue, newValue));
+            }
             product.setStock(updateDTO.stock());
         }
         if (updateDTO.discount() != null) {
+            applicationEventPublisher.publishEvent(new ProductDiscountUpdateEvent(
+                    product, product.getDiscount(), updateDTO.discount()));
             product.setDiscount(updateDTO.discount());
         }
 
@@ -178,9 +195,9 @@ public class ProductServiceImpl implements ProductService {
      * Validates that the sort field is a valid Product entity field.
      */
     private boolean isValidSortField(String field) {
-        return field.matches("^[a-zA-Z]+$") && 
-               (field.equals("id") || field.equals("name") || field.equals("price") || 
-                field.equals("stock") || field.equals("discount") || field.equals("avgScore") ||
-                field.equals("createDate") || field.equals("updateDate"));
+        return field.matches("^[a-zA-Z]+$") &&
+                (field.equals("id") || field.equals("name") || field.equals("price") ||
+                        field.equals("stock") || field.equals("discount") || field.equals("avgScore") ||
+                        field.equals("createDate") || field.equals("updateDate"));
     }
 }
