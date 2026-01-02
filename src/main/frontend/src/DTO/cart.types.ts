@@ -1,3 +1,5 @@
+import { TProductDTO } from './product.types';
+
 export type TCartItemDTO = {
   id: number;
   productId: number;
@@ -8,6 +10,18 @@ export type TCartItemDTO = {
 
 export type TCartDTO = {
   items: TCartItemDTO[];
+};
+
+export type TPopulatedCartItemDTO = {
+  id: number;
+  quantity: number;
+  appliedDiscount: number | null;
+  currentPrice: number;
+  product: TProductDTO;
+};
+
+export type TPopulatedCartDTO = {
+  items: TPopulatedCartItemDTO[];
 };
 
 export type TCartItemCreateDTO = {

@@ -4,14 +4,14 @@
 import type React from 'react';
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 
-import type { TCartDTO, TCartItemCreateDTO } from '../DTO/cart.types';
+import type { TCartItemCreateDTO, TPopulatedCartDTO } from '../DTO/cart.types';
 
 import { toast } from 'sonner';
 import { CartApi } from '../utilities/cartApi';
 import { useUser } from './authenticatedUserContext';
 
 type TCartContextType = {
-  cart: TCartDTO | null;
+  cart: TPopulatedCartDTO | null;
   loading: boolean;
   itemLoadingIds: Set<number>;
   clearingCart: boolean;
@@ -32,7 +32,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const { currentUser } = useUser();
   const isAuthenticated = !!currentUser;
 
-  const [cart, setCart] = useState<TCartDTO | null>(null);
+  const [cart, setCart] = useState<TPopulatedCartDTO | null>(null);
 
   const [loading, setLoading] = useState(false);
   const [itemLoadingIds, setItemLoadingIds] = useState<Set<number>>(new Set());

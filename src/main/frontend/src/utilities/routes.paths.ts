@@ -3,6 +3,7 @@ export const ROUTES = {
   PRODUCTS: '/products',
   PRODUCT_DETAIL: '/products/:id',
   ADMIN_USERS: '/admin/users',
+  ADMIN_PRODUCTS: '/admin/products',
   LOGIN: '/login',
   LOGOUT: '/logout',
 
@@ -16,7 +17,6 @@ export const ROUTES = {
   // SUBSCRIPTIONS: '/subscriptions',
   // NOTIFICATIONS: '/notifications',
   // REGISTER: '/register',
-  // ADMIN_PRODUCTS: '/admin/products',
 } as const;
 
 export type TRoutesType = typeof ROUTES;

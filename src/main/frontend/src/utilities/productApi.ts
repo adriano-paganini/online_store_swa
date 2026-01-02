@@ -39,7 +39,7 @@ const createProduct = async (product: TProductCreateDTO): Promise<TProductDTO> =
 
 const updateProduct = async (id: number, product: TProductUpdateDTO): Promise<TProductDTO> => {
   try {
-    const response = await axios.patch<TProductDTO>(`/products/${id}`, product);
+    const response = await axios.put<TProductDTO>(`/products/${id}`, product);
     return response.data;
   } catch (err: unknown) {
     throw new Error(`Error updating product: ${getErrorMessage(err)}`);

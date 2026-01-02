@@ -156,8 +156,8 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
 
   const roles = currentUser?.roles ?? [];
   const isAdmin = roles.includes(UserxRole.ADMIN);
-  const isManager = roles.includes(UserxRole.MANAGER);
-  const isEmployee = roles.includes(UserxRole.EMPLOYEE);
+  const isManager = roles.includes(UserxRole.MANAGER) || isAdmin;
+  const isEmployee = roles.includes(UserxRole.EMPLOYEE) || isManager;
 
   return (
     <UserContext.Provider
