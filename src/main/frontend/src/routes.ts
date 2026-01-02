@@ -1,4 +1,5 @@
 import { ROUTES } from './utilities/routes.paths';
+import AdminProductsPage from './views/AdminProductsPage';
 import HomePage from './views/HomePage';
 import Login from './views/Login';
 import Logout from './views/Logout';
@@ -20,6 +21,11 @@ export const ProductsPageRoute = {
 export const ProductDetailPageRoute = {
   url: ROUTES.PRODUCT_DETAIL,
   component: ProductDetailsPage,
+};
+
+export const AdminProductsPageRoute = {
+  url: ROUTES.ADMIN_PRODUCTS,
+  component: AdminProductsPage,
 };
 
 export const ManageUsersRoute = {

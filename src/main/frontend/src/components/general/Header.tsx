@@ -229,6 +229,9 @@ export function Header() {
               <DropdownMenuContent align="end">
                 <div className="px-2 py-1.5 text-sm font-medium">{userName}</div>
                 <DropdownMenuSeparator />
+                <DropdownMenuItem asChild>
+                  <Link to={ROUTES.ADMIN_PRODUCTS}>Manage Products</Link>
+                </DropdownMenuItem>
                 {isAdmin && (
                   <DropdownMenuItem asChild>
                     <Link to={ROUTES.ADMIN_USERS}>Manage Users</Link>

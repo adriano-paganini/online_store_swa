@@ -12,6 +12,7 @@ import PrivateRoute from './components/routes/PrivateRoute';
 import { UserProvider } from './Contexts/authenticatedUserContext';
 import { CartProvider } from './Contexts/cartContext';
 import {
+  AdminProductsPageRoute,
   HomePageRoute,
   LoginsRoute,
   LogoutsRoute,
@@ -84,13 +85,10 @@ const App: React.FC = () => {
 
                 {/* manager routes */}
                 <Route element={<ManagerRoute />}>
-                  {/* future */}
-                  {/*
                   <Route
-                    path={ROUTES.ADMIN_PRODUCTS}
-                    Component={AdminProductsPage}
+                    path={AdminProductsPageRoute.url}
+                    Component={AdminProductsPageRoute.component}
                   />
-                  */}
                 </Route>
 
                 {/* admin routes */}
