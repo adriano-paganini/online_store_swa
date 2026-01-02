@@ -3,7 +3,6 @@
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { useCart } from '@/Contexts/cartContext';
-import { mockProducts } from '@/mocks/product/mockProducts';
 import { CartItemRow } from './CartItemRow';
 
 export function CartSidebar() {
@@ -21,7 +20,7 @@ export function CartSidebar() {
   }
 
   const subtotal = cart.items.reduce((sum, item) => {
-    const price = item.currentPrice - (item.appliedDiscount ?? 0);
+    const price = item.currentPrice * (1 - (item.appliedDiscount ?? 0));
     return sum + price * item.quantity;
   }, 0);
 
@@ -29,16 +28,12 @@ export function CartSidebar() {
     <div className="flex h-full flex-col">
       <div className="flex-1 space-y-4 overflow-auto px-4">
         {cart.items.map((item) => {
-          const product = mockProducts.find((p): p is (typeof mockProducts)[number] => p.id === item.productId);
-          if (!product) return null;
-
           const isItemLoading = itemLoadingIds.has(item.id);
 
           return (
             <CartItemRow
               key={item.id}
               item={item}
-              product={product}
               isLoading={isItemLoading}
               onIncrement={() => void incrementItem(item.id)}
               onDecrement={() => void decrementItem(item.id)}

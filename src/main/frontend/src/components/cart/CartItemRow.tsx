@@ -2,22 +2,20 @@
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import type { TCartItemDTO } from '@/DTO/cart.types';
-import type { TProductDTO } from '@/DTO/product.types';
+import type { TPopulatedCartItemDTO } from '@/DTO/cart.types';
 import { Minus, Plus, Trash } from 'lucide-react';
 
 type TCartItemRowProps = {
-  item: TCartItemDTO;
-  product: TProductDTO;
+  item: TPopulatedCartItemDTO;
   isLoading: boolean;
   onIncrement: () => void;
   onDecrement: () => void;
   onRemove: () => void;
 };
 
-export function CartItemRow({ item, product, isLoading, onIncrement, onDecrement, onRemove }: TCartItemRowProps) {
-  const discountedPrice = item.currentPrice - (item.appliedDiscount ?? 0);
-
+export function CartItemRow({ item, isLoading, onIncrement, onDecrement, onRemove }: TCartItemRowProps) {
+  const product = item.product;
+  const discountedPrice = item.currentPrice * (1 - (item.appliedDiscount ?? 0));
   const hasDiscount = item.appliedDiscount !== null && item.appliedDiscount > 0;
 
   return (
