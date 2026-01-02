@@ -13,7 +13,7 @@ export const ProductList = ({ products, loading, onEdit, onDelete }: TProductLis
   if (products.length === 0) return <p className="text-muted-foreground">No products found.</p>;
 
   return (
-    <div className="overflow-hidden rounded-lg border">
+    <div className="overflow-hidden rounded-lg">
       {products.map((p) => (
         <ProductRow
           key={p.id}

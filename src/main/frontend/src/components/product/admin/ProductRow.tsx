@@ -17,7 +17,7 @@ type TProductRowProps = {
 
 export const ProductRow = ({ product, onEdit, onDelete }: TProductRowProps) => {
   return (
-    <div className="flex items-center gap-4 border-b px-4 py-3">
+    <div className="flex items-center gap-3 border-b px-4 py-3 text-sm transition-opacity hover:bg-muted">
       <img
         src={product.images[0] || `/placeholder.svg?height=64&width=64`}
         alt={product.name}

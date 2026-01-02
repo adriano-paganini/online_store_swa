@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useUser } from '@/Contexts/authenticatedUserContext';
 import { useCart } from '@/Contexts/cartContext';
-import { LogOut, Menu, Search, Shield, ShoppingCart } from 'lucide-react';
+import { LogOut, Menu, Search, ShoppingCart } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { ROUTES } from '../../utilities/routes.paths';
 import { CartSidebar } from '../cart/CartSidebar';
@@ -19,7 +19,7 @@ import {
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '../ui/sheet';
 
 export function Header() {
-  const { currentUser, isAdmin } = useUser();
+  const { currentUser, isAdmin, isManager } = useUser();
   const isAuthenticated = !!currentUser;
 
   const userName =
@@ -136,13 +136,23 @@ export function Header() {
             </Button>
           </Link>
 
+          {isManager && (
+            <Link to={ROUTES.ADMIN_PRODUCTS}>
+              <Button
+                variant="ghost"
+                className="w-full justify-start"
+              >
+                Manage Products
+              </Button>
+            </Link>
+          )}
+
           {isAdmin && (
             <Link to={ROUTES.ADMIN_USERS}>
               <Button
                 variant="ghost"
-                className="w-full justify-start text-destructive"
+                className="w-full justify-start"
               >
-                <Shield className="mr-2 h-4 w-4" />
                 Manage Users
               </Button>
             </Link>
@@ -228,10 +238,14 @@ export function Header() {
 
               <DropdownMenuContent align="end">
                 <div className="px-2 py-1.5 text-sm font-medium">{userName}</div>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem asChild>
-                  <Link to={ROUTES.ADMIN_PRODUCTS}>Manage Products</Link>
-                </DropdownMenuItem>
+                {isManager && (
+                  <>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem asChild>
+                      <Link to={ROUTES.ADMIN_PRODUCTS}>Manage Products</Link>
+                    </DropdownMenuItem>
+                  </>
+                )}
                 {isAdmin && (
                   <DropdownMenuItem asChild>
                     <Link to={ROUTES.ADMIN_USERS}>Manage Users</Link>
