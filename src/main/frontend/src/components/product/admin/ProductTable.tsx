@@ -122,15 +122,6 @@ export const ProductTable = () => {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-wrap items-center justify-between gap-4">
-        <h1 className="text-3xl font-bold">Manage Products</h1>
-
-        <Button onClick={openCreate}>
-          <Plus className="mr-2 h-4 w-4" />
-          Add Product
-        </Button>
-      </div>
-
       <div className="flex flex-wrap items-center gap-4">
         <Input
           placeholder="Search by name or description…"
@@ -153,6 +144,14 @@ export const ProductTable = () => {
           <option value="stock,desc">Stock ↓</option>
           <option value="discount,desc">Discount ↓</option>
         </select>
+
+        <Button
+          className="ml-auto"
+          onClick={openCreate}
+        >
+          <Plus className="mr-2 h-4 w-4" />
+          Add Product
+        </Button>
       </div>
 
       <ProductList
