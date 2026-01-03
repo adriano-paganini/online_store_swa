@@ -4,6 +4,7 @@ import at.qe.skeleton.dtos.ProductCreateDTO;
 import at.qe.skeleton.dtos.ProductUpdateDTO;
 import at.qe.skeleton.events.*;
 import at.qe.skeleton.model.Product;
+import at.qe.skeleton.model.Subscription;
 import at.qe.skeleton.model.Userx;
 import at.qe.skeleton.repositories.ProductRepository;
 import org.springframework.context.ApplicationEventPublisher;
@@ -27,13 +28,17 @@ public class ProductServiceImpl implements ProductService {
     private final ProductRepository productRepository;
     private final AuthenticatedUserService authenticatedUserService;
     private final ApplicationEventPublisher applicationEventPublisher;
+    private final SubscriptionService subscriptionService;
 
     public ProductServiceImpl(
             ProductRepository productRepository,
-            AuthenticatedUserService authenticatedUserService, ApplicationEventPublisher applicationEventPublisher) {
+            AuthenticatedUserService authenticatedUserService,
+            ApplicationEventPublisher applicationEventPublisher,
+            SubscriptionService subscriptionService) {
         this.productRepository = productRepository;
         this.authenticatedUserService = authenticatedUserService;
         this.applicationEventPublisher = applicationEventPublisher;
+        this.subscriptionService = subscriptionService;
     }
 
     @Override
@@ -161,6 +166,11 @@ public class ProductServiceImpl implements ProductService {
 
         product.setDeleted(true);
         productRepository.save(product);
+
+        Subscription[] subscriptions = subscriptionService.loadProductSubscriptions(product);
+        for (Subscription s : subscriptions){
+            subscriptionService.deleteSubscription(s.getId());
+        }
     }
 
     /**

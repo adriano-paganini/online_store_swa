@@ -1,8 +1,11 @@
 package at.qe.skeleton.services;
 
 import at.qe.skeleton.exceptions.UsernameDuplicateException;
+import at.qe.skeleton.model.Subscription;
 import at.qe.skeleton.model.Userx;
 import java.util.Collection;
+
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -12,6 +15,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import at.qe.skeleton.repositories.UserxRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -26,12 +30,14 @@ public class UserxService implements UserDetailsService {
     private final UserxRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticatedUserService authenticatedUserService;
+    private final SubscriptionService subscriptionService;
 
     @Autowired
-    public UserxService(UserxRepository userRepository, PasswordEncoder passwordEncoder, AuthenticatedUserService authenticatedUserService) {
+    public UserxService(UserxRepository userRepository, PasswordEncoder passwordEncoder, AuthenticatedUserService authenticatedUserService, SubscriptionService subscriptionService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.authenticatedUserService = authenticatedUserService;
+        this.subscriptionService = subscriptionService;
     }
     
     /**
@@ -80,13 +86,20 @@ public class UserxService implements UserDetailsService {
 
     /**
      * Deletes the user.
+     * Deletes the user's subscriptions.
      *
      * @param user the user to delete
      */
+    @Transactional
     @PreAuthorize("hasAuthority('ADMIN')")
     public void deleteUser(Userx user) {
-        Optional<Userx> userOpt = userRepository.findById(user.getId());
-        userOpt.ifPresent(userRepository::delete);
+        userRepository.findById(user.getId()).ifPresent(userToDelete -> {
+            Subscription[] subscriptions = subscriptionService.loadUserSubscriptions(userToDelete);
+            for (Subscription s : subscriptions) {
+                subscriptionService.deleteSubscription(s.getId());
+            }
+            userRepository.delete(userToDelete);
+        });
     }
 
     public Userx getUserByUsername(String username) {
