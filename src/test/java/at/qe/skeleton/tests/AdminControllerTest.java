@@ -8,6 +8,7 @@ import at.qe.skeleton.dtos.UserxCreateDTO;
 import at.qe.skeleton.dtos.UserxDTO;
 import at.qe.skeleton.mappers.UserxCreateMapper;
 import at.qe.skeleton.mappers.UserxMapper;
+import at.qe.skeleton.model.NotificationType;
 import at.qe.skeleton.model.Userx;
 import at.qe.skeleton.model.UserxRole;
 import at.qe.skeleton.services.UserxService;
@@ -106,7 +107,7 @@ public class AdminControllerTest {
 
         Mockito.when(userService.getAllUsers()).thenReturn(users);
         Mockito.when(userMapper.mapTo(Mockito.any(Userx.class))).thenReturn(new UserxDTO(
-                id, null, null, null, null, "testUser", "First", "Last", null, null, false, null));
+                id, null, null, null, null, "testUser", "First", "Last", null, null, false, null, null));
 
 
         mockMvc.perform(MockMvcRequestBuilders.get("/api/admin"))
@@ -126,7 +127,7 @@ public class AdminControllerTest {
         user1.setFirstName("First");
         user1.setLastName("Last");
         Mockito.when(userService.loadUser(id)).thenReturn(Optional.of(user1));
-        Mockito.when(userMapper.mapTo(user1)).thenReturn(new UserxDTO(id, null, null, null, null, username, "First", "Last", null, null, false, null));
+        Mockito.when(userMapper.mapTo(user1)).thenReturn(new UserxDTO(id, null, null, null, null, username, "First", "Last", null, null, false, null,null));
 
         mockMvc.perform(MockMvcRequestBuilders.get("/api/admin/{id}", id))
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -154,18 +155,20 @@ public class AdminControllerTest {
         String email = "new@example.com";
         Set<UserxRole> roles = Set.of(UserxRole.ADMIN);
         boolean isEnabled = true;
+        Set<NotificationType> channels= Set.of(NotificationType.SMS);
 
-        UserxCreateDTO newUser = new UserxCreateDTO(username, password, firstName, lastName, email, "", true, roles);
+        UserxCreateDTO newUser = new UserxCreateDTO(username, password, firstName, lastName, email, "", true, roles, channels);
         Userx user = new Userx();
         user.setId(id);
         user.setUsername(username);
         user.setPassword(password);
         user.setEmail(email);
         user.setEnabled(isEnabled);
+        user.setChannels(channels);
 
         Mockito.when(userCreateMapper.mapFrom(newUser)).thenReturn(user);
         Mockito.when(userService.saveUser(user)).thenReturn(user);
-        Mockito.when(userMapper.mapTo(user)).thenReturn(new UserxDTO(id, null, null, null, null, username, firstName, lastName, email, "", isEnabled, roles));
+        Mockito.when(userMapper.mapTo(user)).thenReturn(new UserxDTO(id, null, null, null, null, username, firstName, lastName, email, "", isEnabled, roles, channels));
 
         mockMvc.perform(MockMvcRequestBuilders.post("/api/admin")
                         .with(SecurityMockMvcRequestPostProcessors.csrf())

@@ -1,5 +1,6 @@
 package at.qe.skeleton.dtos;
 
+import at.qe.skeleton.model.NotificationType;
 import at.qe.skeleton.model.UserxRole;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
@@ -23,5 +24,6 @@ public record UserxCreateDTO(
     String phone,
     boolean enabled,
     @NotEmpty
-    Set<UserxRole> roles
+    Set<UserxRole> roles,
+    Set<NotificationType> channels
 ) {}

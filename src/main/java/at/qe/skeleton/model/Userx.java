@@ -7,21 +7,11 @@ import java.util.Collection;
 import java.util.Objects;
 import java.util.Set;
 
+import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.domain.Persistable;
 
-import jakarta.persistence.CollectionTable;
-import jakarta.persistence.Column;
-import jakarta.persistence.ElementCollection;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -39,7 +29,7 @@ public class Userx implements Persistable<Long>, Serializable, Comparable<Userx>
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
-  
+
   @ManyToOne(fetch = FetchType.LAZY)
   private Userx createUser;
   @Column(nullable = false)
@@ -49,20 +39,25 @@ public class Userx implements Persistable<Long>, Serializable, Comparable<Userx>
   private Userx updateUser;
   @UpdateTimestamp
   private LocalDateTime updateDate;
-  
+
   @Column(unique = true, nullable = false, length = 100)
   private String username;
   private String password;
-  
+
   private String firstName;
   private String lastName;
   private String email;
   private String phone;
-  
+
   @ElementCollection(targetClass = UserxRole.class, fetch = FetchType.EAGER)
   @CollectionTable(name = "Userx_UserxRole")
   @Enumerated(EnumType.STRING)
   private Set<UserxRole> roles;
+
+  @ElementCollection(targetClass = NotificationType.class, fetch = FetchType.EAGER)
+  @Enumerated(EnumType.STRING)
+  @CollectionTable(name = "user_notification_settings", joinColumns = @JoinColumn(name = "user_id"))
+  private Set<NotificationType> channels;
 
   boolean enabled;
 
@@ -86,6 +81,9 @@ public class Userx implements Persistable<Long>, Serializable, Comparable<Userx>
     return getRoles();
   }
 
+  public Set<NotificationType> getChannels() {
+    return channels;
+  }
   public String getUsername() {
     return username;
   }
@@ -136,6 +134,10 @@ public class Userx implements Persistable<Long>, Serializable, Comparable<Userx>
 
   public boolean isEnabled() {
     return enabled;
+  }
+
+  public void setChannels(Set<NotificationType> channels) {
+    this.channels = channels;
   }
 
   public void setEnabled(boolean enabled) {
