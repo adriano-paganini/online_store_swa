@@ -1,6 +1,5 @@
 package at.qe.skeleton.model;
 
-import at.qe.skeleton.events.SubscriptionType;
 import jakarta.persistence.*;
 import org.springframework.data.domain.Persistable;
 import org.springframework.lang.Nullable;

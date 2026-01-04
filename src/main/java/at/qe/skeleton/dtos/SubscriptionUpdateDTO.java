@@ -1,6 +1,6 @@
 package at.qe.skeleton.dtos;
 
-import at.qe.skeleton.events.SubscriptionType;
+import at.qe.skeleton.model.SubscriptionType;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 

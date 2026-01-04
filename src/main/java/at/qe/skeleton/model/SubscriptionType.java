@@ -1,4 +1,4 @@
-package at.qe.skeleton.events;
+package at.qe.skeleton.model;
 
 public enum SubscriptionType {
     NAMEUPDATE,
