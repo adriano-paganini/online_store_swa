@@ -21,6 +21,10 @@ public class ProductEvent<T> {
         this.timestamp = LocalDateTime.now();
     }
 
+    public String getMessage() {
+        return "";
+    }
+
     public Product getProduct() {
         return product;
     }
@@ -40,4 +44,5 @@ public class ProductEvent<T> {
     public LocalDateTime getTimestamp() {
         return timestamp;
     }
+
 }
