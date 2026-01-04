@@ -1,6 +1,6 @@
 package at.qe.skeleton.repositories;
 
-import at.qe.skeleton.events.SubscriptionType;
+import at.qe.skeleton.model.SubscriptionType;
 import at.qe.skeleton.model.Product;
 import at.qe.skeleton.model.Subscription;
 import at.qe.skeleton.model.Userx;

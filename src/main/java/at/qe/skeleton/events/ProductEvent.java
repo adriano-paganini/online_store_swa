@@ -1,6 +1,7 @@
 package at.qe.skeleton.events;
 
 import at.qe.skeleton.model.Product;
+import at.qe.skeleton.model.SubscriptionType;
 
 import java.time.LocalDateTime;
 
@@ -18,6 +19,10 @@ public class ProductEvent<T> {
         this.oldValue = oldValue;
         this.newValue = newValue;
         this.timestamp = LocalDateTime.now();
+    }
+
+    public String getMessage() {
+        return "";
     }
 
     public Product getProduct() {
@@ -39,4 +44,5 @@ public class ProductEvent<T> {
     public LocalDateTime getTimestamp() {
         return timestamp;
     }
+
 }

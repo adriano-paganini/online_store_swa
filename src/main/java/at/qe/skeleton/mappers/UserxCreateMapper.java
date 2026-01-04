@@ -29,6 +29,7 @@ public class UserxCreateMapper implements DTOMapper<Userx, UserxCreateDTO> {
         user.setPhone(dto.phone());
         user.setEnabled(dto.enabled());
         user.setRoles(dto.roles());
+        user.setChannels(dto.channels());
         
         return user;
     }
