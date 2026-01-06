@@ -54,11 +54,6 @@ public class Userx implements Persistable<Long>, Serializable, Comparable<Userx>
   @Enumerated(EnumType.STRING)
   private Set<UserxRole> roles;
 
-  @ElementCollection(targetClass = NotificationType.class, fetch = FetchType.EAGER)
-  @Enumerated(EnumType.STRING)
-  @CollectionTable(name = "user_notification_settings", joinColumns = @JoinColumn(name = "user_id"))
-  private Set<NotificationType> channels;
-
   boolean enabled;
 
   @Override
@@ -81,9 +76,6 @@ public class Userx implements Persistable<Long>, Serializable, Comparable<Userx>
     return getRoles();
   }
 
-  public Set<NotificationType> getChannels() {
-    return channels;
-  }
   public String getUsername() {
     return username;
   }
@@ -134,10 +126,6 @@ public class Userx implements Persistable<Long>, Serializable, Comparable<Userx>
 
   public boolean isEnabled() {
     return enabled;
-  }
-
-  public void setChannels(Set<NotificationType> channels) {
-    this.channels = channels;
   }
 
   public void setEnabled(boolean enabled) {

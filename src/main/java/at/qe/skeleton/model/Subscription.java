@@ -36,10 +36,19 @@ public class Subscription implements Persistable<Long>, Serializable {
     @Enumerated(EnumType.STRING)
     private Set<SubscriptionType> types;
 
+    @ElementCollection(targetClass = NotificationType.class, fetch = FetchType.EAGER)
+    @CollectionTable(name = "Notification_Types")
+    @Enumerated(EnumType.STRING)
+    private Set<NotificationType> channels;
+
     @Nullable
     @Override
     public Long getId() {
         return id;
+    }
+
+    public Set<NotificationType> getChannels() {
+        return channels;
     }
 
     public Userx getUser() {
@@ -60,6 +69,10 @@ public class Subscription implements Persistable<Long>, Serializable {
 
     public void setUser(Userx user) {
         this.user = user;
+    }
+
+    public void setChannels(Set<NotificationType> channels) {
+        this.channels = channels;
     }
 
     public void setProduct(Product product) {

@@ -32,7 +32,8 @@ public class SubscriptionMapper implements DTOMapper<Subscription, SubscriptionD
                 subscription.getId(),
                 subscription.getUser().getId(),
                 subscription.getProduct().getId(),
-                subscription.getTypes());
+                subscription.getTypes(),
+                subscription.getChannels());
     }
 
     @Override
@@ -50,6 +51,7 @@ public class SubscriptionMapper implements DTOMapper<Subscription, SubscriptionD
                 .orElseThrow(() -> new IllegalArgumentException("User not found: " + dto.userId())));
 
         subscription.setTypes(dto.types());
+        subscription.setChannels(dto.channels());
 
         return subscription;
     }

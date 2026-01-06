@@ -1,5 +1,6 @@
 package at.qe.skeleton.dtos;
 
+import at.qe.skeleton.model.NotificationType;
 import at.qe.skeleton.model.SubscriptionType;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -11,6 +12,9 @@ public record SubscriptionCreateDTO(
         Long productId,
 
         @NotEmpty(message = "At least one subscription type must be selected")
-        Set<SubscriptionType> types
+        Set<SubscriptionType> types,
+
+        @NotEmpty(message = "At leas one notification channel must be selected")
+        Set<NotificationType> channels
 ) {
 }
