@@ -29,8 +29,8 @@ public class NotificationService {
     }
 
     @Transactional
-    public Notification createNotification(Userx user, NotificationType chanel, ProductEvent<?> event) {
-        Notification notification = new Notification(user.getId(), event.getMessage(), chanel);
+    public Notification createNotification(Long userId, NotificationType chanel, ProductEvent<?> event) {
+        Notification notification = new Notification(userId, event.getMessage(), chanel);
 
         notificationRepository.save(notification);
         return notification;

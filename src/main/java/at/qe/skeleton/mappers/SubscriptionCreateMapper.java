@@ -37,6 +37,7 @@ public class SubscriptionCreateMapper implements DTOMapper<Subscription, Subscri
         }
 
         subscription.setTypes(dto.types());
+        subscription.setChannels(dto.channels());
 
         return subscription;
     }

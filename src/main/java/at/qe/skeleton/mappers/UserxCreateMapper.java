@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 
 /**
  * Mapping between UserxCreateDTO and UserxTypes.
- *
  * This class is part of the skeleton project provided for students of the
  * course "Software Architecture" offered by Innsbruck University.
  */
@@ -32,5 +31,5 @@ public class UserxCreateMapper implements DTOMapper<Userx, UserxCreateDTO> {
 
         return user;
     }
-    
+
 }

@@ -4,7 +4,6 @@ import at.qe.skeleton.events.ProductEvent;
 import at.qe.skeleton.model.Notification;
 import at.qe.skeleton.model.NotificationType;
 import at.qe.skeleton.model.Subscription;
-import at.qe.skeleton.model.Userx;
 import at.qe.skeleton.repositories.SubscriptionRepository;
 import at.qe.skeleton.services.NotificationService;
 import jakarta.transaction.Transactional;
@@ -37,11 +36,10 @@ public class SubscriptionNotificationListener {
                 event.getSubscriptionType());
 
         for (Subscription s : matchingSubscriptions) {
-            //TODO:IMPLEMENT Subscription owning the Set<NotificationTypes
-//            for (NotificationType channel : s.getChannels()) {
-//                Notification notification = notificationService.createNotification(user, channel, event);
-//                applicationEventPublisher.publishEvent(channel.createEvent(notification));
-//            }
+            for (NotificationType channel : s.getChannels()) {
+                Notification notification = notificationService.createNotification(s.getUser().getId(), channel, event);
+                applicationEventPublisher.publishEvent(channel.createEvent(notification));
+            }
 
         }
     }
