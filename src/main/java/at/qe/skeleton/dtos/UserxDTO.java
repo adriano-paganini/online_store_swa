@@ -24,6 +24,5 @@ public record UserxDTO (
     String email,
     String phone,
     boolean enabled,
-    Set<UserxRole> roles,
-    Set<NotificationType> channels
+    Set<UserxRole> roles
 ) {}

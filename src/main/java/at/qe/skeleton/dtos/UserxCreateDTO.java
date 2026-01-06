@@ -24,6 +24,5 @@ public record UserxCreateDTO(
     String phone,
     boolean enabled,
     @NotEmpty
-    Set<UserxRole> roles,
-    Set<NotificationType> channels
+    Set<UserxRole> roles
 ) {}
