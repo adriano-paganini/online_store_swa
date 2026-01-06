@@ -3,7 +3,9 @@ package at.qe.skeleton.listeners;
 import at.qe.skeleton.events.EmailNotificationEvent;
 import at.qe.skeleton.services.EmailNotificationService;
 import org.springframework.context.event.EventListener;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
+
 
 @Component
 public class EmailNotificationEventListener {
@@ -14,8 +16,9 @@ public class EmailNotificationEventListener {
         this.emailNotificationService = emailNotificationService;
     }
 
+    @Async
     @EventListener
     public void handleEmailNotificationEvent(EmailNotificationEvent event) {
-        emailNotificationService.sendEmail(event.getNotification());
+        emailNotificationService.sendEmail(event);
     }
 }

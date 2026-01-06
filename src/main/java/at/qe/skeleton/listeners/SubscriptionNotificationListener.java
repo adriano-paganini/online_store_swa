@@ -38,9 +38,8 @@ public class SubscriptionNotificationListener {
         for (Subscription s : matchingSubscriptions) {
             for (NotificationType channel : s.getChannels()) {
                 Notification notification = notificationService.createNotification(s.getUser().getId(), channel, event);
-                applicationEventPublisher.publishEvent(channel.createEvent(notification));
+                applicationEventPublisher.publishEvent(channel.createEvent(notification, s));
             }
-
         }
     }
 }

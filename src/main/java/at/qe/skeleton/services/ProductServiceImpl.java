@@ -119,7 +119,7 @@ public class ProductServiceImpl implements ProductService {
         Product product = productRepository.findByIdAndNotDeleted(id)
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND, "Product not found"));
-
+        //TODO:ADD MORE EVENT TYPES
         if (updateDTO.name() != null) {
             applicationEventPublisher.publishEvent(new ProductNameUpdateEvent(
                     product, product.getName(), updateDTO.name()));

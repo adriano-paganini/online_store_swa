@@ -43,6 +43,7 @@ public class SubscriptionService {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User must be logged in to create a subscription");
         }
         subscription.setUser(user);
+        subscriptionRepository.save(subscription);
         return subscription;
     }
 
