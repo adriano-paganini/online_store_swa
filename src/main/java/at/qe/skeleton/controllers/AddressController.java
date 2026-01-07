@@ -7,6 +7,7 @@ import at.qe.skeleton.dtos.AddressUpdateDTO;
 import at.qe.skeleton.mappers.AddressMapper;
 import at.qe.skeleton.services.UserxService;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -37,6 +38,7 @@ public class AddressController {
      * Add new address
      */
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public AddressDTO addAddress(@Valid @RequestBody AddressCreateDTO dto) {
         return addressMapper.toDTO(userxService.addAddress(dto));
     }
@@ -53,6 +55,7 @@ public class AddressController {
      * Delete address
      */
     @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteAddress(@PathVariable Long id) {
         userxService.removeAddress(id);
     }
