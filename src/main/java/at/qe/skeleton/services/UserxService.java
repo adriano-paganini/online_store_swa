@@ -1,6 +1,9 @@
 package at.qe.skeleton.services;
 
+import at.qe.skeleton.dtos.AddressCreateDTO;
+import at.qe.skeleton.dtos.AddressUpdateDTO;
 import at.qe.skeleton.exceptions.UsernameDuplicateException;
+import at.qe.skeleton.model.Address;
 import at.qe.skeleton.model.Subscription;
 import at.qe.skeleton.model.Userx;
 import java.util.Collection;
@@ -119,4 +122,68 @@ public class UserxService implements UserDetailsService {
         return userRepository.findFirstByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
     }
+
+    /**
+     * Get list of addresses of authenticated user
+     * @return list of addresses of user
+     */
+    @PreAuthorize("isAuthenticated()")
+    public List<Address> getAddressesOfCurrentUser() {
+        return authenticatedUserService
+                .getAuthenticatedUser()
+                .getAddresses();
+    }
+
+
+
+    @Transactional
+    @PreAuthorize("isAuthenticated()")
+    public Address addAddress(AddressCreateDTO dto) {
+        Userx user = authenticatedUserService.getAuthenticatedUser();
+
+        Address address = new Address();
+        address.setCountry(dto.country());
+        address.setCity(dto.city());
+        address.setPostalCode(dto.postalCode());
+        address.setStreet(dto.street());
+        address.setNumber(dto.number());
+        address.setExtra(dto.extra());
+
+        address.setUser(user);
+        user.getAddresses().add(address);
+
+        return address;
+    }
+
+
+
+    @Transactional
+    @PreAuthorize("isAuthenticated()")
+    public Address updateAddress(Long addressId, AddressUpdateDTO dto) {
+        Userx user = authenticatedUserService.getAuthenticatedUser();
+
+        Address address = user.getAddresses().stream()
+                .filter(a -> addressId.equals(a.getId()))
+                .findFirst()
+                .orElseThrow(() ->
+                        new IllegalArgumentException("Address not owned by user"));
+
+        if (dto.country() != null) address.setCountry(dto.country());
+        if (dto.city() != null) address.setCity(dto.city());
+        if (dto.postalCode() != null) address.setPostalCode(dto.postalCode());
+        if (dto.street() != null) address.setStreet(dto.street());
+        if (dto.number() != null) address.setNumber(dto.number());
+        if (dto.extra() != null) address.setExtra(dto.extra());
+
+        return address;
+    }
+
+
+    @Transactional
+    @PreAuthorize("isAuthenticated()")
+    public void removeAddress(Long addressId) {
+        Userx user = authenticatedUserService.getAuthenticatedUser();
+        user.getAddresses().removeIf(a -> addressId.equals(a.getId()));
+    }
+
 }

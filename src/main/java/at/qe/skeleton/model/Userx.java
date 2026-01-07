@@ -3,9 +3,7 @@ package at.qe.skeleton.model;
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.Collection;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -53,6 +51,9 @@ public class Userx implements Persistable<Long>, Serializable, Comparable<Userx>
   @CollectionTable(name = "Userx_UserxRole")
   @Enumerated(EnumType.STRING)
   private Set<UserxRole> roles;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Address> addresses = new ArrayList<>();
 
   boolean enabled;
 
@@ -170,6 +171,14 @@ public class Userx implements Persistable<Long>, Serializable, Comparable<Userx>
 
   public void setUpdateDate(LocalDateTime updateDate) {
     this.updateDate = updateDate;
+  }
+
+  public List<Address> getAddresses() {
+      return addresses;
+  }
+
+  public void setAddresses(List<Address> addresses) {
+      this.addresses = addresses;
   }
 
   @Override
