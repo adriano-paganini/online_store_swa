@@ -423,4 +423,100 @@ class OrderServiceTest {
 
         Assertions.assertEquals(HttpStatus.UNAUTHORIZED, ex.getStatusCode());
     }
+
+    @Test
+    void orderAddressIsFrozenAfterCreation() {
+        OrderCreateDTO dto = new OrderCreateDTO(
+                SHIPPING_ADDRESS_ID,
+                BILLING_ADDRESS_ID
+        );
+
+        Mockito.when(cartService.getCart()).thenReturn(cart);
+        Mockito.when(productService.getProductById(PRODUCT_ID))
+                .thenReturn(Optional.of(product));
+        Mockito.when(orderRepository.save(Mockito.any()))
+                .thenAnswer(invocation -> invocation.getArgument(0));
+
+        Order order = orderService.createOrder(dto);
+
+        // mutate original address after order creation
+        Address billing = user.getAddresses().stream()
+                .filter(a -> a.getId().equals(BILLING_ADDRESS_ID))
+                .findFirst()
+                .orElseThrow();
+
+        billing.setCity("Vienna");
+        billing.setStreet("Changed Street");
+
+        OrderAddress snapshot = order.getBillingAddress();
+        Assertions.assertEquals(CITY_INNSBRUCK, snapshot.getCity());
+        Assertions.assertEquals(STREET, snapshot.getStreet());
+    }
+
+    @Test
+    void productNameIsFrozenAtPurchaseTime() {
+        OrderCreateDTO dto = new OrderCreateDTO(
+                SHIPPING_ADDRESS_ID,
+                BILLING_ADDRESS_ID
+        );
+
+        Mockito.when(cartService.getCart()).thenReturn(cart);
+        Mockito.when(productService.getProductById(PRODUCT_ID))
+                .thenReturn(Optional.of(product));
+        Mockito.when(orderRepository.save(Mockito.any()))
+                .thenAnswer(invocation -> invocation.getArgument(0));
+
+        Order order = orderService.createOrder(dto);
+
+        // change product after order creation
+        product.setName("Renamed Product");
+
+        OrderItem item = order.getItems().getFirst();
+        Assertions.assertEquals(PRODUCT_NAME, item.getProductName());
+    }
+
+    @Test
+    void productPriceIsFrozenAtPurchaseTime() {
+        OrderCreateDTO dto = new OrderCreateDTO(
+                SHIPPING_ADDRESS_ID,
+                BILLING_ADDRESS_ID
+        );
+
+        Mockito.when(cartService.getCart()).thenReturn(cart);
+        Mockito.when(productService.getProductById(PRODUCT_ID))
+                .thenReturn(Optional.of(product));
+        Mockito.when(orderRepository.save(Mockito.any()))
+                .thenAnswer(invocation -> invocation.getArgument(0));
+
+        Order order = orderService.createOrder(dto);
+
+        // change price after order creation
+        cartItem.setCurrentPrice(999.0);
+
+        OrderItem item = order.getItems().getFirst();
+        Assertions.assertEquals(PRODUCT_PRICE, item.getPriceAtPurchase(), 0.001);
+    }
+
+    @Test
+    void orderTotalIsFrozenAfterCreation() {
+        OrderCreateDTO dto = new OrderCreateDTO(
+                SHIPPING_ADDRESS_ID,
+                BILLING_ADDRESS_ID
+        );
+
+        Mockito.when(cartService.getCart()).thenReturn(cart);
+        Mockito.when(productService.getProductById(PRODUCT_ID))
+                .thenReturn(Optional.of(product));
+        Mockito.when(orderRepository.save(Mockito.any()))
+                .thenAnswer(invocation -> invocation.getArgument(0));
+
+        Order order = orderService.createOrder(dto);
+
+        // change cart after order creation
+        cartItem.setQuantity(99);
+        cartItem.setAppliedDiscount(99.0);
+
+        double expected = (PRODUCT_PRICE - PRODUCT_DISCOUNT) * PRODUCT_QUANTITY;
+        Assertions.assertEquals(expected, order.getTotal(), 0.001);
+    }
 }
