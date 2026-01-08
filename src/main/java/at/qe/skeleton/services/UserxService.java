@@ -129,7 +129,6 @@ public class UserxService implements UserDetailsService {
      * Get list of addresses of authenticated user
      * @return list of addresses of user
      */
-    @PreAuthorize("isAuthenticated()")
     public List<Address> getAddressesOfCurrentUser() {
         return authenticatedUserService.requireAuthenticatedUser().getAddresses();
     }
@@ -141,7 +140,6 @@ public class UserxService implements UserDetailsService {
      * @return address object
      */
     @Transactional
-    @PreAuthorize("isAuthenticated()")
     public Address addAddress(AddressCreateDTO dto) {
         Userx user = authenticatedUserService.requireAuthenticatedUser();
 
@@ -168,7 +166,6 @@ public class UserxService implements UserDetailsService {
      * @return the updated address
      */
     @Transactional
-    @PreAuthorize("isAuthenticated()")
     public Address updateAddress(Long addressId, AddressUpdateDTO dto) {
         Userx user = authenticatedUserService.requireAuthenticatedUser();
 
@@ -194,7 +191,6 @@ public class UserxService implements UserDetailsService {
      * @param addressId the id of the address to delete
      */
     @Transactional
-    @PreAuthorize("isAuthenticated()")
     public void removeAddress(Long addressId) {
         Userx user = authenticatedUserService.requireAuthenticatedUser();
         user.getAddresses().removeIf(a -> addressId.equals(a.getId()));

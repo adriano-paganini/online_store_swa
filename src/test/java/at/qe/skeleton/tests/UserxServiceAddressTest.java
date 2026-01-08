@@ -84,16 +84,19 @@ class UserxServiceAddressTest {
     @Test
     void addAddressUnauthenticatedFails() {
         Mockito.when(authenticatedUserService.requireAuthenticatedUser())
-                .thenReturn(null);
+                .thenThrow(new ResponseStatusException(
+                        HttpStatus.UNAUTHORIZED, "User not authenticated"
+                ));
 
         AddressCreateDTO dto = new AddressCreateDTO(
                 COUNTRY, CITY_INNSBRUCK, POSTAL_CODE, STREET, NUMBER, EXTRA
         );
 
-        Assertions.assertThrows(
-                AuthenticationCredentialsNotFoundException.class,
-                () -> userxService.addAddress(dto)
-        );
+        ResponseStatusException ex =
+                Assertions.assertThrows(ResponseStatusException.class,
+                        () -> userxService.addAddress(dto));
+
+        Assertions.assertEquals(HttpStatus.UNAUTHORIZED, ex.getStatusCode());
     }
 
     @Test
