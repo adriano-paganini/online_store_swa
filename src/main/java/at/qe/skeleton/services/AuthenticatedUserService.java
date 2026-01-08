@@ -3,9 +3,11 @@ package at.qe.skeleton.services;
 import at.qe.skeleton.model.Userx;
 import at.qe.skeleton.repositories.UserxRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 /**
  * Service for accessing currently authenticated user.
@@ -31,6 +33,20 @@ public class AuthenticatedUserService {
     public Userx getAuthenticatedUser() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         return userRepository.findFirstByUsername(auth.getName()).orElse(null);
+    }
+
+    /**
+     * helper method to verify user where attributes are requested is not null
+     *
+     * @return authenticated user
+     */
+    public Userx requireAuthenticatedUser() {
+        Userx user = getAuthenticatedUser();
+        if (user == null) {
+            throw new ResponseStatusException(
+                    HttpStatus.UNAUTHORIZED, "User not authenticated");
+        }
+        return user;
     }
 
 }
