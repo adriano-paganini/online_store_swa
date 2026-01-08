@@ -40,7 +40,7 @@ public class OrderService {
             int page,
             int limit
     ) {
-        Userx user = requireAuthenticatedUser();
+        Userx user = authenticatedUserService.requireAuthenticatedUser();
         Pageable pageable = PageRequest.of(page, limit, Sort.by("timestamp").descending());
 
         if (status != null) {
@@ -51,7 +51,7 @@ public class OrderService {
 
 
     public Order getOrderByNumber(String orderNumber) {
-        Userx user = requireAuthenticatedUser();
+        Userx user = authenticatedUserService.requireAuthenticatedUser();
 
         Order order = orderRepository.findByOrderNumber(orderNumber)
                 .orElseThrow(() ->
@@ -75,7 +75,7 @@ public class OrderService {
     @Transactional
     public Order createOrder(OrderCreateDTO orderCreateDTO) {
 
-        Userx user = requireAuthenticatedUser();
+        Userx user = authenticatedUserService.requireAuthenticatedUser();
 
         Cart cart = cartService.getCart();
         if (cart.getItems().isEmpty()) {
@@ -117,15 +117,6 @@ public class OrderService {
                 address.getNumber(),
                 address.getExtra()
         );
-    }
-
-    // TODO: centralize requireAuthenticatedUser() in AuthenticatedUserService
-    private Userx requireAuthenticatedUser() {
-        Userx user = authenticatedUserService.getAuthenticatedUser();
-        if (user == null) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not authenticated");
-        }
-        return user;
     }
 
     private List<OrderItem> createOrderItemsFromCart(Cart cart) {

@@ -126,27 +126,12 @@ public class UserxService implements UserDetailsService {
     }
 
     /**
-     * helper method to verify user where attributes are requested is not null
-     * @return authenticated user
-     */
-    private Userx requireAuthenticatedUser() {
-        Userx user = authenticatedUserService.getAuthenticatedUser();
-        if (user == null) {
-            throw new ResponseStatusException(
-                    HttpStatus.UNAUTHORIZED, "User not authenticated");
-        }
-        return user;
-    }
-
-    /**
      * Get list of addresses of authenticated user
      * @return list of addresses of user
      */
-    @PreAuthorize("isAuthenticated()")
     public List<Address> getAddressesOfCurrentUser() {
-        return requireAuthenticatedUser().getAddresses();
+        return authenticatedUserService.requireAuthenticatedUser().getAddresses();
     }
-
 
     /**
      * add new address to authenticated user
@@ -155,9 +140,8 @@ public class UserxService implements UserDetailsService {
      * @return address object
      */
     @Transactional
-    @PreAuthorize("isAuthenticated()")
     public Address addAddress(AddressCreateDTO dto) {
-        Userx user = requireAuthenticatedUser();
+        Userx user = authenticatedUserService.requireAuthenticatedUser();
 
         Address address = new Address();
         address.setCountry(dto.country());
@@ -182,9 +166,8 @@ public class UserxService implements UserDetailsService {
      * @return the updated address
      */
     @Transactional
-    @PreAuthorize("isAuthenticated()")
     public Address updateAddress(Long addressId, AddressUpdateDTO dto) {
-        Userx user = requireAuthenticatedUser();
+        Userx user = authenticatedUserService.requireAuthenticatedUser();
 
         Address address = user.getAddresses().stream()
                 .filter(a -> addressId.equals(a.getId()))
@@ -208,9 +191,8 @@ public class UserxService implements UserDetailsService {
      * @param addressId the id of the address to delete
      */
     @Transactional
-    @PreAuthorize("isAuthenticated()")
     public void removeAddress(Long addressId) {
-        Userx user = requireAuthenticatedUser();
+        Userx user = authenticatedUserService.requireAuthenticatedUser();
         user.getAddresses().removeIf(a -> addressId.equals(a.getId()));
     }
 }

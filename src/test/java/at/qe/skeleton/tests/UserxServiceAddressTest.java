@@ -56,7 +56,7 @@ class UserxServiceAddressTest {
         testUser.setUsername(USERNAME);
         testUser.setAddresses(new ArrayList<>());
 
-        Mockito.when(authenticatedUserService.getAuthenticatedUser())
+        Mockito.when(authenticatedUserService.requireAuthenticatedUser())
                 .thenReturn(testUser);
     }
 
@@ -83,24 +83,29 @@ class UserxServiceAddressTest {
 
     @Test
     void addAddressUnauthenticatedFails() {
-        Mockito.when(authenticatedUserService.getAuthenticatedUser())
-                .thenReturn(null);
+        Mockito.when(authenticatedUserService.requireAuthenticatedUser())
+                .thenThrow(new ResponseStatusException(
+                        HttpStatus.UNAUTHORIZED, "User not authenticated"
+                ));
 
         AddressCreateDTO dto = new AddressCreateDTO(
                 COUNTRY, CITY_INNSBRUCK, POSTAL_CODE, STREET, NUMBER, EXTRA
         );
 
-        Assertions.assertThrows(
-                AuthenticationCredentialsNotFoundException.class,
-                () -> userxService.addAddress(dto)
-        );
+        ResponseStatusException ex =
+                Assertions.assertThrows(ResponseStatusException.class,
+                        () -> userxService.addAddress(dto));
+
+        Assertions.assertEquals(HttpStatus.UNAUTHORIZED, ex.getStatusCode());
     }
 
     @Test
     @WithMockUser(username = USERNAME)
     void addAddressAuthenticatedButUserMissingInDbFails() {
-        Mockito.when(authenticatedUserService.getAuthenticatedUser())
-                .thenReturn(null);
+        Mockito.when(authenticatedUserService.requireAuthenticatedUser())
+                .thenThrow(new ResponseStatusException(
+                        HttpStatus.UNAUTHORIZED, "User not authenticated"
+                ));
 
         AddressCreateDTO dto = new AddressCreateDTO(
                 COUNTRY, CITY_INNSBRUCK, POSTAL_CODE, STREET, NUMBER, EXTRA
