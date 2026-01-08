@@ -113,7 +113,7 @@ class OrderServiceTest {
         product.setId(PRODUCT_ID);
         product.setName(PRODUCT_NAME);
 
-        Mockito.when(authenticatedUserService.getAuthenticatedUser())
+        Mockito.when(authenticatedUserService.requireAuthenticatedUser())
                 .thenReturn(user);
     }
 
@@ -171,8 +171,10 @@ class OrderServiceTest {
 
     @Test
     void createOrderUnauthenticatedFails() {
-        Mockito.when(authenticatedUserService.getAuthenticatedUser())
-                .thenReturn(null);
+        Mockito.when(authenticatedUserService.requireAuthenticatedUser())
+                .thenThrow(new ResponseStatusException(
+                        HttpStatus.UNAUTHORIZED, "User not authenticated"
+                ));
 
         OrderCreateDTO dto = new OrderCreateDTO(
                 SHIPPING_ADDRESS_ID,
@@ -348,8 +350,10 @@ class OrderServiceTest {
 
     @Test
     void getOrderByNumberUnauthenticatedFails() {
-        Mockito.when(authenticatedUserService.getAuthenticatedUser())
-                .thenReturn(null);
+        Mockito.when(authenticatedUserService.requireAuthenticatedUser())
+                .thenThrow(new ResponseStatusException(
+                        HttpStatus.UNAUTHORIZED, "User not authenticated"
+                ));
 
         ResponseStatusException ex = Assertions.assertThrows(
                 ResponseStatusException.class,
@@ -413,8 +417,10 @@ class OrderServiceTest {
 
     @Test
     void getCurrentUserOrdersUnauthenticatedFails() {
-        Mockito.when(authenticatedUserService.getAuthenticatedUser())
-                .thenReturn(null);
+        Mockito.when(authenticatedUserService.requireAuthenticatedUser())
+                .thenThrow(new ResponseStatusException(
+                        HttpStatus.UNAUTHORIZED, "User not authenticated"
+                ));
 
         ResponseStatusException ex = Assertions.assertThrows(
                 ResponseStatusException.class,
