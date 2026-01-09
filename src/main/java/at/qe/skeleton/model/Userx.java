@@ -38,24 +38,44 @@ public class Userx implements Persistable<Long>, Serializable, Comparable<Userx>
   @UpdateTimestamp
   private LocalDateTime updateDate;
 
-  @Column(unique = true, nullable = false, length = 100)
+  @Column(unique = true, nullable = false, length = 50)
   private String username;
+  @Column(length = 72)
   private String password;
-
+  @Column(length = 50)
   private String firstName;
+  @Column(length = 50)
   private String lastName;
+  @Column(length = 100)
   private String email;
+  @Column(length = 20)
   private String phone;
 
+  // initialize to empty hash set to avoid NullPointerException
   @ElementCollection(targetClass = UserxRole.class, fetch = FetchType.EAGER)
   @CollectionTable(name = "Userx_UserxRole")
   @Enumerated(EnumType.STRING)
-  private Set<UserxRole> roles;
+  private Set<UserxRole> roles = new HashSet<>();
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Address> addresses = new ArrayList<>();
+  // EAGER because channel preferences are small, bounded and frequently needed
+  // outside transactional contexts
+  // initialize to empty hash set to avoid NullPointerException
+  @ElementCollection(fetch = FetchType.EAGER)
+  @CollectionTable(name = "Userx_NotificationType")
+  @Enumerated(EnumType.STRING)
+  private Set<NotificationType> channels = new HashSet<>();
 
-  boolean enabled;
+  // initialize to empty array list to avoid NullPointerException
+  @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<Address> addresses = new ArrayList<>();
+
+  // user is allowed to authenticate
+  @Column(nullable = false)
+  private boolean enabled;
+
+  // user is soft deleted
+  @Column(nullable = false)
+  private boolean deleted = false;
 
   @Override
   public boolean isAccountNonExpired() {
@@ -133,6 +153,13 @@ public class Userx implements Persistable<Long>, Serializable, Comparable<Userx>
     this.enabled = enabled;
   }
 
+  public boolean isDeleted() {
+    return deleted;
+  }
+  public void setDeleted(boolean deleted) {
+      this.deleted = deleted;
+  }
+
   public Set<UserxRole> getRoles() {
     return roles;
   }
@@ -179,6 +206,14 @@ public class Userx implements Persistable<Long>, Serializable, Comparable<Userx>
 
   public void setAddresses(List<Address> addresses) {
       this.addresses = addresses;
+  }
+
+  public Set<NotificationType> getChannels() {
+      return channels;
+  }
+
+  public void setChannels(Set<NotificationType> channels) {
+      this.channels = channels;
   }
 
   @Override
