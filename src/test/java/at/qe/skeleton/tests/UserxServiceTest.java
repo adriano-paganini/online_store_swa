@@ -1,5 +1,8 @@
 package at.qe.skeleton.tests;
 
+import at.qe.skeleton.dtos.UserxRegistrationDTO;
+import at.qe.skeleton.dtos.UserxUpdateDTO;
+import at.qe.skeleton.model.NotificationType;
 import at.qe.skeleton.model.Userx;
 import at.qe.skeleton.model.UserxRole;
 import at.qe.skeleton.services.UserxService;
@@ -157,7 +160,7 @@ public class UserxServiceTest {
                 "Admin user could not be loaded from test data source");
         Userx adminUser = adminUserOpt.get();
 
-        String username = "newuser";
+        String username = "neweruser";
         String password = "passwd";
         String fName = "New";
         String lName = "User";
@@ -295,4 +298,82 @@ public class UserxServiceTest {
             userService.deleteUser(user);
         });
     }
+
+    @Test
+    void registerCustomerSetsDefaultsAndNoCreator() {
+        UserxRegistrationDTO dto = new UserxRegistrationDTO(
+                "newuser",
+                "StrongPass1",
+                "New",
+                "User",
+                "new@user.at",
+                null
+        );
+
+        Userx user = userService.registerCustomer(dto);
+
+        Assertions.assertNotNull(user.getId());
+        Assertions.assertEquals("newuser", user.getUsername());
+
+        Assertions.assertNotEquals("StrongPass1", user.getPassword(),
+                "Password must not be stored in plain text");
+        Assertions.assertTrue(user.getPassword().startsWith("{bcrypt}"),
+                "Password must be BCrypt-encoded");
+        Assertions.assertTrue(
+                BCrypt.checkpw("StrongPass1", user.getPassword().replace("{bcrypt}", "")),
+                "Encoded password does not match original");
+
+        Assertions.assertTrue(user.getRoles().contains(UserxRole.CUSTOMER));
+        Assertions.assertTrue(user.getChannels().contains(NotificationType.EMAIL));
+        Assertions.assertTrue(user.isEnabled());
+        Assertions.assertFalse(user.isDeleted());
+
+        Assertions.assertNull(user.getCreateUser(),
+                "Self-registered user must not have a createUser");
+    }
+
+    @DirtiesContext
+    @Test
+    @WithMockUser(username = "user2", authorities = {"CUSTOMER"})
+    public void testUpdateCurrentUserSelfService() {
+
+        UserxUpdateDTO dto = new UserxUpdateDTO(
+                null,
+                "NewStrongPass1",
+                "UpdatedFirst",
+                "UpdatedLast",
+                "updated@mail.at",
+                null,
+                Sets.newSet(UserxRole.ADMIN), // must be ignored
+                null
+        );
+
+        Userx updated = userService.updateCurrentUser(dto);
+
+        Assertions.assertEquals("UpdatedFirst", updated.getFirstName());
+        Assertions.assertEquals("UpdatedLast", updated.getLastName());
+        Assertions.assertEquals("updated@mail.at", updated.getEmail());
+
+        Assertions.assertFalse(updated.getRoles().contains(UserxRole.ADMIN),
+                "Self-service update must not allow role escalation");
+
+        Assertions.assertTrue(
+                BCrypt.checkpw("NewStrongPass1",
+                        updated.getPassword().replace("{bcrypt}", "")),
+                "Password was not updated correctly");
+    }
+
+
+    @Test
+    @WithMockUser(username = "user2", authorities = {"CUSTOMER"})
+    public void testUpdateOtherUserForbidden() {
+        Assertions.assertThrows(
+                org.springframework.security.access.AccessDeniedException.class,
+                () -> userService.loadUser(1000L) // admin
+        );
+    }
+
+
+
+
 }
