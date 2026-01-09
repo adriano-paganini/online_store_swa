@@ -1,6 +1,7 @@
 package at.qe.skeleton.mappers;
 
 import at.qe.skeleton.dtos.UserxDTO;
+import at.qe.skeleton.dtos.UserxMeDTO;
 import at.qe.skeleton.model.Userx;
 import at.qe.skeleton.services.UserxService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,9 +27,10 @@ public class UserxMapper implements DTOMapper<Userx, UserxDTO>{
         if (user == null) {
             return null;
         }
+        Userx creator = user.getCreateUser();
         UserxDTO dto = new UserxDTO(
                 user.getId(), 
-                user.getCreateUser().getId(), 
+                creator != null ? creator.getId() : null,
                 user.getCreateDate(), 
                 user.getUpdateUser() != null ? user.getUpdateUser().getId() : null, 
                 user.getUpdateDate(),
@@ -65,5 +67,20 @@ public class UserxMapper implements DTOMapper<Userx, UserxDTO>{
         user.setRoles(userxDto.roles());
 
         return user;
+    }
+
+    public UserxMeDTO mapToMe(Userx user) {
+        if (user == null) {
+            return null;
+        }
+        return new UserxMeDTO(
+                user.getUsername(),
+                user.getFirstName(),
+                user.getLastName(),
+                user.getEmail(),
+                user.getPhone(),
+                user.getRoles(),
+                user.getChannels()
+        );
     }
 }

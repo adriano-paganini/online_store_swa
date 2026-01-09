@@ -5,12 +5,12 @@ import at.qe.skeleton.model.UserxRole;
 
 import java.util.Set;
 
-public record UserxMeResponseDTO(
+public record UserxMeDTO(
         String username,
         String firstName,
         String lastName,
         String email,
         String phone,
-        UserxRole role,
+        Set<UserxRole> roles,
         Set<NotificationType> channels
 ) {}

@@ -1,16 +1,16 @@
 package at.qe.skeleton.controllers;
 
-import at.qe.skeleton.dtos.UserxDTO;
+import at.qe.skeleton.dtos.UserxMeDTO;
+import at.qe.skeleton.dtos.UserxUpdateDTO;
 import at.qe.skeleton.mappers.UserxMapper;
 import at.qe.skeleton.model.Userx;
 import at.qe.skeleton.services.UserxService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * Userx endpoints exposed by the server.
@@ -22,18 +22,28 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/users")
 public class UserxController {
  
-    private final UserxMapper userMapper;
-    private final UserxService userService;
+    private final UserxMapper userxMapper;
+    private final UserxService userxService;
 
     @Autowired
     public UserxController(UserxMapper userMapper, UserxService userService) {
-        this.userMapper = userMapper;
-        this.userService = userService;
+        this.userxMapper = userMapper;
+        this.userxService = userService;
     }
-    
+
+
     @GetMapping("/me")
-    public ResponseEntity<UserxDTO> getCurrentUser(@AuthenticationPrincipal Userx user) {
-        return ResponseEntity.ok(userMapper.mapTo(user));
+    public ResponseEntity<UserxMeDTO> getMe() {
+        Userx user = userxService.getCurrentUser();
+        return ResponseEntity.ok(userxMapper.mapToMe(user));
+    }
+
+    @PatchMapping("/me")
+    public ResponseEntity<UserxMeDTO> updateMe(
+            @Valid @RequestBody UserxUpdateDTO dto
+    ) {
+        Userx updated = userxService.updateCurrentUser(dto);
+        return ResponseEntity.ok(userxMapper.mapToMe(updated));
     }
      
     @GetMapping("/authenticated")

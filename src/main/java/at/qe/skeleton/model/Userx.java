@@ -28,13 +28,15 @@ public class Userx implements Persistable<Long>, Serializable, Comparable<Userx>
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  private Userx createUser;
+  @ManyToOne(fetch = FetchType.LAZY, optional = true)
+  @JoinColumn(name = "create_user_id", nullable = true)
+  private Userx createUser = null;
   @Column(nullable = false)
   @CreationTimestamp
   private LocalDateTime createDate;
-  @ManyToOne(optional = true)
-  private Userx updateUser;
+  @ManyToOne(fetch = FetchType.LAZY, optional = true)
+  @JoinColumn(name = "update_user_id", nullable = true)
+  private Userx updateUser = null;
   @UpdateTimestamp
   private LocalDateTime updateDate;
 

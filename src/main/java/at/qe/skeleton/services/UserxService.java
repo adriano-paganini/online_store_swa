@@ -2,6 +2,7 @@ package at.qe.skeleton.services;
 
 import at.qe.skeleton.dtos.AddressCreateDTO;
 import at.qe.skeleton.dtos.AddressUpdateDTO;
+import at.qe.skeleton.dtos.UserxRegistrationDTO;
 import at.qe.skeleton.dtos.UserxUpdateDTO;
 import at.qe.skeleton.exceptions.UsernameDuplicateException;
 import at.qe.skeleton.model.*;
@@ -257,4 +258,59 @@ public class UserxService implements UserDetailsService {
         Userx user = authenticatedUserService.requireAuthenticatedUser();
         user.getAddresses().removeIf(a -> addressId.equals(a.getId()));
     }
+
+    @Transactional
+    public Userx registerCustomer(UserxRegistrationDTO dto) {
+
+        if (userRepository.existsByUsername(dto.username())) {
+            throw new UsernameDuplicateException(
+                    "Username " + dto.username() + " not available");
+        }
+
+        Userx user = new Userx();
+        user.setUsername(dto.username());
+        user.setPassword(passwordEncoder.encode(dto.password()));
+        user.setFirstName(dto.firstName());
+        user.setLastName(dto.lastName());
+        user.setEmail(dto.email());
+        user.setPhone(dto.phone());
+
+        // enforced defaults
+        user.setRoles(Set.of(UserxRole.CUSTOMER));
+        user.setChannels(Set.of(NotificationType.EMAIL));
+        user.setEnabled(true);
+        user.setDeleted(false);
+
+        return userRepository.save(user);
+    }
+
+    public Userx getCurrentUser() {
+        return authenticatedUserService.requireAuthenticatedUser();
+    }
+
+    @Transactional
+    public Userx updateCurrentUser(UserxUpdateDTO dto) {
+
+        Userx user = authenticatedUserService.requireAuthenticatedUser();
+
+        if (dto.firstName() != null) user.setFirstName(dto.firstName());
+        if (dto.lastName() != null) user.setLastName(dto.lastName());
+        if (dto.email() != null) user.setEmail(dto.email());
+        if (dto.phone() != null) user.setPhone(dto.phone());
+
+        if (dto.password() != null) {
+            user.setPassword(passwordEncoder.encode(dto.password()));
+        }
+
+        /*
+        intentionally ignored:
+        - roles
+        - enabled
+        - deleted
+        - username
+         */
+
+        return userRepository.save(user);
+    }
+
 }
