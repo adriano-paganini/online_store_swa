@@ -27,7 +27,7 @@ public record UserxAdminCreateDTO(
         @NotBlank @Email @Size(max = 100)
         String email,
 
-        @NotBlank @Size(max = 20)
+        @Size(max = 20)
         String phone,
 
         @NotNull

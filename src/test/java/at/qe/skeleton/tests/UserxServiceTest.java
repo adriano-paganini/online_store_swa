@@ -103,16 +103,13 @@ public class UserxServiceTest {
         userService.deleteUser(toBeDeletedUser);
 
         Page<Userx> page = userService.getAllUsers(0,10, null, null);
-        Assertions.assertEquals(3, page.toList().size(),
-                "No user has been deleted after calling UserService.deleteUser");
+        Assertions.assertEquals(4, page.toList().size(),
+                "User has actually been deleted after calling UserService.deleteUser - should only be soft deleted");
         Optional<Userx> deletedUserOpt = userService.loadUser(deleteUserId);
-        Assertions.assertTrue(deletedUserOpt.isEmpty(),
-                "Deleted User with id \"" + deleteUserId + "\" could still be loaded from test data source via UserService.loadUser");
+        Assertions.assertFalse(deletedUserOpt.isEmpty(),
+                "Deleted User with id \"" + deleteUserId + "\" could not be loaded from test data source via UserService.loadUser");
 
-        for (Userx remainingUser : page.toList()) {
-            Assertions.assertNotEquals(toBeDeletedUser.getUsername(), remainingUser.getUsername(),
-                    "Deleted User with id \"" + deleteUserId + "\" could still be loaded from test data source via UserService.getAllUsers");
-        }
+        Assertions.assertTrue(deletedUserOpt.get().isDeleted(), "Deleted User is not soft deleted (field DELETED=FALSE)");
     }
 
     @DirtiesContext
@@ -248,7 +245,7 @@ public class UserxServiceTest {
     }
 
     @Test
-    @WithMockUser(username = "user", authorities = {"EMPLOYEE"})
+    @WithMockUser(username = "user", authorities = {"CUSTOMER"})
     public void testUnauthorizedLoadUsers() {
         Assertions.assertThrows(org.springframework.security.access.AccessDeniedException.class, () -> {
             Page<Userx> page = userService.getAllUsers(0,10, null, null);
@@ -260,7 +257,7 @@ public class UserxServiceTest {
     }
 
     @Test
-    @WithMockUser(username = "user1", authorities = {"EMPLOYEE"})
+    @WithMockUser(username = "user1", authorities = {"CUSTOMER"})
     public void testUnauthorizedLoadUser() {
         Assertions.assertThrows(org.springframework.security.access.AccessDeniedException.class, () -> {
             Optional<Userx> user = userService.loadUser(1000L);
@@ -270,7 +267,7 @@ public class UserxServiceTest {
     }
 
     @Test
-    @WithMockUser(username = "user1", authorities = {"EMPLOYEE"})
+    @WithMockUser(username = "user1", authorities = {"CUSTOMER"})
     public void testUnauthorizedSaveUser() {
         Assertions.assertThrows(org.springframework.security.access.AccessDeniedException.class, () -> {
             Long userId = 2000L;
@@ -285,7 +282,7 @@ public class UserxServiceTest {
     }
 
     @Test
-    @WithMockUser(username = "user1", authorities = {"EMPLOYEE"})
+    @WithMockUser(username = "user1", authorities = {"CUSTOMER"})
     public void testUnauthorizedDeleteUser() {
         Assertions.assertThrows(org.springframework.security.access.AccessDeniedException.class, () -> {
             Long userId = 2000L;
