@@ -2,14 +2,18 @@ package at.qe.skeleton.services;
 
 import at.qe.skeleton.dtos.AddressCreateDTO;
 import at.qe.skeleton.dtos.AddressUpdateDTO;
+import at.qe.skeleton.dtos.UserxRegistrationDTO;
+import at.qe.skeleton.dtos.UserxUpdateDTO;
 import at.qe.skeleton.exceptions.UsernameDuplicateException;
-import at.qe.skeleton.model.Address;
-import at.qe.skeleton.model.Subscription;
-import at.qe.skeleton.model.Userx;
+import at.qe.skeleton.model.*;
+
 import java.util.Collection;
 
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -22,6 +26,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * Service for accessing and manipulating user data.
@@ -51,8 +56,25 @@ public class UserxService implements UserDetailsService {
      * @return the userx collection
      */
     @PreAuthorize("hasAuthority('ADMIN')")
-    public Collection<Userx> getAllUsers() {
-        return userRepository.findAll();
+    public Page<Userx> getAllUsers(
+            int page,
+            int limit,
+            UserxRole role,
+            Boolean deleted
+    ) {
+        Pageable pageable = PageRequest.of(page, limit);
+
+        if (role != null && deleted != null) {
+            return userRepository.findByRolesContainingAndDeleted(role, deleted, pageable);
+        }
+        if (role != null) {
+            return userRepository.findByRolesContaining(role, pageable);
+        }
+        if (deleted != null) {
+            return userRepository.findByDeleted(deleted, pageable);
+        }
+
+        return userRepository.findAll(pageable);
     }
 
     /**
@@ -82,12 +104,50 @@ public class UserxService implements UserDetailsService {
                 throw new UsernameDuplicateException("Username " + user.getUsername() + " not available");
             }
             user.setPassword(passwordEncoder.encode(user.getPassword()));
+            // DEFAULT ROLE
+            if (user.getRoles() == null || user.getRoles().isEmpty()) {
+                user.setRoles(Set.of(UserxRole.CUSTOMER));
+            }
+            // DEFAULT CHANNEL
+            if (user.getChannels() == null || user.getChannels().isEmpty()) {
+                user.setChannels(Set.of(NotificationType.EMAIL));
+            }
             user.setCreateUser(authenticatedUserService.getAuthenticatedUser());
         } else {
             user.setUpdateUser(authenticatedUserService.getAuthenticatedUser());
         }
         return userRepository.save(user);
     }
+
+    /**
+     * Updates the user.
+     *
+     * @param id the id of the user to update
+     * @param dto the updated user data
+     * @return the updated user
+     */
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public Userx updateUser(Long id, UserxUpdateDTO dto) {
+        Userx user = userRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+        if (dto.username() != null) user.setUsername(dto.username());
+        if (dto.firstName() != null) user.setFirstName(dto.firstName());
+        if (dto.lastName() != null) user.setLastName(dto.lastName());
+        if (dto.email() != null) user.setEmail(dto.email());
+        if (dto.phone() != null) user.setPhone(dto.phone());
+
+        if (dto.password() != null) {
+            user.setPassword(passwordEncoder.encode(dto.password()));
+        }
+
+        if (dto.roles() != null) user.setRoles(dto.roles());
+        if (dto.channels() != null) user.setChannels(dto.channels());
+
+        user.setUpdateUser(authenticatedUserService.getAuthenticatedUser());
+        return userRepository.save(user);
+    }
+
 
     /**
      * Deletes the user.
@@ -103,7 +163,10 @@ public class UserxService implements UserDetailsService {
             for (Subscription s : subscriptions) {
                 subscriptionService.deleteSubscription(s.getId());
             }
-            userRepository.delete(userToDelete);
+            // only soft delete users
+            userToDelete.setDeleted(true);
+            userToDelete.setEnabled(false);
+            userRepository.save(userToDelete);
         });
     }
 
@@ -195,4 +258,59 @@ public class UserxService implements UserDetailsService {
         Userx user = authenticatedUserService.requireAuthenticatedUser();
         user.getAddresses().removeIf(a -> addressId.equals(a.getId()));
     }
+
+    @Transactional
+    public Userx registerCustomer(UserxRegistrationDTO dto) {
+
+        if (userRepository.existsByUsername(dto.username())) {
+            throw new UsernameDuplicateException(
+                    "Username " + dto.username() + " not available");
+        }
+
+        Userx user = new Userx();
+        user.setUsername(dto.username());
+        user.setPassword(passwordEncoder.encode(dto.password()));
+        user.setFirstName(dto.firstName());
+        user.setLastName(dto.lastName());
+        user.setEmail(dto.email());
+        user.setPhone(dto.phone());
+
+        // enforced defaults
+        user.setRoles(Set.of(UserxRole.CUSTOMER));
+        user.setChannels(Set.of(NotificationType.EMAIL));
+        user.setEnabled(true);
+        user.setDeleted(false);
+
+        return userRepository.save(user);
+    }
+
+    public Userx getCurrentUser() {
+        return authenticatedUserService.requireAuthenticatedUser();
+    }
+
+    @Transactional
+    public Userx updateCurrentUser(UserxUpdateDTO dto) {
+
+        Userx user = authenticatedUserService.requireAuthenticatedUser();
+
+        if (dto.firstName() != null) user.setFirstName(dto.firstName());
+        if (dto.lastName() != null) user.setLastName(dto.lastName());
+        if (dto.email() != null) user.setEmail(dto.email());
+        if (dto.phone() != null) user.setPhone(dto.phone());
+
+        if (dto.password() != null) {
+            user.setPassword(passwordEncoder.encode(dto.password()));
+        }
+
+        /*
+        intentionally ignored:
+        - roles
+        - enabled
+        - deleted
+        - username
+         */
+
+        return userRepository.save(user);
+    }
+
 }

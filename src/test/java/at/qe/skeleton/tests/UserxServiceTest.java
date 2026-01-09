@@ -1,5 +1,8 @@
 package at.qe.skeleton.tests;
 
+import at.qe.skeleton.dtos.UserxRegistrationDTO;
+import at.qe.skeleton.dtos.UserxUpdateDTO;
+import at.qe.skeleton.model.NotificationType;
 import at.qe.skeleton.model.Userx;
 import at.qe.skeleton.model.UserxRole;
 import at.qe.skeleton.services.UserxService;
@@ -8,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.internal.util.collections.Sets;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.DirtiesContext;
@@ -31,9 +35,10 @@ public class UserxServiceTest {
     @Test
     @WithMockUser(username = "admin", authorities = {"ADMIN"})
     public void testDatainitialization() {
-        Assertions.assertEquals(4, userService.getAllUsers().size(),
+        Page<Userx> page = userService.getAllUsers(0,10, null, null);
+        Assertions.assertEquals(4, page.toList().size(),
                 "Insufficient amount of users initialized for test data source");
-        for (Userx user : userService.getAllUsers()) {
+        for (Userx user : page.getContent()) {
             if ("admin".equals(user.getUsername())) {
                 Assertions.assertTrue(user.getRoles().contains(UserxRole.ADMIN),
                         "User \"" + user + "\" does not have role ADMIN");
@@ -57,8 +62,8 @@ public class UserxServiceTest {
                 Assertions.assertNull(user.getUpdateDate(),
                         "User \"" + user + "\" has a updateDate defined");
             } else if ("user2".equals(user.getUsername())) {
-                Assertions.assertTrue(user.getRoles().contains(UserxRole.EMPLOYEE),
-                        "User \"" + user + "\" does not have role EMPLOYEE");
+                Assertions.assertTrue(user.getRoles().contains(UserxRole.CUSTOMER),
+                        "User \"" + user + "\" does not have role CUSTOMER");
                 Assertions.assertNotNull(user.getCreateUser(),
                         "User \"" + user + "\" does not have a createUser defined");
                 Assertions.assertNotNull(user.getCreateDate(),
@@ -100,16 +105,14 @@ public class UserxServiceTest {
 
         userService.deleteUser(toBeDeletedUser);
 
-        Assertions.assertEquals(3, userService.getAllUsers().size(),
-                "No user has been deleted after calling UserService.deleteUser");
+        Page<Userx> page = userService.getAllUsers(0,10, null, null);
+        Assertions.assertEquals(4, page.toList().size(),
+                "User has actually been deleted after calling UserService.deleteUser - should only be soft deleted");
         Optional<Userx> deletedUserOpt = userService.loadUser(deleteUserId);
-        Assertions.assertTrue(deletedUserOpt.isEmpty(),
-                "Deleted User with id \"" + deleteUserId + "\" could still be loaded from test data source via UserService.loadUser");
+        Assertions.assertFalse(deletedUserOpt.isEmpty(),
+                "Deleted User with id \"" + deleteUserId + "\" could not be loaded from test data source via UserService.loadUser");
 
-        for (Userx remainingUser : userService.getAllUsers()) {
-            Assertions.assertNotEquals(toBeDeletedUser.getUsername(), remainingUser.getUsername(),
-                    "Deleted User with id \"" + deleteUserId + "\" could still be loaded from test data source via UserService.getAllUsers");
-        }
+        Assertions.assertTrue(deletedUserOpt.get().isDeleted(), "Deleted User is not soft deleted (field DELETED=FALSE)");
     }
 
     @DirtiesContext
@@ -157,7 +160,7 @@ public class UserxServiceTest {
                 "Admin user could not be loaded from test data source");
         Userx adminUser = adminUserOpt.get();
 
-        String username = "newuser";
+        String username = "neweruser";
         String password = "passwd";
         String fName = "New";
         String lName = "User";
@@ -171,7 +174,7 @@ public class UserxServiceTest {
         toBeCreatedUser.setLastName(lName);
         toBeCreatedUser.setEmail(email);
         toBeCreatedUser.setPhone(phone);
-        toBeCreatedUser.setRoles(Sets.newSet(UserxRole.EMPLOYEE, UserxRole.MANAGER));
+        toBeCreatedUser.setRoles(Sets.newSet(UserxRole.CUSTOMER, UserxRole.MANAGER));
         Userx savedUser = userService.saveUser(toBeCreatedUser);
 
         Optional<Userx> freshlyCreatedUserOpt = userService.loadUser(savedUser.getId());
@@ -194,8 +197,8 @@ public class UserxServiceTest {
                 "User \"" + username + "\" does not have a the correct phone attribute stored being saved");
         Assertions.assertTrue(freshlyCreatedUser.getRoles().contains(UserxRole.MANAGER),
                 "User \"" + username + "\" does not have role MANAGER");
-        Assertions.assertTrue(freshlyCreatedUser.getRoles().contains(UserxRole.EMPLOYEE),
-                "User \"" + username + "\" does not have role EMPLOYEE");
+        Assertions.assertTrue(freshlyCreatedUser.getRoles().contains(UserxRole.CUSTOMER),
+                "User \"" + username + "\" does not have role CUSTOMER");
         Assertions.assertNotNull(freshlyCreatedUser.getCreateUser(),
                 "User \"" + username + "\" does not have a createUser defined after being saved");
         Assertions.assertEquals(adminUser, freshlyCreatedUser.getCreateUser(),
@@ -236,7 +239,8 @@ public class UserxServiceTest {
         Assertions.assertThrows(
                 org.springframework.security.authentication.AuthenticationCredentialsNotFoundException.class,
                 () -> {
-                    for (Userx user : userService.getAllUsers()) {
+                    Page<Userx> page = userService.getAllUsers(0,10, null, null);
+                    for (Userx user : page.toList()) {
                         Assertions.fail(
                                 "Call to userService.getAllUsers should not work without proper authorization");
                     }
@@ -244,10 +248,11 @@ public class UserxServiceTest {
     }
 
     @Test
-    @WithMockUser(username = "user", authorities = {"EMPLOYEE"})
+    @WithMockUser(username = "user", authorities = {"CUSTOMER"})
     public void testUnauthorizedLoadUsers() {
         Assertions.assertThrows(org.springframework.security.access.AccessDeniedException.class, () -> {
-            for (Userx user : userService.getAllUsers()) {
+            Page<Userx> page = userService.getAllUsers(0,10, null, null);
+            for (Userx user : page.toList()) {
                 Assertions.fail(
                         "Call to userService.getAllUsers should not work without proper authorization");
             }
@@ -255,7 +260,7 @@ public class UserxServiceTest {
     }
 
     @Test
-    @WithMockUser(username = "user1", authorities = {"EMPLOYEE"})
+    @WithMockUser(username = "user1", authorities = {"CUSTOMER"})
     public void testUnauthorizedLoadUser() {
         Assertions.assertThrows(org.springframework.security.access.AccessDeniedException.class, () -> {
             Optional<Userx> user = userService.loadUser(1000L);
@@ -265,7 +270,7 @@ public class UserxServiceTest {
     }
 
     @Test
-    @WithMockUser(username = "user1", authorities = {"EMPLOYEE"})
+    @WithMockUser(username = "user1", authorities = {"CUSTOMER"})
     public void testUnauthorizedSaveUser() {
         Assertions.assertThrows(org.springframework.security.access.AccessDeniedException.class, () -> {
             Long userId = 2000L;
@@ -280,7 +285,7 @@ public class UserxServiceTest {
     }
 
     @Test
-    @WithMockUser(username = "user1", authorities = {"EMPLOYEE"})
+    @WithMockUser(username = "user1", authorities = {"CUSTOMER"})
     public void testUnauthorizedDeleteUser() {
         Assertions.assertThrows(org.springframework.security.access.AccessDeniedException.class, () -> {
             Long userId = 2000L;
@@ -293,4 +298,82 @@ public class UserxServiceTest {
             userService.deleteUser(user);
         });
     }
+
+    @Test
+    void registerCustomerSetsDefaultsAndNoCreator() {
+        UserxRegistrationDTO dto = new UserxRegistrationDTO(
+                "newuser",
+                "StrongPass1",
+                "New",
+                "User",
+                "new@user.at",
+                null
+        );
+
+        Userx user = userService.registerCustomer(dto);
+
+        Assertions.assertNotNull(user.getId());
+        Assertions.assertEquals("newuser", user.getUsername());
+
+        Assertions.assertNotEquals("StrongPass1", user.getPassword(),
+                "Password must not be stored in plain text");
+        Assertions.assertTrue(user.getPassword().startsWith("{bcrypt}"),
+                "Password must be BCrypt-encoded");
+        Assertions.assertTrue(
+                BCrypt.checkpw("StrongPass1", user.getPassword().replace("{bcrypt}", "")),
+                "Encoded password does not match original");
+
+        Assertions.assertTrue(user.getRoles().contains(UserxRole.CUSTOMER));
+        Assertions.assertTrue(user.getChannels().contains(NotificationType.EMAIL));
+        Assertions.assertTrue(user.isEnabled());
+        Assertions.assertFalse(user.isDeleted());
+
+        Assertions.assertNull(user.getCreateUser(),
+                "Self-registered user must not have a createUser");
+    }
+
+    @DirtiesContext
+    @Test
+    @WithMockUser(username = "user2", authorities = {"CUSTOMER"})
+    public void testUpdateCurrentUserSelfService() {
+
+        UserxUpdateDTO dto = new UserxUpdateDTO(
+                null,
+                "NewStrongPass1",
+                "UpdatedFirst",
+                "UpdatedLast",
+                "updated@mail.at",
+                null,
+                Sets.newSet(UserxRole.ADMIN), // must be ignored
+                null
+        );
+
+        Userx updated = userService.updateCurrentUser(dto);
+
+        Assertions.assertEquals("UpdatedFirst", updated.getFirstName());
+        Assertions.assertEquals("UpdatedLast", updated.getLastName());
+        Assertions.assertEquals("updated@mail.at", updated.getEmail());
+
+        Assertions.assertFalse(updated.getRoles().contains(UserxRole.ADMIN),
+                "Self-service update must not allow role escalation");
+
+        Assertions.assertTrue(
+                BCrypt.checkpw("NewStrongPass1",
+                        updated.getPassword().replace("{bcrypt}", "")),
+                "Password was not updated correctly");
+    }
+
+
+    @Test
+    @WithMockUser(username = "user2", authorities = {"CUSTOMER"})
+    public void testUpdateOtherUserForbidden() {
+        Assertions.assertThrows(
+                org.springframework.security.access.AccessDeniedException.class,
+                () -> userService.loadUser(1000L) // admin
+        );
+    }
+
+
+
+
 }
