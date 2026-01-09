@@ -37,8 +37,10 @@ public class UserxMapper implements DTOMapper<Userx, UserxDTO>{
                 user.getLastName(), 
                 user.getEmail(), 
                 user.getPhone(), 
-                user.isEnabled(), 
-                user.getRoles()
+                user.isEnabled(),
+                user.isDeleted(),
+                user.getRoles(),
+                user.getChannels()
         );
         
         return dto;

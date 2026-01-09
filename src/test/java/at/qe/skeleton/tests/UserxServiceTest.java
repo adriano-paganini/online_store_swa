@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.internal.util.collections.Sets;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.DirtiesContext;
@@ -31,9 +32,10 @@ public class UserxServiceTest {
     @Test
     @WithMockUser(username = "admin", authorities = {"ADMIN"})
     public void testDatainitialization() {
-        Assertions.assertEquals(4, userService.getAllUsers().size(),
+        Page<Userx> page = userService.getAllUsers(0,10, null, null);
+        Assertions.assertEquals(4, page.toList().size(),
                 "Insufficient amount of users initialized for test data source");
-        for (Userx user : userService.getAllUsers()) {
+        for (Userx user : page.getContent()) {
             if ("admin".equals(user.getUsername())) {
                 Assertions.assertTrue(user.getRoles().contains(UserxRole.ADMIN),
                         "User \"" + user + "\" does not have role ADMIN");
@@ -57,8 +59,8 @@ public class UserxServiceTest {
                 Assertions.assertNull(user.getUpdateDate(),
                         "User \"" + user + "\" has a updateDate defined");
             } else if ("user2".equals(user.getUsername())) {
-                Assertions.assertTrue(user.getRoles().contains(UserxRole.EMPLOYEE),
-                        "User \"" + user + "\" does not have role EMPLOYEE");
+                Assertions.assertTrue(user.getRoles().contains(UserxRole.CUSTOMER),
+                        "User \"" + user + "\" does not have role CUSTOMER");
                 Assertions.assertNotNull(user.getCreateUser(),
                         "User \"" + user + "\" does not have a createUser defined");
                 Assertions.assertNotNull(user.getCreateDate(),
@@ -100,13 +102,14 @@ public class UserxServiceTest {
 
         userService.deleteUser(toBeDeletedUser);
 
-        Assertions.assertEquals(3, userService.getAllUsers().size(),
+        Page<Userx> page = userService.getAllUsers(0,10, null, null);
+        Assertions.assertEquals(3, page.toList().size(),
                 "No user has been deleted after calling UserService.deleteUser");
         Optional<Userx> deletedUserOpt = userService.loadUser(deleteUserId);
         Assertions.assertTrue(deletedUserOpt.isEmpty(),
                 "Deleted User with id \"" + deleteUserId + "\" could still be loaded from test data source via UserService.loadUser");
 
-        for (Userx remainingUser : userService.getAllUsers()) {
+        for (Userx remainingUser : page.toList()) {
             Assertions.assertNotEquals(toBeDeletedUser.getUsername(), remainingUser.getUsername(),
                     "Deleted User with id \"" + deleteUserId + "\" could still be loaded from test data source via UserService.getAllUsers");
         }
@@ -171,7 +174,7 @@ public class UserxServiceTest {
         toBeCreatedUser.setLastName(lName);
         toBeCreatedUser.setEmail(email);
         toBeCreatedUser.setPhone(phone);
-        toBeCreatedUser.setRoles(Sets.newSet(UserxRole.EMPLOYEE, UserxRole.MANAGER));
+        toBeCreatedUser.setRoles(Sets.newSet(UserxRole.CUSTOMER, UserxRole.MANAGER));
         Userx savedUser = userService.saveUser(toBeCreatedUser);
 
         Optional<Userx> freshlyCreatedUserOpt = userService.loadUser(savedUser.getId());
@@ -194,8 +197,8 @@ public class UserxServiceTest {
                 "User \"" + username + "\" does not have a the correct phone attribute stored being saved");
         Assertions.assertTrue(freshlyCreatedUser.getRoles().contains(UserxRole.MANAGER),
                 "User \"" + username + "\" does not have role MANAGER");
-        Assertions.assertTrue(freshlyCreatedUser.getRoles().contains(UserxRole.EMPLOYEE),
-                "User \"" + username + "\" does not have role EMPLOYEE");
+        Assertions.assertTrue(freshlyCreatedUser.getRoles().contains(UserxRole.CUSTOMER),
+                "User \"" + username + "\" does not have role CUSTOMER");
         Assertions.assertNotNull(freshlyCreatedUser.getCreateUser(),
                 "User \"" + username + "\" does not have a createUser defined after being saved");
         Assertions.assertEquals(adminUser, freshlyCreatedUser.getCreateUser(),
@@ -236,7 +239,8 @@ public class UserxServiceTest {
         Assertions.assertThrows(
                 org.springframework.security.authentication.AuthenticationCredentialsNotFoundException.class,
                 () -> {
-                    for (Userx user : userService.getAllUsers()) {
+                    Page<Userx> page = userService.getAllUsers(0,10, null, null);
+                    for (Userx user : page.toList()) {
                         Assertions.fail(
                                 "Call to userService.getAllUsers should not work without proper authorization");
                     }
@@ -247,7 +251,8 @@ public class UserxServiceTest {
     @WithMockUser(username = "user", authorities = {"EMPLOYEE"})
     public void testUnauthorizedLoadUsers() {
         Assertions.assertThrows(org.springframework.security.access.AccessDeniedException.class, () -> {
-            for (Userx user : userService.getAllUsers()) {
+            Page<Userx> page = userService.getAllUsers(0,10, null, null);
+            for (Userx user : page.toList()) {
                 Assertions.fail(
                         "Call to userService.getAllUsers should not work without proper authorization");
             }

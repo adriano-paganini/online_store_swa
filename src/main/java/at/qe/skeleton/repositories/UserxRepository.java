@@ -2,6 +2,8 @@ package at.qe.skeleton.repositories;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -25,8 +27,12 @@ public interface UserxRepository extends AbstractRepository<Userx, Long> {
     List<Userx> findByWholeNameConcat(@Param("wholeName") String wholeName);
 
     @Query("SELECT u FROM Userx u WHERE :role MEMBER OF u.roles")
-    List<Userx> findByRole(@Param("role") UserxRole role);
+    Page<Userx> findByRolesContaining(@Param("role") UserxRole role,  Pageable pageable);
 
     boolean existsByUsername(String username);
+    Page<Userx> findAll(Pageable pageable);
+    Page<Userx> findByDeleted(boolean deleted, Pageable pageable);
+    Page<Userx> findByRolesContainingAndDeleted(UserxRole role, boolean deleted, Pageable pageable);
+
 
 }

@@ -1,6 +1,6 @@
 package at.qe.skeleton.mappers;
 
-import at.qe.skeleton.dtos.UserxCreateDTO;
+import at.qe.skeleton.dtos.UserxAdminCreateDTO;
 import at.qe.skeleton.model.Userx;
 import org.springframework.stereotype.Service;
 
@@ -10,21 +10,21 @@ import org.springframework.stereotype.Service;
  * course "Software Architecture" offered by Innsbruck University.
  */
 @Service
-public class UserxCreateMapper implements DTOMapper<Userx, UserxCreateDTO> {
+public class UserxAdminCreateMapper implements DTOMapper<Userx, UserxAdminCreateDTO> {
 
     @Override
-    public UserxCreateDTO mapTo(Userx entity) {
+    public UserxAdminCreateDTO mapTo(Userx entity) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public Userx mapFrom(UserxCreateDTO dto) {
+    public Userx mapFrom(UserxAdminCreateDTO dto) {
         Userx user = new Userx();
         user.setUsername(dto.username());
-        user.setPassword(dto.password());
         user.setFirstName(dto.firstName());
         user.setLastName(dto.lastName());
         user.setEmail(dto.email());
+        user.setPassword(dto.password());
         user.setPhone(dto.phone());
         user.setEnabled(dto.enabled());
         user.setRoles(dto.roles());
