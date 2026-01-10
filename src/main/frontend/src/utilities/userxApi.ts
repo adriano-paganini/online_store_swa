@@ -1,3 +1,4 @@
+import { TPageResponseDTO } from '@/DTO/pagination.types';
 import axios from 'axios';
 import { TUserDTO, UserxTypes } from '../DTO/userx.types';
 import { createUserxFromInterfaces } from './userxUtilities';
@@ -21,9 +22,9 @@ const getErrorMessage = (err: unknown): string => {
 /**
  * Fetch all users from the backend
  */
-const fetchAllUsers = async (): Promise<TUserDTO[]> => {
+const fetchAllUsers = async (): Promise<TPageResponseDTO<TUserDTO>> => {
   try {
-    const response = await axios.get<TUserDTO[]>('/api/admin');
+    const response = await axios.get<TPageResponseDTO<TUserDTO>>('/api/admin/users');
     return response.data;
   } catch (err: unknown) {
     throw new Error(`Error fetching users: ${getErrorMessage(err)}`);
@@ -36,7 +37,7 @@ const fetchAllUsers = async (): Promise<TUserDTO[]> => {
 const createUser = async (selectedUser: TUserDTO): Promise<UserxTypes> => {
   try {
     const userxInstance = createUserxFromInterfaces(selectedUser);
-    const response = await axios.post<TUserDTO>('/api/admin', userxInstance.toCreateJSON());
+    const response = await axios.post<TUserDTO>('/api/admin/users', userxInstance.toCreateJSON());
     return UserxTypes.fromJSON(response.data);
   } catch (err: unknown) {
     throw new Error(`Error saving user: ${getErrorMessage(err)}`);
@@ -49,7 +50,7 @@ const createUser = async (selectedUser: TUserDTO): Promise<UserxTypes> => {
 const updateUser = async (selectedUser: TUserDTO): Promise<UserxTypes> => {
   try {
     const userxInstance = createUserxFromInterfaces(selectedUser);
-    const response = await axios.patch<TUserDTO>(`/api/admin/${selectedUser.id}`, userxInstance.toUpdateJSON());
+    const response = await axios.patch<TUserDTO>(`/api/admin/users/${selectedUser.id}`, userxInstance.toUpdateJSON());
     return UserxTypes.fromJSON(response.data);
   } catch (err: unknown) {
     throw new Error(`Error updating user: ${getErrorMessage(err)}`);
@@ -61,7 +62,7 @@ const updateUser = async (selectedUser: TUserDTO): Promise<UserxTypes> => {
  */
 const deleteUser = async (selectedUser: TUserDTO): Promise<void> => {
   try {
-    await axios.delete(`/api/admin/${selectedUser.id}`);
+    await axios.delete(`/api/admin/users/${selectedUser.id}`);
   } catch (err: unknown) {
     throw new Error(`Error deleting user: ${getErrorMessage(err)}`);
   }
