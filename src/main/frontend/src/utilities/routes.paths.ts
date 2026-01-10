@@ -3,6 +3,7 @@ export const ROUTES = {
   PRODUCTS: '/products',
   PRODUCT_DETAIL: '/products/:id',
   SUBSCRIPTIONS: '/subscriptions',
+  NOTIFICATIONS: '/notifications',
   ADMIN_USERS: '/admin/users',
   ADMIN_PRODUCTS: '/admin/products',
   LOGIN: '/login',
@@ -15,8 +16,6 @@ export const ROUTES = {
   // ORDER_DETAIL: '/orders/:id',
   // PROFILE: '/profile',
   // ADDRESSES: '/addresses',
-  // SUBSCRIPTIONS: '/subscriptions',
-  // NOTIFICATIONS: '/notifications',
   // REGISTER: '/register',
 } as const;
 

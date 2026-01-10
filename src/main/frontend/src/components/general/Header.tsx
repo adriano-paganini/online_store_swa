@@ -136,6 +136,15 @@ export function Header() {
             </Button>
           </Link>
 
+          <Link to={ROUTES.NOTIFICATIONS}>
+            <Button
+              variant="ghost"
+              className="w-full justify-start"
+            >
+              My Notifications
+            </Button>
+          </Link>
+
           <Link to={ROUTES.SUBSCRIPTIONS}>
             <Button
               variant="ghost"
@@ -250,6 +259,9 @@ export function Header() {
 
                 <DropdownMenuSeparator />
 
+                <DropdownMenuItem asChild>
+                  <Link to={ROUTES.NOTIFICATIONS}>My Notifications</Link>
+                </DropdownMenuItem>
                 <DropdownMenuItem asChild>
                   <Link to={ROUTES.SUBSCRIPTIONS}>My Product Subscriptions</Link>
                 </DropdownMenuItem>

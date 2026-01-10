@@ -18,6 +18,7 @@ import {
   LogoutsRoute,
   ManageUsersRoute,
   NotFoundRoute,
+  NotificationsPageRoute,
   ProductDetailPageRoute,
   ProductsPageRoute,
   SubscriptionsPageRoute,
@@ -68,6 +69,11 @@ const App: React.FC = () => {
                     Component={SubscriptionsPageRoute.component}
                   />
 
+                  <Route
+                    path={NotificationsPageRoute.url}
+                    Component={NotificationsPageRoute.component}
+                  />
+
                   {/* future */}
                   {/*
                   <Route
@@ -81,10 +87,6 @@ const App: React.FC = () => {
                   <Route
                     path={OrdersPageRoute.url}
                     Component={OrdersPageRoute.component}
-                  />
-                  <Route
-                    path={NotificationsPageRoute.url}
-                    Component={NotificationsPageRoute.component}
                   />
                   */}
                 </Route>

@@ -11,6 +11,10 @@ type TPaginationProps = {
 };
 
 export function Pagination({ page, totalPages, limit, onLimitChange, onPageChange }: TPaginationProps) {
+  if (totalPages === 0) {
+    return null;
+  }
+
   return (
     <div className="mt-8 flex flex-wrap items-center justify-between gap-4">
       <div className="flex items-center gap-2 text-sm">
