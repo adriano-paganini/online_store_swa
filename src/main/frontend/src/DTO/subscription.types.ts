@@ -1,4 +1,6 @@
 import { NotificationType } from './notification.types';
+import { TPaginationParams } from './pagination.types';
+import { TProductDTO } from './product.types';
 
 export enum SubscriptionType {
   NAMEUPDATE = 'NAMEUPDATE',
@@ -25,4 +27,17 @@ export type TSubscriptionCreateDTO = {
 export type TSubscriptionUpdateDTO = {
   types: SubscriptionType[];
   channels: NotificationType[];
+};
+
+export type TPopulatedSubscriptionDTO = {
+  id: number;
+  userId: number;
+  types: SubscriptionType[];
+  channels: NotificationType[];
+  product: TProductDTO;
+};
+
+export type TSubscriptionQueryParams = TPaginationParams & {
+  types?: SubscriptionType[];
+  channels?: NotificationType[];
 };

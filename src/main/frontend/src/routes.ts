@@ -7,6 +7,7 @@ import ManageUsers from './views/ManageUsers';
 import NotFoundPage from './views/NotFoundPage';
 import ProductDetailsPage from './views/ProductDetailsPage';
 import ProductsPage from './views/ProductsPage';
+import SubscriptionsPage from './views/SubscriptionsPage';
 
 export const HomePageRoute = {
   url: ROUTES.HOME,
@@ -21,6 +22,11 @@ export const ProductsPageRoute = {
 export const ProductDetailPageRoute = {
   url: ROUTES.PRODUCT_DETAIL,
   component: ProductDetailsPage,
+};
+
+export const SubscriptionsPageRoute = {
+  url: ROUTES.SUBSCRIPTIONS,
+  component: SubscriptionsPage,
 };
 
 export const AdminProductsPageRoute = {
