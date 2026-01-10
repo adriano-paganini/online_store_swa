@@ -74,15 +74,17 @@ public class WebSecurityConfig {
                     .csrf(AbstractHttpConfigurer::disable).headers(
                             headers -> headers.frameOptions(FrameOptionsConfig::sameOrigin)) // needed for H2 console
                     // backend endpoints we want to handle here
-                    .securityMatcher("/api/**", "/authentication/**", "/cart/**", "/products/**", "/h2-console/**")
+                    // single security filter chain for all endpoints, access control is defined via request matchers below
+                    // resolves problems with axios OPTIONS requests from frontend
+                    .securityMatcher("/**")
                     .authorizeHttpRequests(authorize -> authorize
                             .requestMatchers("/h2-console/**").access(devOnly())
                             .requestMatchers("/authentication/**").permitAll()
                             .requestMatchers(HttpMethod.GET, "/products/*/reviews").permitAll() // GET reviews is public
                             .requestMatchers(HttpMethod.GET, "/products").permitAll() // GET all products is public
                             .requestMatchers(HttpMethod.GET, "/products/*").permitAll() // GET product by ID is public
-                            .requestMatchers("/api/admin/**").hasAnyAuthority("ADMIN")
-                            .requestMatchers("/api/**").authenticated()
+                            .requestMatchers(HttpMethod.POST, "/registration").permitAll() // customer registration is public
+                            .requestMatchers("/admin/**").hasAnyAuthority("ADMIN")
                             .requestMatchers("/cart/**").authenticated()
                             .requestMatchers("/products/**").authenticated() // POST, PUT, DELETE product endpoints require auth
                             .requestMatchers("/admin/**").authenticated()
