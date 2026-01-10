@@ -1,59 +1,43 @@
 'use client';
 
-import { useState } from 'react';
-
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-
-import type { TNotificationResponseDTO } from '@/DTO/notification.types';
-import { NotificationStatus, NotificationType } from '@/DTO/notification.types';
-
-const MESSAGE_PREVIEW_LENGTH = 80;
+import { NotificationStatus, type TNotificationResponseDTO } from '@/DTO/notification.types';
+import { NotificationStatusLabels, NotificationTypeLabels } from '@/utilities/notificationUtils';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip';
 
 type TNotificationRowProps = {
   notification: TNotificationResponseDTO;
 };
 
 export function NotificationRow({ notification }: TNotificationRowProps) {
-  const [expanded, setExpanded] = useState(false);
-
-  const date = new Date(notification.timestamp);
-  const isLong = notification.message.length > MESSAGE_PREVIEW_LENGTH;
-
-  const message =
-    expanded || !isLong ? notification.message : `${notification.message.slice(0, MESSAGE_PREVIEW_LENGTH)}…`;
+  const statusColor =
+    notification.status === NotificationStatus.FAILED
+      ? 'bg-red-500'
+      : notification.status === NotificationStatus.SENT
+        ? 'bg-green-500'
+        : 'bg-yellow-400';
 
   return (
-    <>
-      <div className="grid grid-cols-5 items-center gap-4 border-b px-4 py-3 text-sm">
-        <span className="break-words">{message}</span>
+    <div className="flex items-center gap-4 border-b px-4 py-3 text-sm last:border-0">
+      <div className="flex items-center gap-2">
+        <TooltipProvider delayDuration={200}>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <div
+                className={`h-3 w-3 rounded-full ${statusColor}`}
+                aria-label={`Status: ${notification.status}`}
+              />
+            </TooltipTrigger>
 
-        <Badge variant="secondary">{notification.channel === NotificationType.EMAIL ? 'Email' : 'SMS'}</Badge>
+            <TooltipContent side="top">
+              <span className="text-sm">{NotificationStatusLabels[notification.status]}</span>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
 
-        <Badge
-          variant={
-            notification.status === NotificationStatus.SENT
-              ? 'secondary'
-              : notification.status === NotificationStatus.FAILED
-                ? 'destructive'
-                : 'outline'
-          }
-        >
-          {notification.status}
-        </Badge>
-
-        <span>{date.toLocaleString()}</span>
-
-        {isLong && (
-          <Button
-            size="sm"
-            variant="ghost"
-            onClick={() => setExpanded((v) => !v)}
-          >
-            {expanded ? 'Collapse' : 'Expand'}
-          </Button>
-        )}
+        <div>{NotificationTypeLabels[notification.channel]}</div>
       </div>
-    </>
+
+      <span className="break-words">{notification.message}</span>
+    </div>
   );
 }

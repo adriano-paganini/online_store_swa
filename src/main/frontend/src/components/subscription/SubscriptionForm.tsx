@@ -8,6 +8,8 @@ import { NotificationType } from '@/DTO/notification.types';
 import type { TProductDTO } from '@/DTO/product.types';
 import type { TPopulatedSubscriptionDTO, TSubscriptionCreateDTO } from '@/DTO/subscription.types';
 import { SubscriptionType } from '@/DTO/subscription.types';
+import { NotificationTypeLabels } from '@/utilities/notificationUtils';
+import { SubscriptionTypeLabels } from '@/utilities/subscriptionUtils';
 
 type TSubscriptionFormProps = {
   product: TProductDTO;
@@ -46,7 +48,7 @@ export const SubscriptionForm = ({ product, subscription, onSubmit }: TSubscript
               checked={types.includes(type)}
               onCheckedChange={() => toggle(type, types, setTypes)}
             />
-            <span>{type}</span>
+            <span>{SubscriptionTypeLabels[type]}</span>
           </div>
         ))}
       </div>
@@ -62,7 +64,7 @@ export const SubscriptionForm = ({ product, subscription, onSubmit }: TSubscript
               checked={channels.includes(channel)}
               onCheckedChange={() => toggle(channel, channels, setChannels)}
             />
-            <span>{channel}</span>
+            <span>{NotificationTypeLabels[channel]}</span>
           </div>
         ))}
       </div>

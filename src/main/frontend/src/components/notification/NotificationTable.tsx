@@ -10,7 +10,7 @@ type TNotificationTableProps = {
 };
 
 export function NotificationTable({ notifications, loading }: TNotificationTableProps) {
-  if (loading) {
+  if (loading && notifications.length === 0) {
     return (
       <div className="space-y-2">
         {Array.from({ length: 8 }).map((_, i) => (
@@ -29,14 +29,6 @@ export function NotificationTable({ notifications, loading }: TNotificationTable
 
   return (
     <div className="rounded-lg border">
-      <div className="grid grid-cols-5 gap-4 border-b px-4 py-2 text-sm font-medium">
-        <span>Message</span>
-        <span>Channel</span>
-        <span>Status</span>
-        <span>Date</span>
-        <span />
-      </div>
-
       {notifications.map((notification, index) => (
         <NotificationRow
           key={`${notification.timestamp}-${index}`}
