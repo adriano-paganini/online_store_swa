@@ -136,6 +136,15 @@ export function Header() {
             </Button>
           </Link>
 
+          <Link to={ROUTES.SUBSCRIPTIONS}>
+            <Button
+              variant="ghost"
+              className="w-full justify-start"
+            >
+              My Product Subscriptions
+            </Button>
+          </Link>
+
           {isManager && (
             <Link to={ROUTES.ADMIN_PRODUCTS}>
               <Button
@@ -238,6 +247,13 @@ export function Header() {
 
               <DropdownMenuContent align="end">
                 <div className="px-2 py-1.5 text-sm font-medium">{userName}</div>
+
+                <DropdownMenuSeparator />
+
+                <DropdownMenuItem asChild>
+                  <Link to={ROUTES.SUBSCRIPTIONS}>My Product Subscriptions</Link>
+                </DropdownMenuItem>
+
                 {isManager && (
                   <>
                     <DropdownMenuSeparator />

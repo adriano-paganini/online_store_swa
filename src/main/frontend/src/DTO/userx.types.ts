@@ -9,7 +9,7 @@
 export enum UserxRole {
   ADMIN = 'ADMIN',
   MANAGER = 'MANAGER',
-  EMPLOYEE = 'EMPLOYEE',
+  CUSTOMER = 'CUSTOMER',
 }
 
 /**

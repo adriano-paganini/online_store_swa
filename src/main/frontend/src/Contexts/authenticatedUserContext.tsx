@@ -26,7 +26,7 @@ type TUserContextType = {
   error: Error | null;
   isAdmin: boolean;
   isManager: boolean;
-  isEmployee: boolean;
+  isCustomer: boolean;
   userIsAuthenticated: () => Promise<boolean>;
 };
 
@@ -157,7 +157,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
   const roles = currentUser?.roles ?? [];
   const isAdmin = roles.includes(UserxRole.ADMIN);
   const isManager = roles.includes(UserxRole.MANAGER) || isAdmin;
-  const isEmployee = roles.includes(UserxRole.EMPLOYEE) || isManager;
+  const isCustomer = roles.includes(UserxRole.CUSTOMER) || isManager;
 
   return (
     <UserContext.Provider
@@ -168,7 +168,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
         error,
         isAdmin,
         isManager,
-        isEmployee,
+        isCustomer,
         userIsAuthenticated,
       }}
     >

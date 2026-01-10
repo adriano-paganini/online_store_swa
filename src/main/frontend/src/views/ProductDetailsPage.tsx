@@ -13,6 +13,7 @@ import { ProductApi } from '@/utilities/productApi';
 import { toast } from 'sonner';
 
 import { ReviewsList } from '@/components/review/ReviewsList';
+import { SubscriptionBlock } from '@/components/subscription/SubscriptionBlock';
 import type { TProductDTO } from '../DTO/product.types';
 
 export default function ProductDetailsPage() {
@@ -137,6 +138,8 @@ export default function ProductDetailsPage() {
               {product.stock === 0 ? 'Out of stock' : 'Add to cart'}
             </Button>
           </div>
+
+          <SubscriptionBlock product={product} />
         </div>
       </div>
 

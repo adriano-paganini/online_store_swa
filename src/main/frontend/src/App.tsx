@@ -20,6 +20,7 @@ import {
   NotFoundRoute,
   ProductDetailPageRoute,
   ProductsPageRoute,
+  SubscriptionsPageRoute,
 } from './routes';
 
 const App: React.FC = () => {
@@ -60,6 +61,11 @@ const App: React.FC = () => {
                   <Route
                     path={LogoutsRoute.url}
                     Component={LogoutsRoute.component}
+                  />
+
+                  <Route
+                    path={SubscriptionsPageRoute.url}
+                    Component={SubscriptionsPageRoute.component}
                   />
 
                   {/* future */}
