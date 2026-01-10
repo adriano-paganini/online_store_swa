@@ -31,7 +31,7 @@ public class UserxControllerTest {
     @WithMockUser(username = "user2", authorities = {"CUSTOMER"})
     public void testGetMe() throws Exception {
 
-        mockMvc.perform(get("/api/users/me"))
+        mockMvc.perform(get("/users/me"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.username").value("user2"))
                 .andExpect(jsonPath("$.roles").value("CUSTOMER"))
@@ -53,7 +53,7 @@ public class UserxControllerTest {
                 null
         );
 
-        mockMvc.perform(patch("/api/users/me")
+        mockMvc.perform(patch("/users/me")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isOk())
@@ -64,7 +64,7 @@ public class UserxControllerTest {
     @Test
     public void testGetMeUnauthenticated() throws Exception {
 
-        mockMvc.perform(get("/api/users/me"))
+        mockMvc.perform(get("/users/me"))
                 .andExpect(status().isUnauthorized());
     }
 }

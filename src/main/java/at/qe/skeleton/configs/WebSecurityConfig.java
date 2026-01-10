@@ -85,6 +85,9 @@ public class WebSecurityConfig {
                             .requestMatchers("/api/**").authenticated()
                             .requestMatchers("/cart/**").authenticated()
                             .requestMatchers("/products/**").authenticated() // POST, PUT, DELETE product endpoints require auth
+                            .requestMatchers("/admin/**").authenticated()
+                            .requestMatchers("/users/**").authenticated()
+                            .requestMatchers("/addresses/**").authenticated()
                             .anyRequest().authenticated()
                     )
                     // Add the token authentication filter before the UsernamePasswordAuthenticationFilter

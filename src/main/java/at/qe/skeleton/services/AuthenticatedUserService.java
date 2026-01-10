@@ -32,6 +32,9 @@ public class AuthenticatedUserService {
      */
     public Userx getAuthenticatedUser() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null || !auth.isAuthenticated() || "anonymousUser".equals(auth.getPrincipal())) {
+            return null;
+        }
         return userRepository.findFirstByUsername(auth.getName()).orElse(null);
     }
 

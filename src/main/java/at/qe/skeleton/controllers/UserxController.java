@@ -4,6 +4,7 @@ import at.qe.skeleton.dtos.UserxMeDTO;
 import at.qe.skeleton.dtos.UserxUpdateDTO;
 import at.qe.skeleton.mappers.UserxMapper;
 import at.qe.skeleton.model.Userx;
+import at.qe.skeleton.services.AuthenticatedUserService;
 import at.qe.skeleton.services.UserxService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,22 +20,24 @@ import org.springframework.web.bind.annotation.*;
  * course "Software Architecture" offered by Innsbruck University.
  */
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping("/users")
 public class UserxController {
  
     private final UserxMapper userxMapper;
     private final UserxService userxService;
+    private final AuthenticatedUserService authenticatedUserService;
 
     @Autowired
-    public UserxController(UserxMapper userMapper, UserxService userService) {
+    public UserxController(UserxMapper userMapper, UserxService userService, AuthenticatedUserService authenticatedUserService) {
         this.userxMapper = userMapper;
         this.userxService = userService;
+        this.authenticatedUserService = authenticatedUserService;
     }
 
 
     @GetMapping("/me")
     public ResponseEntity<UserxMeDTO> getMe() {
-        Userx user = userxService.getCurrentUser();
+        Userx user = authenticatedUserService.requireAuthenticatedUser();
         return ResponseEntity.ok(userxMapper.mapToMe(user));
     }
 

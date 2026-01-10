@@ -27,7 +27,7 @@ import org.springframework.web.server.ResponseStatusException;
  * course "Software Architecture" offered by Innsbruck University.
  */
 @RestController
-@RequestMapping("/api/admin/users")
+@RequestMapping("/admin/users")
 public class AdminController {
     private final UserxAdminCreateMapper userCreateMapper;
     private final UserxMapper userMapper;
