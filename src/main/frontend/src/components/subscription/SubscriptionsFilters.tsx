@@ -28,8 +28,33 @@ export function SubscriptionFilters({
   setSort,
   onApplyFilters,
 }: TSubscriptionFiltersProps) {
-  const toggle = <T,>(value: T, list: T[], set: (v: T[]) => void) => {
-    set(list.includes(value) ? list.filter((v) => v !== value) : [...list, value]);
+  const allTypesSelected = types.length === 0;
+  const allChannelsSelected = channels.length === 0;
+
+  const toggleType = (type: SubscriptionType) => {
+    if (types.includes(type)) {
+      const next = types.filter((t) => t !== type);
+      setTypes(next.length === 0 ? [] : next);
+    } else {
+      setTypes([...types, type]);
+    }
+  };
+
+  const toggleAllTypes = () => {
+    setTypes([]);
+  };
+
+  const toggleChannel = (channel: NotificationType) => {
+    if (channels.includes(channel)) {
+      const next = channels.filter((c) => c !== channel);
+      setChannels(next.length === 0 ? [] : next);
+    } else {
+      setChannels([...channels, channel]);
+    }
+  };
+
+  const toggleAllChannels = () => {
+    setChannels([]);
   };
 
   return (
@@ -37,15 +62,24 @@ export function SubscriptionFilters({
       <div className="space-y-4 rounded-lg border p-4">
         <div>
           <Label className="mb-2 block">Subscription Types</Label>
+
           <div className="space-y-2">
+            <div className="flex items-center gap-2">
+              <Checkbox
+                checked={allTypesSelected}
+                onCheckedChange={toggleAllTypes}
+              />
+              <span className="text-sm font-medium">All</span>
+            </div>
+
             {Object.values(SubscriptionType).map((type) => (
               <div
                 key={type}
                 className="flex items-center gap-2"
               >
                 <Checkbox
-                  checked={types.includes(type)}
-                  onCheckedChange={() => toggle(type, types, setTypes)}
+                  checked={!allTypesSelected && types.includes(type)}
+                  onCheckedChange={() => toggleType(type)}
                 />
                 <span className="text-sm">{SubscriptionTypeLabels[type]}</span>
               </div>
@@ -55,15 +89,25 @@ export function SubscriptionFilters({
 
         <div>
           <Label className="mb-2 block">Channels</Label>
+
           <div className="space-y-2">
+            {/* All */}
+            <div className="flex items-center gap-2">
+              <Checkbox
+                checked={allChannelsSelected}
+                onCheckedChange={toggleAllChannels}
+              />
+              <span className="text-sm font-medium">All</span>
+            </div>
+
             {Object.values(NotificationType).map((channel) => (
               <div
                 key={channel}
                 className="flex items-center gap-2"
               >
                 <Checkbox
-                  checked={channels.includes(channel)}
-                  onCheckedChange={() => toggle(channel, channels, setChannels)}
+                  checked={!allChannelsSelected && channels.includes(channel)}
+                  onCheckedChange={() => toggleChannel(channel)}
                 />
                 <span className="text-sm">{NotificationTypeLabels[channel]}</span>
               </div>

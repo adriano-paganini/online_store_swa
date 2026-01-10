@@ -65,27 +65,25 @@ export default function SubscriptionsPage() {
   }, [limit]);
 
   return (
-    <>
-      <h1 className="mb-8 text-3xl font-bold">My Subscriptions</h1>
+    <div className="flex flex-col gap-8 lg:flex-row">
+      <SubscriptionFilters
+        types={draftTypes}
+        setTypes={setDraftTypes}
+        channels={draftChannels}
+        setChannels={setDraftChannels}
+        sort={draftSort}
+        setSort={setDraftSort}
+        onApplyFilters={handleApplyFilters}
+      />
 
-      <div className="flex flex-col gap-8 lg:flex-row">
-        <SubscriptionFilters
-          types={draftTypes}
-          setTypes={setDraftTypes}
-          channels={draftChannels}
-          setChannels={setDraftChannels}
-          sort={draftSort}
-          setSort={setDraftSort}
-          onApplyFilters={handleApplyFilters}
+      <div className="flex-1">
+        <SubscriptionTable
+          subscriptions={subscriptions}
+          loading={loading}
+          onChanged={() => void loadSubscriptions()}
         />
 
-        <div className="flex-1">
-          <SubscriptionTable
-            subscriptions={subscriptions}
-            loading={loading}
-            onChanged={() => void loadSubscriptions()}
-          />
-
+        {subscriptions.length > 0 && !loading && (
           <Pagination
             page={page}
             limit={limit}
@@ -93,8 +91,8 @@ export default function SubscriptionsPage() {
             totalPages={totalPages}
             onPageChange={setPage}
           />
-        </div>
+        )}
       </div>
-    </>
+    </div>
   );
 }
