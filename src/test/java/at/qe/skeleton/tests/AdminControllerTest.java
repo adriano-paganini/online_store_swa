@@ -115,7 +115,7 @@ public class AdminControllerTest {
                 id, null, null, null, null, "testUser", "First", "Last", null, null, false, false,null, null));
 
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/admin/users"))
+        mockMvc.perform(MockMvcRequestBuilders.get("/admin/users"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data[0].id").value(id))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data[0].username").value(username));
@@ -134,7 +134,7 @@ public class AdminControllerTest {
         Mockito.when(userService.loadUser(id)).thenReturn(Optional.of(user1));
         Mockito.when(userMapper.mapTo(user1)).thenReturn(new UserxDTO(id, null, null, null, null, username, "First", "Last", null, null, false, false, null, null));
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/admin/users/{id}", id))
+        mockMvc.perform(MockMvcRequestBuilders.get("/admin/users/{id}", id))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(1L))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.username").value(username));
@@ -145,7 +145,7 @@ public class AdminControllerTest {
     void getUserUserDoesNotExist() throws Exception {
         Mockito.when(userService.loadUser(1L)).thenReturn(Optional.empty());
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/admin/users/1"))
+        mockMvc.perform(MockMvcRequestBuilders.get("/admin/users/1"))
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
     }
 
@@ -173,7 +173,7 @@ public class AdminControllerTest {
         Mockito.when(userService.saveUser(user)).thenReturn(user);
         Mockito.when(userMapper.mapTo(user)).thenReturn(new UserxDTO(id, null, null, null, null, username, firstName, lastName, email, "", isEnabled, false, roles, null));
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/admin/users")
+        mockMvc.perform(MockMvcRequestBuilders.post("/admin/users")
                         .with(SecurityMockMvcRequestPostProcessors.csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsString(newUser)))
@@ -193,7 +193,7 @@ public class AdminControllerTest {
 
         Mockito.when(userService.loadUser(1L)).thenReturn(Optional.of(user));
 
-        mockMvc.perform(MockMvcRequestBuilders.delete("/api/admin/users/{id}", id)
+        mockMvc.perform(MockMvcRequestBuilders.delete("/admin/users/{id}", id)
                         .with(SecurityMockMvcRequestPostProcessors.csrf()))
                 .andExpect(MockMvcResultMatchers.status().isNoContent());
     }
@@ -204,7 +204,7 @@ public class AdminControllerTest {
         Long id = 1L;
         Mockito.when(userService.loadUser(id)).thenReturn(Optional.empty());
 
-        mockMvc.perform(MockMvcRequestBuilders.delete("/api/admin/users/{id}", id)
+        mockMvc.perform(MockMvcRequestBuilders.delete("/admin/users/{id}", id)
                         .with(SecurityMockMvcRequestPostProcessors.csrf()))
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
     }
