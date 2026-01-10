@@ -24,7 +24,7 @@ const getErrorMessage = (err: unknown): string => {
  */
 const fetchAllUsers = async (): Promise<TPageResponseDTO<TUserDTO>> => {
   try {
-    const response = await axios.get<TPageResponseDTO<TUserDTO>>('/api/admin/users');
+    const response = await axios.get<TPageResponseDTO<TUserDTO>>('/admin/users');
     return response.data;
   } catch (err: unknown) {
     throw new Error(`Error fetching users: ${getErrorMessage(err)}`);
@@ -37,7 +37,7 @@ const fetchAllUsers = async (): Promise<TPageResponseDTO<TUserDTO>> => {
 const createUser = async (selectedUser: TUserDTO): Promise<UserxTypes> => {
   try {
     const userxInstance = createUserxFromInterfaces(selectedUser);
-    const response = await axios.post<TUserDTO>('/api/admin/users', userxInstance.toCreateJSON());
+    const response = await axios.post<TUserDTO>('/admin/users', userxInstance.toCreateJSON());
     return UserxTypes.fromJSON(response.data);
   } catch (err: unknown) {
     throw new Error(`Error saving user: ${getErrorMessage(err)}`);
@@ -50,7 +50,7 @@ const createUser = async (selectedUser: TUserDTO): Promise<UserxTypes> => {
 const updateUser = async (selectedUser: TUserDTO): Promise<UserxTypes> => {
   try {
     const userxInstance = createUserxFromInterfaces(selectedUser);
-    const response = await axios.patch<TUserDTO>(`/api/admin/users/${selectedUser.id}`, userxInstance.toUpdateJSON());
+    const response = await axios.patch<TUserDTO>(`/admin/users/${selectedUser.id}`, userxInstance.toUpdateJSON());
     return UserxTypes.fromJSON(response.data);
   } catch (err: unknown) {
     throw new Error(`Error updating user: ${getErrorMessage(err)}`);
@@ -62,7 +62,7 @@ const updateUser = async (selectedUser: TUserDTO): Promise<UserxTypes> => {
  */
 const deleteUser = async (selectedUser: TUserDTO): Promise<void> => {
   try {
-    await axios.delete(`/api/admin/users/${selectedUser.id}`);
+    await axios.delete(`/admin/users/${selectedUser.id}`);
   } catch (err: unknown) {
     throw new Error(`Error deleting user: ${getErrorMessage(err)}`);
   }
@@ -73,7 +73,7 @@ const deleteUser = async (selectedUser: TUserDTO): Promise<void> => {
  */
 const getCurrentUser = async (): Promise<UserxTypes> => {
   try {
-    const response = await axios.get<TUserDTO>('/api/users/me');
+    const response = await axios.get<TUserDTO>('/users/me');
     return UserxTypes.fromJSON(response.data);
   } catch (err: unknown) {
     throw new Error(`Error determining current user: ${getErrorMessage(err)}`);
@@ -85,7 +85,7 @@ const getCurrentUser = async (): Promise<UserxTypes> => {
  */
 const isAuthenticated = async (): Promise<boolean> => {
   try {
-    const response = await axios.get('/api/users/authenticated');
+    const response = await axios.get('/users/authenticated');
     return response.status >= 200 && response.status < 300;
   } catch {
     return false;
