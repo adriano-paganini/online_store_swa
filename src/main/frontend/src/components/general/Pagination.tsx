@@ -11,7 +11,7 @@ type TPaginationProps = {
 };
 
 export function Pagination({ page, totalPages, limit, onLimitChange, onPageChange }: TPaginationProps) {
-  if (totalPages === 0) {
+  if (!totalPages || totalPages === 0) {
     return null;
   }
 

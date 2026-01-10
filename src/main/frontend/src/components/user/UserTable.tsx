@@ -46,7 +46,6 @@ const UserTable = () => {
     const fetchUsers = async () => {
       try {
         const userxData = await UserxApi.fetchAllUsers();
-        console.log('Fetched users:', userxData);
         const userxInstances = userxData.data.map((user: TUserDTO) => createUserxFromInterfaces(user));
         setUsers(userxInstances);
       } catch (err: unknown) {

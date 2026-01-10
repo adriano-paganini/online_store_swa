@@ -14,7 +14,7 @@ import type {
 import { ProductApi } from './productApi';
 
 const populateSubscriptions = async (subscriptions: TSubscriptionDTO[]): Promise<TPopulatedSubscriptionDTO[]> => {
-  if (subscriptions.length === 0) return [];
+  if (!subscriptions || subscriptions.length === 0) return [];
 
   const uniqueProductIds = [...new Set(subscriptions.map((s) => s.productId))];
 
