@@ -5,6 +5,7 @@ import Login from './views/Login';
 import Logout from './views/Logout';
 import ManageUsers from './views/ManageUsers';
 import NotFoundPage from './views/NotFoundPage';
+import NotificationsPage from './views/NotificationsPage';
 import ProductDetailsPage from './views/ProductDetailsPage';
 import ProductsPage from './views/ProductsPage';
 import SubscriptionsPage from './views/SubscriptionsPage';
@@ -27,6 +28,11 @@ export const ProductDetailPageRoute = {
 export const SubscriptionsPageRoute = {
   url: ROUTES.SUBSCRIPTIONS,
   component: SubscriptionsPage,
+};
+
+export const NotificationsPageRoute = {
+  url: ROUTES.NOTIFICATIONS,
+  component: NotificationsPage,
 };
 
 export const AdminProductsPageRoute = {

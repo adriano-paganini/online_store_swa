@@ -83,15 +83,13 @@ export default function SubscriptionsPage() {
           onChanged={() => void loadSubscriptions()}
         />
 
-        {subscriptions.length > 0 && !loading && (
-          <Pagination
-            page={page}
-            limit={limit}
-            onLimitChange={setLimit}
-            totalPages={totalPages}
-            onPageChange={setPage}
-          />
-        )}
+        <Pagination
+          page={page}
+          limit={limit}
+          onLimitChange={setLimit}
+          totalPages={totalPages}
+          onPageChange={setPage}
+        />
       </div>
     </div>
   );
