@@ -34,5 +34,4 @@ public interface UserxRepository extends AbstractRepository<Userx, Long> {
     Page<Userx> findByDeleted(boolean deleted, Pageable pageable);
     Page<Userx> findByRolesContainingAndDeleted(UserxRole role, boolean deleted, Pageable pageable);
 
-
 }

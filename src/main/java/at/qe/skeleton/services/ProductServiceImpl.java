@@ -121,32 +121,44 @@ public class ProductServiceImpl implements ProductService {
                         HttpStatus.NOT_FOUND, "Product not found"));
         //TODO:ADD MORE EVENT TYPES
         if (updateDTO.name() != null) {
-            applicationEventPublisher.publishEvent(new ProductNameUpdateEvent(
-                    product, product.getName(), updateDTO.name()));
+            if (!product.getName().equals(updateDTO.name())){
+                applicationEventPublisher.publishEvent(new ProductNameUpdateEvent(
+                        product, product.getName(), updateDTO.name()));
+            }
             product.setName(updateDTO.name());
         }
         if (updateDTO.description() != null) {
-            applicationEventPublisher.publishEvent(new ProductDescriptionUpdateEvent(
-                    product, product.getDescription(), updateDTO.description()));
+            if (!product.getDescription().equals(updateDTO.description())){
+                applicationEventPublisher.publishEvent(new ProductDescriptionUpdateEvent(
+                        product, product.getDescription(), updateDTO.description()));
+            }
             product.setDescription(updateDTO.description());
         }
         if (updateDTO.price() != null) {
-            applicationEventPublisher.publishEvent(new ProductPriceUpdateEvent(
-                    product, product.getPrice(), updateDTO.price()));
+
+            if(!product.getPrice().equals(updateDTO.price())){
+                applicationEventPublisher.publishEvent(new ProductPriceUpdateEvent(
+                        product, product.getPrice(), updateDTO.price()));
+            }
             product.setPrice(updateDTO.price());
         }
         if (updateDTO.stock() != null) {
-            Integer oldValue = product.getStock();
-            Integer newValue = updateDTO.stock();
-            if (oldValue < newValue) {
-                applicationEventPublisher.publishEvent(new ProductRestockEvent(product, oldValue, newValue));
+            if (product.getStock() < updateDTO.stock()) {
+                applicationEventPublisher.publishEvent(new ProductRestockEvent(product,
+                        product.getStock(), updateDTO.stock()));
             }
             product.setStock(updateDTO.stock());
         }
         if (updateDTO.discount() != null) {
-            applicationEventPublisher.publishEvent(new ProductDiscountUpdateEvent(
-                    product, product.getDiscount(), updateDTO.discount()));
-            product.setDiscount(updateDTO.discount());
+            Double oldDiscount = product.getDiscount();
+            Double newDiscount = updateDTO.discount();
+
+            if (!newDiscount.equals(oldDiscount) && newDiscount > 0) {
+                applicationEventPublisher.publishEvent(new ProductDiscountUpdateEvent(
+                        product, oldDiscount, newDiscount));
+            }
+
+            product.setDiscount(newDiscount);
         }
 
         Userx currentUser = authenticatedUserService.getAuthenticatedUser();

@@ -25,7 +25,10 @@ public class EmailNotificationService {
         Subscription subscription = event.getSubscription();
         Notification notification = event.getNotification();
         Userx user = subscription.getUser();
-
+        if (user.getEmail() == null || user.getEmail().isBlank()) {
+            notificationService.updateNotificationStatus(NotificationStatus.FAILED,notification);
+            return;
+        }
         String sender = "software.architektur@gmx.at";
         String password = "software.architektur@gmx.at";
 
@@ -37,7 +40,6 @@ public class EmailNotificationService {
         properties.put("mail.smtp.user", sender);
         properties.put("mail.smtp.password", password);
         properties.put("mail.smtp.starttls.enable", "true");
-
         try {
             Session mailSession = Session.getInstance(properties, new Authenticator() {
                 @Override

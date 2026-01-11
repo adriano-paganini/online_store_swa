@@ -13,7 +13,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Objects;
 import java.util.Optional;
+
+import static at.qe.skeleton.Helpers.SortHelper.parseSort;
 
 @Service
 public class ReviewService {
@@ -41,7 +44,9 @@ public class ReviewService {
             String sort) {
 
 
-        Sort sortObj = parseSort(sort);
+        Sort sortObj = parseSort(sort,
+                field -> Objects.equals("score", field),
+                "timestamp");
 
         Pageable pageable = PageRequest.of(page, limit, sortObj);
 
@@ -94,34 +99,5 @@ public class ReviewService {
         }
     }
 
- 
-    private Sort parseSort(String sortString) {
-        if (sortString == null || sortString.isEmpty()) {
-            return Sort.by(Sort.Direction.DESC, "timestamp");
-        }
-
-        String[] parts = sortString.split(",");
-        if (parts.length != 2) {
-            return Sort.by(Sort.Direction.DESC, "timestamp");
-        }
-
-        String field = parts[0].trim();
-        String direction = parts[1].trim().toLowerCase();
-
-        Sort.Direction sortDirection = "asc".equals(direction) 
-            ? Sort.Direction.ASC 
-            : Sort.Direction.DESC;
-
-        if (!isValidSortField(field)) {
-            field = "timestamp";
-        }
-
-        return Sort.by(sortDirection, field);
-    }
-
-
-    private boolean isValidSortField(String field) {
-        return "timestamp".equals(field) || "score".equals(field);
-    }
 }
 
