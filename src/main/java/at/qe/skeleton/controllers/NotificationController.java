@@ -8,7 +8,6 @@ import at.qe.skeleton.services.NotificationService;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -28,7 +27,6 @@ public class NotificationController {
     }
 
     @GetMapping("")
-    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<PageResponseDTO<NotificationResponseDTO>> getUserNotifications(
             @AuthenticationPrincipal Userx user,
             @RequestParam(defaultValue = "0") int page,

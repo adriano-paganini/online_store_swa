@@ -1,19 +1,18 @@
 package at.qe.skeleton.controllers;
 
-import at.qe.skeleton.dtos.SubscriptionCreateDTO;
-import at.qe.skeleton.dtos.SubscriptionDTO;
-import at.qe.skeleton.dtos.SubscriptionUpdateDTO;
+import at.qe.skeleton.dtos.*;
 import at.qe.skeleton.mappers.SubscriptionMapper;
-import at.qe.skeleton.model.Userx;
+import at.qe.skeleton.model.*;
 import at.qe.skeleton.services.SubscriptionService;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
-import java.util.Arrays;
+import java.util.List;
 
 @RestController
 @RequestMapping("/subscriptions")
@@ -29,28 +28,47 @@ public class SubscriptionController {
     }
 
     @GetMapping("")
-    @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<SubscriptionDTO[]> getUserSubscriptions(
-            @AuthenticationPrincipal Userx user) {
-        SubscriptionDTO[] dtos = Arrays.stream(subscriptionService.loadUserSubscriptions(user))
-                .map(subscriptionMapper::mapTo)
-                .toArray(SubscriptionDTO[]::new);
+    public ResponseEntity<PageResponseDTO<SubscriptionDTO>> getUserSubscriptions(
+            @AuthenticationPrincipal Userx user,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "6") int limit,
+            @RequestParam(required = false, defaultValue = "productId,desc") String sort,
+            @RequestParam(required = false) SubscriptionType[] types,
+            @RequestParam(required = false) NotificationType[] channels
+    ) {
+        try {
 
-        return ResponseEntity.ok(dtos);
+            Page<Subscription> subscriptionPage = subscriptionService.getUserSubscriptions(
+                    user, page, limit, types, channels, sort);
+
+            List<SubscriptionDTO> subscriptionDTOS = subscriptionPage.getContent().stream()
+                    .map(subscriptionMapper::mapTo)
+                    .toList();
+
+            PageResponseDTO<SubscriptionDTO> response = new PageResponseDTO<>(
+                    subscriptionDTOS,
+                    page,
+                    limit,
+                    subscriptionPage.getTotalElements(),
+                    subscriptionPage.getTotalPages()
+            );
+
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error fetching notifications: " + e.getMessage());
+        }
     }
 
     @PostMapping("")
-    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<SubscriptionDTO> createSubscription(
-            @AuthenticationPrincipal Userx user, // Use your custom User entity directly if possible
+            @AuthenticationPrincipal Userx user,
             @Valid @RequestBody SubscriptionCreateDTO createDTO) {
 
         SubscriptionDTO response = subscriptionMapper.mapTo(subscriptionService.createSubscription(user, createDTO));
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    @PutMapping("/{id}")
-    @PreAuthorize("isAuthenticated()")
+    @PatchMapping("/{id}")
     public ResponseEntity<SubscriptionDTO> updateSubscription(
             @PathVariable Long id,
             @Valid @RequestBody SubscriptionUpdateDTO updateDTO
@@ -60,7 +78,6 @@ public class SubscriptionController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Void> deleteSubscription(@PathVariable Long id) {
         subscriptionService.deleteSubscription(id);
         return ResponseEntity.noContent().build();

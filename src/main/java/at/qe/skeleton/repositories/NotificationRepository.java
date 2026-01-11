@@ -22,4 +22,5 @@ public interface NotificationRepository extends AbstractRepository<Notification,
     );
 
 
+    Notification getNotificationById(Long id);
 }

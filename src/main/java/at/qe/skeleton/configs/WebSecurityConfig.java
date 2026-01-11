@@ -90,6 +90,7 @@ public class WebSecurityConfig {
                             .requestMatchers("/admin/**").authenticated()
                             .requestMatchers("/users/**").authenticated()
                             .requestMatchers("/addresses/**").authenticated()
+                            .requestMatchers("/subscriptions/**").authenticated()
                             .anyRequest().authenticated()
                     )
                     // Add the token authentication filter before the UsernamePasswordAuthenticationFilter

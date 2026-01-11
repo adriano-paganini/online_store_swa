@@ -13,6 +13,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
+import static at.qe.skeleton.Helpers.SortHelper.parseSort;
+
 @Service
 public class NotificationService {
 
@@ -20,6 +24,10 @@ public class NotificationService {
 
     public NotificationService(NotificationRepository notificationRepository) {
         this.notificationRepository = notificationRepository;
+    }
+
+    public Notification getNotificationById(Long id){
+        return notificationRepository.getNotificationById(id);
     }
 
     @Transactional
@@ -39,34 +47,12 @@ public class NotificationService {
     public Page<Notification> getUserNotifications(
             Userx user, int page, int limit, NotificationStatus status, NotificationType channel, String sort) {
 
-        Sort sortObj = parseSort(sort);
+        Sort sortObj = parseSort(sort,
+                field -> List.of("channel","status").contains(field),
+                "timestamp");
 
         Pageable pageable = PageRequest.of(page, limit, sortObj);
 
         return notificationRepository.findByUserWithFilter(user.getId(), status, channel, pageable);
-    }
-
-    private Sort parseSort(String sortString) {
-        String[] parts = sortString.split(",");
-        if (parts.length != 2) {
-            return Sort.by(Sort.Direction.DESC, "timestamp");
-        }
-
-        String field = parts[0].trim();
-        String direction = parts[1].trim().toLowerCase();
-
-        Sort.Direction sortDirection = "asc".equals(direction)
-                ? Sort.Direction.ASC
-                : Sort.Direction.DESC;
-
-        if (!isValidSortField(field)) {
-            field = "timestamp";
-        }
-
-        return Sort.by(sortDirection, field);
-    }
-
-    private boolean isValidSortField(String field) {
-        return "timestamp".equals(field) || "channel".equals(field) || "status".equals(field);
     }
 }

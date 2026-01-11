@@ -12,11 +12,14 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
@@ -51,7 +54,7 @@ public class SubscriptionServiceTest {
     }
 
     @Test
-    void testCreateSubscription_LogicAndPersistence() {
+    void testCreateSubscriptionLogicAndPersistence() {
         SubscriptionCreateDTO createDTO = new SubscriptionCreateDTO(
                 10L,
                 Set.of(SubscriptionType.RESTOCK),
@@ -110,5 +113,73 @@ public class SubscriptionServiceTest {
 
         Assertions.assertEquals(1, results.length);
         Assertions.assertEquals(testSubscription, results[0]);
+    }
+    @Test
+    void testGetUserSubscriptionsPaginationAndFiltering() {
+        int page = 0;
+        int limit = 10;
+        SubscriptionType[] types = {SubscriptionType.PRICEUPDATE};
+        NotificationType[] channels = {NotificationType.EMAIL};
+        String sort = "productId,asc";
+
+        Page<Subscription> expectedPage = org.springframework.data.domain.Page.empty();
+
+        ArgumentCaptor<Pageable> pageableCaptor = ArgumentCaptor.forClass(Pageable.class);
+
+        when(subscriptionRepository.findByUserWithFilter(
+                org.mockito.ArgumentMatchers.eq(testUser.getId()),
+                org.mockito.ArgumentMatchers.eq(types),
+                org.mockito.ArgumentMatchers.eq(channels),
+                pageableCaptor.capture()
+        )).thenReturn(expectedPage);
+
+        Page<Subscription> result = subscriptionService.getUserSubscriptions(
+                testUser, page, limit, types, channels, sort);
+
+        Assertions.assertNotNull(result);
+        Pageable capturedPageable = pageableCaptor.getValue();
+        Assertions.assertEquals(page, capturedPageable.getPageNumber());
+        Assertions.assertEquals(limit, capturedPageable.getPageSize());
+        Assertions.assertTrue(Objects.requireNonNull(capturedPageable.getSort().getOrderFor("product")).isAscending());
+
+        verify(subscriptionRepository).findByUserWithFilter(testUser.getId(), types, channels, capturedPageable);
+    }
+
+    @Test
+    void testLoadProductSubscriptions() {
+        Product testProduct = new Product();
+        testProduct.setId(50L);
+        when(subscriptionRepository.findByProduct(testProduct)).thenReturn(List.of(testSubscription));
+
+        Subscription[] results = subscriptionService.loadProductSubscriptions(testProduct);
+
+        Assertions.assertEquals(1, results.length);
+        Assertions.assertEquals(testSubscription, results[0]);
+        verify(subscriptionRepository).findByProduct(testProduct);
+    }
+
+    @Test
+    void testUpdateSubscriptionThrowsNotFound() {
+        Long invalidId = 999L;
+        SubscriptionUpdateDTO updateDTO = new SubscriptionUpdateDTO(Set.of(), Set.of());
+        when(subscriptionRepository.findById(invalidId)).thenReturn(Optional.empty());
+
+        ResponseStatusException ex = Assertions.assertThrows(ResponseStatusException.class,
+                () -> subscriptionService.updateSubscription(invalidId, updateDTO));
+
+        Assertions.assertEquals(HttpStatus.NOT_FOUND, ex.getStatusCode());
+        Assertions.assertNotNull(ex.getReason());
+        Assertions.assertTrue(ex.getReason().contains("Subscription not found"));
+    }
+
+    @Test
+    void testDeleteSubscriptionThrowsNotFound() {
+        Long invalidId = 999L;
+        when(subscriptionRepository.findById(invalidId)).thenReturn(Optional.empty());
+
+        ResponseStatusException ex = Assertions.assertThrows(ResponseStatusException.class,
+                () -> subscriptionService.deleteSubscription(invalidId));
+
+        Assertions.assertEquals(HttpStatus.NOT_FOUND, ex.getStatusCode());
     }
 }
