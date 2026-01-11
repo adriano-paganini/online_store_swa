@@ -11,6 +11,9 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import java.time.LocalDateTime;
 
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.when;
+
 @SpringBootTest
 public class EmailNotificationServiceTest {
 
@@ -34,12 +37,15 @@ public class EmailNotificationServiceTest {
         subscription.setProduct(product);
 
         Notification notification = new Notification();
+        notification.setId(1L);
         notification.setChannel(NotificationType.EMAIL);
         notification.setMessage("Test-Contents: The Price for " + product.getName() + " fell!");
         notification.setTimestamp(LocalDateTime.now());
 
-        EmailNotificationEvent event = new EmailNotificationEvent(notification, subscription);
 
+        when(notificationService.getNotificationById(anyLong())).thenReturn(notification);
+
+        EmailNotificationEvent event = new EmailNotificationEvent(notification, subscription);
         emailNotificationService.sendEmail(event);
     }
 }
