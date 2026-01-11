@@ -5,9 +5,11 @@ import at.qe.skeleton.model.Notification;
 import at.qe.skeleton.model.NotificationStatus;
 import at.qe.skeleton.model.Subscription;
 import at.qe.skeleton.model.Userx;
+import at.qe.skeleton.repositories.SubscriptionRepository;
 import jakarta.mail.*;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.Properties;
@@ -16,39 +18,47 @@ import java.util.Properties;
 public class EmailNotificationService {
 
     private final NotificationService notificationService;
+    private final SubscriptionRepository subscriptionRepository;
 
-    public EmailNotificationService(NotificationService notificationService) {
+    public EmailNotificationService(NotificationService notificationService, SubscriptionRepository subscriptionRepository) {
         this.notificationService = notificationService;
+        this.subscriptionRepository = subscriptionRepository;
     }
 
+    @Transactional
     public void sendEmail(EmailNotificationEvent event) {
-        Subscription subscription = event.getSubscription();
-        Notification notification = event.getNotification();
-        Userx user = subscription.getUser();
-        if (user.getEmail() == null || user.getEmail().isBlank()) {
-            notificationService.updateNotificationStatus(NotificationStatus.FAILED,notification);
-            return;
-        }
-        String sender = "software.architektur@gmx.at";
-        String password = "software.architektur@gmx.at";
+        Notification notification = notificationService.getNotificationById(event.getNotificationId());
 
-        Properties properties = new Properties();
-        properties.put("mail.transport.protocol", "smtp");
-        properties.put("mail.smtp.host", "mail.gmx.net");
-        properties.put("mail.smtp.port", "587");
-        properties.put("mail.smtp.auth", "true");
-        properties.put("mail.smtp.user", sender);
-        properties.put("mail.smtp.password", password);
-        properties.put("mail.smtp.starttls.enable", "true");
         try {
-            Session mailSession = Session.getInstance(properties, new Authenticator() {
-                @Override
-                protected PasswordAuthentication getPasswordAuthentication() {
-                    return new PasswordAuthentication(
-                            properties.getProperty("mail.smtp.user"),
-                            properties.getProperty("mail.smtp.password")
-                    );
-                }
+            Subscription subscription = subscriptionRepository.findById(event.getSubscription().getId())
+                    .orElseThrow(() -> new RuntimeException("Subscription not found"));
+
+            Userx user = subscription.getUser();
+
+
+            if (user.getEmail() == null || user.getEmail().isBlank()) {
+                notificationService.updateNotificationStatus(NotificationStatus.FAILED, notification);
+                return;
+            }
+            String sender = "software.architektur@gmx.at";
+            String password = "software.architektur@gmx.at";
+
+            Properties properties = new Properties();
+            properties.put("mail.transport.protocol", "smtp");
+            properties.put("mail.smtp.host", "mail.gmx.net");
+            properties.put("mail.smtp.port", "587");
+            properties.put("mail.smtp.auth", "true");
+            properties.put("mail.smtp.user", sender);
+            properties.put("mail.smtp.password", password);
+            properties.put("mail.smtp.starttls.enable", "true");
+                Session mailSession = Session.getInstance(properties, new Authenticator() {
+                    @Override
+                    protected PasswordAuthentication getPasswordAuthentication() {
+                        return new PasswordAuthentication(
+                                properties.getProperty("mail.smtp.user"),
+                                properties.getProperty("mail.smtp.password")
+                        );
+                     }
             });
 
             Message message = new MimeMessage(mailSession);
@@ -64,7 +74,6 @@ public class EmailNotificationService {
 
         } catch (MessagingException e) {
             notificationService.updateNotificationStatus(NotificationStatus.FAILED, notification);
-            System.err.println("Failed to send email to " + user.getEmail() + ": " + e.getMessage());
         }
     }
 }

@@ -27,6 +27,18 @@ public class SubscriptionController {
         this.subscriptionService = subscriptionService;
     }
 
+
+    @GetMapping("/product/{id}")
+    public ResponseEntity<SubscriptionDTO> getSubscriptionByProductId(
+            @AuthenticationPrincipal Userx user,
+            @PathVariable Long id
+    ){
+        Subscription subscription = subscriptionService.getSubscriptionByUserAndProduct(user.getId(), id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Subscription not found for this product"));
+
+        return ResponseEntity.ok(subscriptionMapper.mapTo(subscription));
+    }
+
     @GetMapping("")
     public ResponseEntity<PageResponseDTO<SubscriptionDTO>> getUserSubscriptions(
             @AuthenticationPrincipal Userx user,
@@ -55,7 +67,7 @@ public class SubscriptionController {
 
             return ResponseEntity.ok(response);
         } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error fetching notifications: " + e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error fetching Subscriptions: " + e.getMessage());
         }
     }
 

@@ -16,6 +16,6 @@ public class SmSNotificationEventListener {
 
     @EventListener
     public void handleSmsNotificationEvent(SmsNotificationEvent event) {
-        smsNotificationService.sendSms(event.getNotification());
+        smsNotificationService.sendSms(event.getNotificationId());
     }
 }
