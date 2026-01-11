@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 
@@ -12,6 +11,10 @@ import type { TPopulatedSubscriptionDTO, TSubscriptionCreateDTO } from '@/DTO/su
 
 import { SubscriptionApi } from '@/utilities/subscriptionApi';
 
+import { NotificationTypeLabels } from '@/utilities/notificationUtils';
+import { SubscriptionTypeLabels } from '@/utilities/subscriptionUtils';
+import { MoreHorizontal, PenLine, Trash2 } from 'lucide-react';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '../ui/dropdown-menu';
 import { SubscriptionDeleteDialog } from './SubscriptionDeleteDialog';
 import { SubscriptionDialog } from './SubscriptionDialog';
 
@@ -29,16 +32,16 @@ export const SubscriptionBlock = ({ product }: TSubscriptionBlockProps) => {
   useEffect(() => {
     const loadSubscription = async () => {
       try {
+        // ToDo: change to get by productId enpoint when available
         const page = await SubscriptionApi.getUserSubscriptionsPagePopulated({
           page: 0,
-          limit: 50, // safe upper bound for "single product lookup"
+          limit: 50,
         });
 
         const existing = page.data.find((s) => s.product.id === product.id);
 
         setSubscription(existing ?? null);
       } catch {
-        // Non-blocking: product page must still work
         setSubscription(null);
       }
     };
@@ -108,39 +111,47 @@ export const SubscriptionBlock = ({ product }: TSubscriptionBlockProps) => {
         )}
 
         {subscription && (
-          <div className="space-y-3 rounded-lg border p-4">
-            <p className="text-sm text-muted-foreground">You are subscribed to updates for this product.</p>
+          <div className="flex items-center rounded-lg border p-4">
+            <div className="flex flex-1 flex-col gap-2">
+              <p className="text-sm">You are subscribed to updates for this product.</p>
 
-            <div className="flex flex-wrap gap-2">
-              {subscription.types.map((type) => (
-                <Badge
-                  key={type}
-                  variant="secondary"
+              <div className="flex flex-col">
+                <div className="text-sm text-muted-foreground">
+                  Track: {subscription.types.map((t) => SubscriptionTypeLabels[t]).join(', ')}
+                </div>
+
+                <div className="text-sm text-muted-foreground">
+                  Send by: {subscription.channels.map((channel) => NotificationTypeLabels[channel]).join(', ')}
+                </div>
+              </div>
+            </div>
+
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  disabled={loading}
                 >
-                  {type}
-                </Badge>
-              ))}
-              {subscription.channels.map((channel) => (
-                <Badge key={channel}>{channel}</Badge>
-              ))}
-            </div>
+                  <MoreHorizontal className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
 
-            <div className="flex gap-2">
-              <Button
-                size="sm"
-                variant="outline"
-                onClick={() => setDialogOpen(true)}
-              >
-                Edit
-              </Button>
-              <Button
-                size="sm"
-                variant="destructive"
-                onClick={() => setDeleteOpen(true)}
-              >
-                Unsubscribe
-              </Button>
-            </div>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={() => setDialogOpen(true)}>
+                  <PenLine className="mr-2 h-4 w-4" />
+                  Edit
+                </DropdownMenuItem>
+
+                <DropdownMenuItem
+                  className="text-destructive"
+                  onClick={() => setDeleteOpen(true)}
+                >
+                  <Trash2 className="mr-2 h-4 w-4" />
+                  Unsubscribe
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         )}
       </div>

@@ -1,15 +1,25 @@
 'use client';
 
+import { MoreHorizontal, PenLine, Trash2 } from 'lucide-react';
 import { useState } from 'react';
+import { toast } from 'sonner';
 
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+
+import { NotificationTypeLabels } from '@/utilities/notificationUtils';
+import { SubscriptionApi } from '@/utilities/subscriptionApi';
+import { SubscriptionTypeLabels } from '@/utilities/subscriptionUtils';
+
+import type { TPopulatedSubscriptionDTO, TSubscriptionUpdateDTO } from '@/DTO/subscription.types';
 
 import { SubscriptionDeleteDialog } from '@/components/subscription/SubscriptionDeleteDialog';
 import { SubscriptionDialog } from '@/components/subscription/SubscriptionDialog';
-import { TPopulatedSubscriptionDTO } from '@/DTO/subscription.types';
-import { NotificationTypeLabels } from '@/utilities/notificationUtils';
-import { SubscriptionTypeLabels } from '@/utilities/subscriptionUtils';
 
 type TSubscriptionRowProps = {
   subscription: TPopulatedSubscriptionDTO;
@@ -17,82 +27,103 @@ type TSubscriptionRowProps = {
 };
 
 export function SubscriptionRow({ subscription, onChanged }: TSubscriptionRowProps) {
+  const { product } = subscription;
+
   const [editOpen, setEditOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const { product } = subscription;
+  const handleUpdate = async (values: TSubscriptionUpdateDTO) => {
+    try {
+      setLoading(true);
+      await SubscriptionApi.updateSubscription(subscription.id, values);
+      toast.success('Subscription updated');
+      setEditOpen(false);
+      onChanged();
+    } catch {
+      toast.error('Failed to update subscription');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    try {
+      setLoading(true);
+      await SubscriptionApi.deleteSubscription(subscription.id);
+      toast.success('Unsubscribed successfully');
+      setDeleteOpen(false);
+      onChanged();
+    } catch {
+      toast.error('Failed to unsubscribe');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <>
-      <div className="grid grid-cols-6 items-center gap-4 border-b px-4 py-3 text-sm">
-        <div className="flex items-center gap-3">
-          <img
-            src={product.images[0]}
-            alt={product.name}
-            className="h-10 w-10 rounded object-cover"
-          />
-          <span className="font-medium">{product.name}</span>
+      <div className="flex items-center gap-4 px-4 py-4 transition-colors hover:bg-muted/60">
+        <img
+          src={product.images[0] || `/placeholder.svg?height=64&width=64`}
+          alt={product.name}
+          className="h-16 w-16 rounded-md object-cover"
+        />
+
+        <div className="min-w-0 flex-1 space-y-1">
+          <div className="truncate font-medium">{product.name}</div>
+
+          <div className="text-sm text-muted-foreground">
+            Track: {subscription.types.map((t) => SubscriptionTypeLabels[t]).join(', ')}
+          </div>
+
+          <div className="text-sm text-muted-foreground">
+            Send by: {subscription.channels.map((channel) => NotificationTypeLabels[channel]).join(', ')}
+          </div>
         </div>
 
-        <span>${product.price.toFixed(2)}</span>
-
-        <div className="flex flex-wrap gap-1">
-          {subscription.types.map((type) => (
-            <Badge
-              key={type}
-              variant="secondary"
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              variant="ghost"
+              size="icon"
+              disabled={loading}
             >
-              {SubscriptionTypeLabels[type]}
-            </Badge>
-          ))}
-        </div>
+              <MoreHorizontal className="h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
 
-        <div className="flex flex-wrap gap-1">
-          {subscription.channels.map((channel) => (
-            <Badge key={channel}>{NotificationTypeLabels[channel]}</Badge>
-          ))}
-        </div>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem onClick={() => setEditOpen(true)}>
+              <PenLine className="mr-2 h-4 w-4" />
+              Edit
+            </DropdownMenuItem>
 
-        <span className="text-muted-foreground">Active</span>
-
-        <div className="flex gap-2">
-          <Button
-            size="sm"
-            variant="outline"
-            onClick={() => setEditOpen(true)}
-          >
-            Edit
-          </Button>
-          <Button
-            size="sm"
-            variant="destructive"
-            onClick={() => setDeleteOpen(true)}
-          >
-            Delete
-          </Button>
-        </div>
+            <DropdownMenuItem
+              className="text-destructive"
+              onClick={() => setDeleteOpen(true)}
+            >
+              <Trash2 className="mr-2 h-4 w-4" />
+              Unsubscribe
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
 
       <SubscriptionDialog
         open={editOpen}
         subscription={subscription}
         product={product}
+        loading={loading}
         onClose={() => setEditOpen(false)}
-        onSubmit={() => {
-          setEditOpen(false);
-          onChanged();
-        }}
-        loading={false}
+        onSubmit={(e) => void handleUpdate(e)}
       />
 
       <SubscriptionDeleteDialog
         open={deleteOpen}
         product={product}
         onClose={() => setDeleteOpen(false)}
-        onConfirm={() => {
-          setDeleteOpen(false);
-          onChanged();
-        }}
+        onConfirm={() => void handleDelete()}
       />
     </>
   );
