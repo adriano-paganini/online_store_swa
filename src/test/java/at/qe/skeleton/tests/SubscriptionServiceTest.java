@@ -84,9 +84,8 @@ public class SubscriptionServiceTest {
         Assertions.assertEquals(HttpStatus.UNAUTHORIZED, ex.getStatusCode());
     }
 
-    @Test
-    void testUpdateSubscriptionLogic() {
-        //TODO: FIX Test
+//    @Test TODO:FIX
+//    void testUpdateSubscriptionLogic() {
 //        Set<SubscriptionType> newTypes = Set.of(SubscriptionType.DISCOUNTUPDATE, SubscriptionType.RESTOCK);
 //        SubscriptionUpdateDTO updateDTO = new SubscriptionUpdateDTO(newTypes, Set.of(NotificationType.SMS));
 //
@@ -96,7 +95,7 @@ public class SubscriptionServiceTest {
 //
 //        Assertions.assertEquals(newTypes, updated.getTypes());
 //        verify(subscriptionRepository).save(testSubscription);
-    }
+//    }
 
     @Test
     void testDeleteSubscriptionSuccess() {
@@ -175,13 +174,12 @@ public class SubscriptionServiceTest {
 
     @Test
     void testDeleteSubscriptionThrowsNotFound() {
-        //TODO: FIX test
-//        Long invalidId = 999L;
-//        when(subscriptionRepository.findById(invalidId)).thenReturn(Optional.empty());
-//
-//        ResponseStatusException ex = Assertions.assertThrows(ResponseStatusException.class,
-//                () -> subscriptionService.deleteSubscription(invalidId));
-//
-//        Assertions.assertEquals(HttpStatus.NOT_FOUND, ex.getStatusCode());
+        Long invalidId = 999L;
+        when(subscriptionRepository.findById(invalidId)).thenReturn(Optional.empty());
+
+        ResponseStatusException ex = Assertions.assertThrows(ResponseStatusException.class,
+                () -> subscriptionService.deleteSubscription(invalidId));
+
+        Assertions.assertEquals(HttpStatus.NOT_FOUND, ex.getStatusCode());
     }
 }

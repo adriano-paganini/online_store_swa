@@ -23,7 +23,7 @@ public class EmailNotificationService {
 
     public void sendEmail(EmailNotificationEvent event) {
         Subscription subscription = event.getSubscription();
-        Notification notification = notificationService.getNotificationById(event.getNotification().getId());
+        Notification notification = event.getNotification();
         Userx user = subscription.getUser();
         if (user.getEmail() == null || user.getEmail().isBlank()) {
             notificationService.updateNotificationStatus(NotificationStatus.FAILED,notification);
