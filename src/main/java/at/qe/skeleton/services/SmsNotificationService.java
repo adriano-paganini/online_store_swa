@@ -13,14 +13,15 @@ public class SmsNotificationService {
         this.notificationService = notificationService;
     }
 
-    public void sendSms(Notification n) {
+    public void sendSms(Long notificationId) {
         //This is a Stub. The actual functionality is not needed, as this is just a proof of concept.
         //90% success rate
+        Notification notification = notificationService.getNotificationById(notificationId);
         boolean sendingSuccess = Math.random() < 0.9;
         if (sendingSuccess) {
-            notificationService.updateNotificationStatus(NotificationStatus.SENT, n);
+            notificationService.updateNotificationStatus(NotificationStatus.SENT, notification);
         } else {
-            notificationService.updateNotificationStatus(NotificationStatus.FAILED, n);
+            notificationService.updateNotificationStatus(NotificationStatus.FAILED, notification);
         }
     }
 }

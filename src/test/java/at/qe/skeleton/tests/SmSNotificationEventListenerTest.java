@@ -32,7 +32,7 @@ class SmSNotificationEventListenerTest {
 
         publisher.publishEvent(new SmsNotificationEvent(n, s));
 
-        verify(smsNotificationService, times(1)).sendSms(n);
+        verify(smsNotificationService, times(1)).sendSms(n.getId());
         verifyNoMoreInteractions(smsNotificationService);
     }
 }

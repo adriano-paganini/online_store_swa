@@ -34,6 +34,10 @@ public class SubscriptionService {
         return subscriptionRepository.findById(id);
     }
 
+    public Optional<Subscription> getSubscriptionByUserAndProduct(Long userId, Long productId){
+        return subscriptionRepository.findByUserAndProduct(userId,productId);
+    }
+
     public Subscription[] loadUserSubscriptions(Userx user) {
         return subscriptionRepository.findByUser(user).toArray(Subscription[]::new);
     }

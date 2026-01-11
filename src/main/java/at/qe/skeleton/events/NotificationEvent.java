@@ -4,11 +4,11 @@ import at.qe.skeleton.model.Notification;
 import at.qe.skeleton.model.Subscription;
 
 public class NotificationEvent {
-    private final Notification notification;
+    private final Long notificationId;
     private final Subscription subscription;
 
     public NotificationEvent(Notification notification, Subscription subscription) {
-        this.notification = notification;
+        this.notificationId = notification.getId();
         this.subscription = subscription;
     }
 
@@ -16,7 +16,7 @@ public class NotificationEvent {
         return subscription;
     }
 
-    public Notification getNotification() {
-        return notification;
+    public Long getNotificationId() {
+        return notificationId;
     }
 }

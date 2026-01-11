@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface SubscriptionRepository extends AbstractRepository<Subscription,Long>{
 
@@ -34,4 +35,12 @@ public interface SubscriptionRepository extends AbstractRepository<Subscription,
             @Param("channels") NotificationType[] channels,
             Pageable pageable
     );
+
+
+    @Query("SELECT s FROM  Subscription s WHERE s.user.id = :userId AND s.product.id = :productId")
+    Optional<Subscription>  findByUserAndProduct(
+            @Param("userId") Long userId,
+            @Param("productId") Long productId
+    );
+
 }
