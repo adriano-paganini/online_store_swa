@@ -49,15 +49,27 @@ UPDATE USERX SET CREATE_USER_ID = (SELECT ID FROM USERX WHERE USERNAME = 'elvis'
 --Add Products
 
 INSERT INTO PRODUCT (ID, CREATE_USER_ID, NAME, DESCRIPTION, PRICE, STOCK, DISCOUNT, DELETED, AVG_SCORE, CREATE_DATE)
-SELECT 1000, ID, 'DDR5 32GB', 'Standard RAM Kit', 879.99, 13, 0.05, FALSE, 3.7, TIMESTAMP '2000-01-01 00:00:00'
+SELECT 1000, ID, 'DDR5 32GB', 'Standard RAM Kit', 1015.99, 13, 0.10, FALSE, 3.7, TIMESTAMP '2000-01-01 00:00:00'
 FROM USERX WHERE USERNAME = 'elvis';
 
 INSERT INTO PRODUCT (ID, CREATE_USER_ID, NAME, DESCRIPTION, PRICE, STOCK, DISCOUNT, DELETED, AVG_SCORE, CREATE_DATE)
-SELECT 1010, ID, 'Aerondight Silver Sword', 'Lady of the Lake approved. Better for monsters than for humans.', 1273.00, 1, 0.05, FALSE, 5.0, CURRENT_TIMESTAMP
+SELECT 1010, ID, 'Aerondight Silver Sword', 'Lady of the Lake approved. Better for monsters than for humans.', 1273.00, 1, 0.0, FALSE, 5.0, CURRENT_TIMESTAMP
 FROM USERX WHERE USERNAME = 'elvis';
 
 INSERT INTO PRODUCT (ID, CREATE_USER_ID, NAME, DESCRIPTION, PRICE, STOCK, DISCOUNT, DELETED, AVG_SCORE, CREATE_DATE)
-SELECT 1011, ID, 'Guardian Angel', 'Upon taking lethal damage, restores 50% of base health. Perfect for a Last Stand.', 3000.00, 2, 0.00, FALSE, 4.8, CURRENT_TIMESTAMP
+SELECT 1011, ID, 'Guardian Angel', 'Upon taking lethal damage, restores 50% of base health. Perfect for a Last Stand.', 3000.00, 2, 0.0, FALSE, 4.8, CURRENT_TIMESTAMP
+FROM USERX WHERE USERNAME = 'elvis';
+
+INSERT INTO PRODUCT (ID, CREATE_USER_ID, NAME, DESCRIPTION, PRICE, STOCK, DISCOUNT, DELETED, AVG_SCORE, CREATE_DATE)
+SELECT 1009, ID, 'Schrödinger’s Laptop', 'Simultaneously the best and worst laptop until you open it.', 500.00, 2, 0.00, FALSE, 2.5, CURRENT_TIMESTAMP
+FROM USERX WHERE USERNAME = 'elvis';
+
+INSERT INTO PRODUCT (ID, CREATE_USER_ID, NAME, DESCRIPTION, PRICE, STOCK, DISCOUNT, DELETED, AVG_SCORE, CREATE_DATE)
+SELECT 1005, ID, 'Pip-Boy 3000', 'Essential for vault life. Radiation sensor not included.', 3000.00, 13, 0.11, FALSE, 4.5, CURRENT_TIMESTAMP
+FROM USERX WHERE USERNAME = 'elvis';
+
+INSERT INTO PRODUCT (ID, CREATE_USER_ID, NAME, DESCRIPTION, PRICE, STOCK, DISCOUNT, DELETED, AVG_SCORE, CREATE_DATE)
+SELECT 1012, ID, 'Non-Stop Energy Drink', 'A favorite among Stalkers in the Zone. Restores stamina, but watch out for anomalies.', 15.50, 50, 0.00, FALSE, 4.7, CURRENT_TIMESTAMP
 FROM USERX WHERE USERNAME = 'elvis';
 
 -- Add Subscription to this Product
