@@ -7,8 +7,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 
 type TProductFiltersProps = {
-  priceRange: [number, number];
-  setPriceRange: (value: [number, number]) => void;
+  priceRange: [number, number | null];
+  setPriceRange: (value: [number, number | null]) => void;
   inStockOnly: boolean;
   setInStockOnly: (value: boolean) => void;
   minRating: number;
@@ -17,6 +17,8 @@ type TProductFiltersProps = {
   setSort: (value: string) => void;
   onApplyFilters: () => void;
 };
+
+const MAX_PRICE = 1000;
 
 export function ProductFilters({
   priceRange,
@@ -37,16 +39,19 @@ export function ProductFilters({
             <Label className="mb-3 block">Price Range</Label>
 
             <DualRangeSlider
-              value={priceRange}
-              onValueChange={(v) => setPriceRange(v as [number, number])}
+              value={[priceRange[0], priceRange[1] ?? MAX_PRICE]}
+              onValueChange={(v) => {
+                const [min, max] = v as [number, number];
+
+                setPriceRange([min, max >= MAX_PRICE ? null : max]);
+              }}
               min={0}
-              max={1000}
+              max={MAX_PRICE}
               step={10}
             />
-
             <div className="mt-2 flex justify-between text-sm text-muted-foreground">
               <span>${priceRange[0]}</span>
-              <span>${priceRange[1]}</span>
+              <span>{priceRange[1] === null ? '$1000+' : `$${priceRange[1]}`}</span>
             </div>
           </div>
 

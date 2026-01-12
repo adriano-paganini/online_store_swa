@@ -18,14 +18,14 @@ export default function ProductsPage() {
   const [totalPages, setTotalPages] = useState(0);
   const [limit, setLimit] = useState(12);
 
-  const [draftPriceRange, setDraftPriceRange] = useState<[number, number]>([0, 1000]);
+  const [draftPriceRange, setDraftPriceRange] = useState<[number, number | null]>([0, null]);
   const [draftInStockOnly, setDraftInStockOnly] = useState(false);
   const [draftMinRating, setDraftMinRating] = useState(0);
   const [draftSort, setDraftSort] = useState('id,asc');
 
   const [appliedSort, setAppliedSort] = useState('id,asc');
   const [appliedFilters, setAppliedFilters] = useState({
-    priceRange: [0, 1000] as [number, number],
+    priceRange: [0, null] as [number, number | null],
     inStockOnly: false,
     minRating: 0,
   });
