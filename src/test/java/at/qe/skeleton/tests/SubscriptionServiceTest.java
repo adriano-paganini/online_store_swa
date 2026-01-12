@@ -84,18 +84,24 @@ public class SubscriptionServiceTest {
         Assertions.assertEquals(HttpStatus.UNAUTHORIZED, ex.getStatusCode());
     }
 
-//    @Test TODO:FIX
-//    void testUpdateSubscriptionLogic() {
-//        Set<SubscriptionType> newTypes = Set.of(SubscriptionType.DISCOUNTUPDATE, SubscriptionType.RESTOCK);
-//        SubscriptionUpdateDTO updateDTO = new SubscriptionUpdateDTO(newTypes, Set.of(NotificationType.SMS));
-//
-//        when(subscriptionRepository.findById(100L)).thenReturn(Optional.of(testSubscription));
-//
-//        Subscription updated = subscriptionService.updateSubscription(100L, updateDTO);
-//
-//        Assertions.assertEquals(newTypes, updated.getTypes());
-//        verify(subscriptionRepository).save(testSubscription);
-//    }
+    @Test
+    void testUpdateSubscriptionLogic() {
+        Set<SubscriptionType> newTypes = Set.of(SubscriptionType.DISCOUNTUPDATE, SubscriptionType.RESTOCK);
+        Set<NotificationType> newChannels = Set.of(NotificationType.SMS);
+        SubscriptionUpdateDTO updateDTO = new SubscriptionUpdateDTO(newTypes, newChannels);
+
+        when(subscriptionRepository.findById(100L)).thenReturn(Optional.of(testSubscription));
+
+        when(subscriptionRepository.save(org.mockito.ArgumentMatchers.any(Subscription.class)))
+                .thenReturn(testSubscription);
+
+        Subscription updated = subscriptionService.updateSubscription(100L, updateDTO);
+
+        Assertions.assertNotNull(updated);
+        Assertions.assertEquals(newTypes, updated.getTypes());
+        Assertions.assertEquals(newChannels, updated.getChannels()) ;
+        verify(subscriptionRepository).save(testSubscription);
+    }
 
     @Test
     void testDeleteSubscriptionSuccess() {
