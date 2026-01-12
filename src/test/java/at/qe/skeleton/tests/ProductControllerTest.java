@@ -289,7 +289,8 @@ public class ProductControllerTest {
                 "New Description",
                 149.99,
                 20,
-                0.15
+                0.15,
+                new ArrayList<>()
         );
 
         Product newProduct = new Product();
@@ -336,7 +337,8 @@ public class ProductControllerTest {
                 "Description",
                 99.99,
                 10,
-                0.0
+                0.0,
+                new ArrayList<>()
         );
 
         mockMvc.perform(MockMvcRequestBuilders.post("/products")
@@ -354,7 +356,8 @@ public class ProductControllerTest {
                 "Description",
                 -10.0, // Invalid: negative price
                 10,
-                0.0
+                0.0,
+                new ArrayList<>()
         );
 
         mockMvc.perform(MockMvcRequestBuilders.post("/products")
@@ -372,7 +375,8 @@ public class ProductControllerTest {
                 "Description",
                 99.99,
                 -5, // Invalid: negative stock
-                0.0
+                0.0,
+                new ArrayList<>()
         );
 
         mockMvc.perform(MockMvcRequestBuilders.post("/products")
@@ -389,7 +393,8 @@ public class ProductControllerTest {
                 "Description",
                 99.99,
                 10,
-                0.0
+                0.0,
+                new ArrayList<>()
         );
 
         mockMvc.perform(MockMvcRequestBuilders.post("/products")
@@ -407,7 +412,8 @@ public class ProductControllerTest {
                 "Updated Description",
                 199.99,
                 15,
-                0.2
+                0.2,
+                null
         );
 
         Product updatedProduct = new Product();
@@ -451,6 +457,7 @@ public class ProductControllerTest {
         ProductUpdateDTO updateDTO = new ProductUpdateDTO(
                 "Updated Name",
                 null, // Only update name
+                null,
                 null,
                 null,
                 null
@@ -498,6 +505,7 @@ public class ProductControllerTest {
                 null,
                 null,
                 null,
+                null,
                 null
         );
 
@@ -516,6 +524,7 @@ public class ProductControllerTest {
     void updateProductUnauthenticated() throws Exception {
         ProductUpdateDTO updateDTO = new ProductUpdateDTO(
                 "Updated Name",
+                null,
                 null,
                 null,
                 null,
