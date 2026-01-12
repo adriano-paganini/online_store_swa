@@ -9,6 +9,8 @@ public record ProductUpdateDTO(
     @Size(max = 255, message = "Name must not exceed 255 characters")
     String name,
 
+    List<String> images,
+
     @Size(max = 2000, message = "Description must not exceed 2000 characters")
     String description,
 
@@ -20,8 +22,6 @@ public record ProductUpdateDTO(
 
     @Min(value = 0, message = "Discount must be non-negative")
     @Max(value = 1, message = "Price must be non-negative")
-    Double discount,
-
-    List<String> images
+    Double discount
 ) {}
 
