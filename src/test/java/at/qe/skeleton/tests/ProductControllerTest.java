@@ -286,11 +286,11 @@ public class ProductControllerTest {
     void createProduct() throws Exception {
         ProductCreateDTO createDTO = new ProductCreateDTO(
                 "New Product",
+                new ArrayList<>(),
                 "New Description",
                 149.99,
                 20,
-                0.15,
-                new ArrayList<>()
+                0.15
         );
 
         Product newProduct = new Product();
@@ -334,11 +334,11 @@ public class ProductControllerTest {
     void createProductInvalidName() throws Exception {
         ProductCreateDTO createDTO = new ProductCreateDTO(
                 "", // Invalid: empty name
+                new ArrayList<>(),
                 "Description",
                 99.99,
                 10,
-                0.0,
-                new ArrayList<>()
+                0.0
         );
 
         mockMvc.perform(MockMvcRequestBuilders.post("/products")
@@ -353,11 +353,11 @@ public class ProductControllerTest {
     void createProductInvalidPrice() throws Exception {
         ProductCreateDTO createDTO = new ProductCreateDTO(
                 "Product",
+                new ArrayList<>(),
                 "Description",
                 -10.0, // Invalid: negative price
                 10,
-                0.0,
-                new ArrayList<>()
+                0.0
         );
 
         mockMvc.perform(MockMvcRequestBuilders.post("/products")
@@ -372,11 +372,11 @@ public class ProductControllerTest {
     void createProductInvalidStock() throws Exception {
         ProductCreateDTO createDTO = new ProductCreateDTO(
                 "Product",
+                new ArrayList<>(),
                 "Description",
                 99.99,
                 -5, // Invalid: negative stock
-                0.0,
-                new ArrayList<>()
+                0.0
         );
 
         mockMvc.perform(MockMvcRequestBuilders.post("/products")
@@ -390,11 +390,11 @@ public class ProductControllerTest {
     void createProductUnauthenticated() throws Exception {
         ProductCreateDTO createDTO = new ProductCreateDTO(
                 "New Product",
+                new ArrayList<>(),
                 "Description",
                 99.99,
                 10,
-                0.0,
-                new ArrayList<>()
+                0.0
         );
 
         mockMvc.perform(MockMvcRequestBuilders.post("/products")
@@ -409,11 +409,11 @@ public class ProductControllerTest {
     void updateProduct() throws Exception {
         ProductUpdateDTO updateDTO = new ProductUpdateDTO(
                 "Updated Product",
+                null,
                 "Updated Description",
                 199.99,
                 15,
-                0.2,
-                null
+                0.2
         );
 
         Product updatedProduct = new Product();

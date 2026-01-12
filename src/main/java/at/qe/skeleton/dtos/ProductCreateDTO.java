@@ -11,6 +11,8 @@ public record ProductCreateDTO(
     @Size(max = 255, message = "Name must not exceed 255 characters")
     String name,
 
+    List<String> images,
+
     @NotBlank(message = "Description is required")
     @Size(max = 2000, message = "Description must not exceed 2000 characters")
     String description,
@@ -25,8 +27,6 @@ public record ProductCreateDTO(
 
     @NotNull(message = "Discount is required")
     @Min(value = 0, message = "Discount must be non-negative")
-    Double discount,
-
-    List<String> images
+    Double discount
 ) {}
 

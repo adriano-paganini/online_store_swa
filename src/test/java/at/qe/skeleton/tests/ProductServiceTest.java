@@ -260,11 +260,11 @@ public class ProductServiceTest {
     void testCreateProduct() {
         ProductCreateDTO createDTO = new ProductCreateDTO(
                 "New Product",
+                new ArrayList<>(),
                 "New Description",
                 149.99,
                 20,
-                0.15,
-                new ArrayList<>()
+                0.15
         );
 
         Mockito.when(productRepository.save(Mockito.any(Product.class)))
@@ -298,11 +298,11 @@ public class ProductServiceTest {
     void testCreateProductWithDefaultDiscount() {
         ProductCreateDTO createDTO = new ProductCreateDTO(
                 "New Product",
+                new ArrayList<>(),
                 "Description",
                 99.99,
                 10,
-                null, // Discount not provided
-                new ArrayList<>()
+                null // Discount not provided
         );
 
         Mockito.when(productRepository.save(Mockito.any(Product.class)))
@@ -323,11 +323,11 @@ public class ProductServiceTest {
         List<String> images = List.of("https://example.com/image1.jpg", "https://example.com/image2.jpg");
         ProductCreateDTO createDTO = new ProductCreateDTO(
                 "New Product",
+                images,
                 "Description",
                 99.99,
                 10,
-                0.0,
-                images
+                0.0
         );
 
         Mockito.when(productRepository.save(Mockito.any(Product.class)))
@@ -347,11 +347,11 @@ public class ProductServiceTest {
     void testCreateProductUnauthenticated() {
         ProductCreateDTO createDTO = new ProductCreateDTO(
                 "New Product",
+                new ArrayList<>(),
                 "Description",
                 99.99,
                 10,
-                0.0,
-                new ArrayList<>()
+                0.0
         );
 
         Mockito.when(authenticatedUserService.getAuthenticatedUser()).thenReturn(null);
@@ -375,11 +375,11 @@ public class ProductServiceTest {
         List<String> newImages = List.of("https://example.com/image1.jpg", "https://example.com/image2.jpg");
         ProductUpdateDTO updateDTO = new ProductUpdateDTO(
                 "Updated Product",
+                newImages,
                 "Updated Description",
                 199.99,
                 15,
-                0.2,
-                newImages
+                0.2
         );
 
         Mockito.when(productRepository.findByIdAndNotDeleted(testProductId))
