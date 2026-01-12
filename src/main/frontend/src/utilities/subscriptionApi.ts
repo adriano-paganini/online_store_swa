@@ -66,6 +66,21 @@ const getUserSubscriptionsPagePopulated = async (
   }
 };
 
+const getPopulatedSubscriptionByProductId = async (productId: number): Promise<TPopulatedSubscriptionDTO | null> => {
+  try {
+    const page = await axios.get<TSubscriptionDTO>(`/subscriptions/product/${productId}`);
+
+    const populated = await populateSubscriptions([page.data]);
+
+    return populated[0] || null;
+  } catch (err: unknown) {
+    if (axios.isAxiosError(err) && err.response?.status === 404) {
+      return null;
+    }
+    throw new Error(`Error fetching subscription: ${getErrorMessage(err)}`);
+  }
+};
+
 const createSubscription = async (subscription: TSubscriptionCreateDTO): Promise<TSubscriptionDTO> => {
   try {
     const response = await axios.post<TSubscriptionDTO>('/subscriptions', subscription);
@@ -95,6 +110,7 @@ const deleteSubscription = async (id: number): Promise<void> => {
 export const SubscriptionApi = {
   getUserSubscriptionsPage,
   getUserSubscriptionsPagePopulated,
+  getPopulatedSubscriptionByProductId,
   createSubscription,
   updateSubscription,
   deleteSubscription,

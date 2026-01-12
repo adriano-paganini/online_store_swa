@@ -32,15 +32,8 @@ export const SubscriptionBlock = ({ product }: TSubscriptionBlockProps) => {
   useEffect(() => {
     const loadSubscription = async () => {
       try {
-        // ToDo: change to get by productId enpoint when available
-        const page = await SubscriptionApi.getUserSubscriptionsPagePopulated({
-          page: 0,
-          limit: 50,
-        });
-
-        const existing = page.data.find((s) => s.product.id === product.id);
-
-        setSubscription(existing ?? null);
+        const data = await SubscriptionApi.getPopulatedSubscriptionByProductId(product.id);
+        setSubscription(data);
       } catch {
         setSubscription(null);
       }
@@ -62,14 +55,8 @@ export const SubscriptionBlock = ({ product }: TSubscriptionBlockProps) => {
         await SubscriptionApi.createSubscription(values);
       }
 
-      const page = await SubscriptionApi.getUserSubscriptionsPagePopulated({
-        page: 0,
-        limit: 50,
-      });
-
-      const updated = page.data.find((s) => s.product.id === product.id);
-
-      setSubscription(updated ?? null);
+      const data = await SubscriptionApi.getPopulatedSubscriptionByProductId(product.id);
+      setSubscription(data);
 
       toast.success(subscription ? 'Subscription updated' : 'Subscription created');
       setDialogOpen(false);
