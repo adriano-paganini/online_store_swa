@@ -6,7 +6,6 @@ import { toast } from 'sonner';
 import type { TAddressCreateDTO, TAddressDTO, TAddressUpdateDTO } from '@/DTO/address.types';
 import { AddressApi } from '@/utilities/addressApi';
 
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 
@@ -50,6 +49,7 @@ export function AddressForm({ address, onSuccess }: TAddressFormProps) {
 
   return (
     <form
+      id="address-form"
       className="space-y-4"
       onSubmit={(e) => {
         e.preventDefault();
@@ -109,14 +109,6 @@ export function AddressForm({ address, onSuccess }: TAddressFormProps) {
           onChange={(e) => setValues({ ...values, extra: e.target.value })}
         />
       </div>
-
-      <Button
-        type="submit"
-        className="w-full"
-        disabled={loading}
-      >
-        Save address
-      </Button>
     </form>
   );
 }
