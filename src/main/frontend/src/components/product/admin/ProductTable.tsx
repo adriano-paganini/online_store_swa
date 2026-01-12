@@ -17,6 +17,7 @@ import { ProductList } from './ProductList';
 
 const emptyProduct = (): TProductCreateDTO => ({
   name: '',
+  images: [],
   description: '',
   price: 0,
   stock: 0,

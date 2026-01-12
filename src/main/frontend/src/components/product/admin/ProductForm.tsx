@@ -12,6 +12,7 @@ type TProductFormProps = {
 export const ProductForm = ({ product, onSubmit }: TProductFormProps) => {
   const [values, setValues] = useState<TProductCreateDTO>({
     name: product.name,
+    images: product.images,
     description: product.description,
     price: product.price,
     stock: product.stock,
@@ -37,6 +38,15 @@ export const ProductForm = ({ product, onSubmit }: TProductFormProps) => {
           name="name"
           value={values.name}
           onChange={handleChange}
+        />
+      </div>
+
+      <div>
+        <Label>Image URLs (comma separated)</Label>
+        <Input
+          name="imageUrls"
+          value={values.images.join(', ')}
+          onChange={(e) => setValues({ ...values, images: e.target.value.split(',').map((url) => url.trim()) })}
         />
       </div>
 
