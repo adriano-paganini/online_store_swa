@@ -3,6 +3,7 @@ import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '
 
 import type { TAddressDTO } from '@/DTO/address.types';
 import { Check, X } from 'lucide-react';
+import { useState } from 'react';
 import { AddressForm } from './AddressForm';
 
 type TAddressDialogProps = {
@@ -13,6 +14,8 @@ type TAddressDialogProps = {
 };
 
 export function AddressDialog({ open, address, onClose, onChanged }: TAddressDialogProps) {
+  const [loading, setLoading] = useState(false);
+
   return (
     <Dialog
       open={open}
@@ -29,12 +32,14 @@ export function AddressDialog({ open, address, onClose, onChanged }: TAddressDia
             onClose();
             onChanged();
           }}
+          setLoading={setLoading}
         />
 
         <DialogFooter>
           <Button
             variant="outline"
             onClick={onClose}
+            disabled={loading}
           >
             <X />
             Cancel
@@ -43,6 +48,7 @@ export function AddressDialog({ open, address, onClose, onChanged }: TAddressDia
           <Button
             type="submit"
             form="address-form"
+            disabled={loading}
           >
             <Check />
             {address ? 'Save' : 'Add'} address

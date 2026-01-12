@@ -3,7 +3,9 @@
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import type { TPopulatedCartItemDTO } from '@/DTO/cart.types';
+import { getInitials } from '@/lib/utils';
 import { Minus, Plus, Trash } from 'lucide-react';
+import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 
 type TCartItemRowProps = {
   item: TPopulatedCartItemDTO;
@@ -20,11 +22,14 @@ export function CartItemRow({ item, isLoading, onIncrement, onDecrement, onRemov
 
   return (
     <div className="flex gap-4 rounded-md border p-3">
-      <img
-        src={product.images[0]}
-        alt={product.name}
-        className="h-16 w-16 rounded-md object-cover"
-      />
+      <Avatar className="h-16 w-16 rounded-md">
+        <AvatarImage
+          src={product.images?.[0]}
+          alt={product.name}
+          className="object-cover"
+        />
+        <AvatarFallback className="rounded-md bg-muted text-sm font-medium">{getInitials(product.name)}</AvatarFallback>
+      </Avatar>
 
       <div className="flex flex-1 flex-col gap-1">
         <span className="text-sm font-medium">{product.name}</span>

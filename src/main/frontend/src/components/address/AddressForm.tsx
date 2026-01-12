@@ -12,11 +12,10 @@ import { Label } from '@/components/ui/label';
 type TAddressFormProps = {
   address: TAddressDTO | null;
   onSuccess: () => void;
+  setLoading: (loading: boolean) => void;
 };
 
-export function AddressForm({ address, onSuccess }: TAddressFormProps) {
-  const [loading, setLoading] = useState(false);
-
+export function AddressForm({ address, onSuccess, setLoading }: TAddressFormProps) {
   const [values, setValues] = useState<TAddressCreateDTO>({
     country: address?.country ?? '',
     city: address?.city ?? '',

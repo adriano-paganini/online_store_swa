@@ -1,6 +1,7 @@
 import type { TProductDTO } from '@/DTO/product.types';
 import { MoreHorizontal, PenLine, Trash2 } from 'lucide-react';
 
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -8,6 +9,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { getInitials } from '@/lib/utils';
 
 type TProductRowProps = {
   product: TProductDTO;
@@ -18,11 +20,16 @@ type TProductRowProps = {
 export const ProductRow = ({ product, onEdit, onDelete }: TProductRowProps) => {
   return (
     <div className="flex items-center gap-3 border-b px-4 py-3 text-sm transition-opacity hover:bg-muted">
-      <img
-        src={product.images[0] || `/placeholder.svg?height=64&width=64`}
-        alt={product.name}
-        className="h-16 w-16 rounded-md object-cover"
-      />
+      <Avatar className="h-16 w-16 rounded-md">
+        <AvatarImage
+          src={product.images?.[0]}
+          alt={product.name}
+          className="object-cover"
+        />
+        <AvatarFallback className="flex h-full w-full items-center justify-center rounded-md bg-muted text-sm font-medium">
+          {getInitials(product.name)}
+        </AvatarFallback>
+      </Avatar>
 
       <div className="flex-1">
         <div className="font-medium">{product.name}</div>
