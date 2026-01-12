@@ -1,6 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import type { TAddressDTO } from '@/DTO/address.types';
+import { Trash2, X } from 'lucide-react';
 
 type TAddressDeleteDialogProps = {
   open: boolean;
@@ -33,12 +34,14 @@ export function AddressDeleteDialog({ open, address, onClose, onConfirm }: TAddr
             variant="outline"
             onClick={onClose}
           >
+            <X className="h-4 w-4" />
             Cancel
           </Button>
           <Button
             variant="destructive"
             onClick={onConfirm}
           >
+            <Trash2 className="h-4 w-4" />
             Delete
           </Button>
         </DialogFooter>

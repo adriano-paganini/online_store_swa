@@ -1,6 +1,5 @@
 import { useState } from 'react';
 
-import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 
@@ -27,6 +26,7 @@ export const SubscriptionForm = ({ product, subscription, onSubmit }: TSubscript
 
   return (
     <form
+      id="subscription-form"
       className="space-y-6"
       onSubmit={(e) => {
         e.preventDefault();
@@ -68,14 +68,6 @@ export const SubscriptionForm = ({ product, subscription, onSubmit }: TSubscript
           </div>
         ))}
       </div>
-
-      <Button
-        type="submit"
-        className="w-full"
-        disabled={types.length === 0 || channels.length === 0}
-      >
-        Save subscription
-      </Button>
     </form>
   );
 };
