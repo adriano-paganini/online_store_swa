@@ -4,6 +4,7 @@ export const ROUTES = {
   PRODUCT_DETAIL: '/products/:id',
   SUBSCRIPTIONS: '/subscriptions',
   NOTIFICATIONS: '/notifications',
+  ADDRESSES: '/addresses',
   ADMIN_USERS: '/admin/users',
   ADMIN_PRODUCTS: '/admin/products',
   LOGIN: '/login',
@@ -15,7 +16,6 @@ export const ROUTES = {
   // ORDERS: '/orders',
   // ORDER_DETAIL: '/orders/:id',
   // PROFILE: '/profile',
-  // ADDRESSES: '/addresses',
   // REGISTER: '/register',
 } as const;
 

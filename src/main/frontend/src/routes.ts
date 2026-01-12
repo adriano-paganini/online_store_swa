@@ -1,4 +1,5 @@
 import { ROUTES } from './utilities/routes.paths';
+import AddressesPage from './views/AddressesPage';
 import AdminProductsPage from './views/AdminProductsPage';
 import HomePage from './views/HomePage';
 import Login from './views/Login';
@@ -33,6 +34,11 @@ export const SubscriptionsPageRoute = {
 export const NotificationsPageRoute = {
   url: ROUTES.NOTIFICATIONS,
   component: NotificationsPage,
+};
+
+export const AddressesPageRoute = {
+  url: ROUTES.ADDRESSES,
+  component: AddressesPage,
 };
 
 export const AdminProductsPageRoute = {
@@ -85,18 +91,3 @@ export const NotFoundRoute = {
 //   url: ROUTES.NOTIFICATIONS,
 //   component: NotificationsPage,
 // }
-
-// Array of all routes for easy iteration
-export const allRoutes = [
-  HomePageRoute,
-  ProductsPageRoute,
-  ManageUsersRoute,
-  LoginsRoute,
-  LogoutsRoute,
-  // ProductDetailPageRoute,
-  // CheckoutPageRoute,
-  // OrderConfirmationPageRoute,
-  // ProfilePageRoute,
-  // OrdersPageRoute,
-  // NotificationsPageRoute,
-];
