@@ -23,6 +23,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -262,7 +263,8 @@ public class ProductServiceTest {
                 "New Description",
                 149.99,
                 20,
-                0.15
+                0.15,
+                new ArrayList<>()
         );
 
         Mockito.when(productRepository.save(Mockito.any(Product.class)))
@@ -282,6 +284,8 @@ public class ProductServiceTest {
         Assertions.assertEquals(0.15, result.getDiscount(), "Discount should match");
         Assertions.assertEquals(0.0, result.getAvgScore(), "AvgScore should be 0.0");
         Assertions.assertFalse(result.getDeleted(), "Product should not be deleted");
+        Assertions.assertNotNull(result.getImages(), "Images should not be null");
+        Assertions.assertTrue(result.getImages().isEmpty(), "Images should be empty list");
 
         ArgumentCaptor<Product> productCaptor = ArgumentCaptor.forClass(Product.class);
         Mockito.verify(productRepository).save(productCaptor.capture());
@@ -297,7 +301,8 @@ public class ProductServiceTest {
                 "Description",
                 99.99,
                 10,
-                null // Discount not provided
+                null, // Discount not provided
+                new ArrayList<>()
         );
 
         Mockito.when(productRepository.save(Mockito.any(Product.class)))
@@ -313,13 +318,40 @@ public class ProductServiceTest {
     }
 
     @Test
+    @WithMockUser(username = "testuser")
+    void testCreateProductWithImages() {
+        List<String> images = List.of("https://example.com/image1.jpg", "https://example.com/image2.jpg");
+        ProductCreateDTO createDTO = new ProductCreateDTO(
+                "New Product",
+                "Description",
+                99.99,
+                10,
+                0.0,
+                images
+        );
+
+        Mockito.when(productRepository.save(Mockito.any(Product.class)))
+                .thenAnswer(invocation -> {
+                    Product product = invocation.getArgument(0);
+                    product.setId(2L);
+                    return product;
+                });
+
+        Product result = productService.createProduct(createDTO);
+
+        Assertions.assertNotNull(result, "Product should not be null");
+        Assertions.assertEquals(images, result.getImages(), "Images should match");
+    }
+
+    @Test
     void testCreateProductUnauthenticated() {
         ProductCreateDTO createDTO = new ProductCreateDTO(
                 "New Product",
                 "Description",
                 99.99,
                 10,
-                0.0
+                0.0,
+                new ArrayList<>()
         );
 
         Mockito.when(authenticatedUserService.getAuthenticatedUser()).thenReturn(null);
@@ -340,12 +372,14 @@ public class ProductServiceTest {
     @Test
     @WithMockUser(username = "testuser")
     void testUpdateProduct() {
+        List<String> newImages = List.of("https://example.com/image1.jpg", "https://example.com/image2.jpg");
         ProductUpdateDTO updateDTO = new ProductUpdateDTO(
                 "Updated Product",
                 "Updated Description",
                 199.99,
                 15,
-                0.2
+                0.2,
+                newImages
         );
 
         Mockito.when(productRepository.findByIdAndNotDeleted(testProductId))
@@ -364,6 +398,7 @@ public class ProductServiceTest {
         Assertions.assertEquals(199.99, updatedProduct.getPrice(), "Price should be updated");
         Assertions.assertEquals(15, updatedProduct.getStock(), "Stock should be updated");
         Assertions.assertEquals(0.2, updatedProduct.getDiscount(), "Discount should be updated");
+        Assertions.assertEquals(newImages, updatedProduct.getImages(), "Images should be updated");
         Assertions.assertEquals(testUser, updatedProduct.getUpdateUser(), "Update user should be set");
     }
 
@@ -373,6 +408,7 @@ public class ProductServiceTest {
         ProductUpdateDTO updateDTO = new ProductUpdateDTO(
                 "Updated Name",
                 null, // Only update name
+                null,
                 null,
                 null,
                 null
@@ -400,6 +436,7 @@ public class ProductServiceTest {
         Long nonExistentId = 999L;
         ProductUpdateDTO updateDTO = new ProductUpdateDTO(
                 "Updated Name",
+                null,
                 null,
                 null,
                 null,

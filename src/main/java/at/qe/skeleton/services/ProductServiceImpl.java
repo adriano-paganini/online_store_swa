@@ -103,7 +103,7 @@ public class ProductServiceImpl implements ProductService {
         product.setDiscount(createDTO.discount() != null ? createDTO.discount() : 0.0);
         product.setAvgScore(0.0);
         product.setDeleted(false);
-        product.setImages(new java.util.ArrayList<>());
+        product.setImages(createDTO.images() != null ? createDTO.images() : new java.util.ArrayList<>());
 
         Userx currentUser = authenticatedUserService.getAuthenticatedUser();
         if (currentUser != null) {
@@ -159,6 +159,9 @@ public class ProductServiceImpl implements ProductService {
             }
 
             product.setDiscount(newDiscount);
+        }
+        if (updateDTO.images() != null) {
+            product.setImages(updateDTO.images());
         }
 
         Userx currentUser = authenticatedUserService.getAuthenticatedUser();

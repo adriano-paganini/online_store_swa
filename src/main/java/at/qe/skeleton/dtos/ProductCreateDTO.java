@@ -4,6 +4,7 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import java.util.List;
 
 public record ProductCreateDTO(
     @NotBlank(message = "Name is required")
@@ -24,6 +25,8 @@ public record ProductCreateDTO(
 
     @NotNull(message = "Discount is required")
     @Min(value = 0, message = "Discount must be non-negative")
-    Double discount
+    Double discount,
+
+    List<String> images
 ) {}
 
