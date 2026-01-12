@@ -72,28 +72,28 @@ public class SubscriptionControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(1L));
     }
 
-//    @Test TODO:FIX
-//    @WithMockUser(username = "testuser")
-//    void updateSubscription() throws Exception {
-//        SubscriptionUpdateDTO updateDTO = new SubscriptionUpdateDTO(
-//                Set.of(SubscriptionType.PRICEUPDATE),
-//                Set.of(NotificationType.SMS)
-//        );
-//
-//        Subscription mockSub = new Subscription();
-//        SubscriptionDTO responseDTO = new SubscriptionDTO(100L, 1L, 10L, Set.of(SubscriptionType.PRICEUPDATE), Set.of(NotificationType.SMS));
-//
-//        Mockito.when(subscriptionService.updateSubscription(Mockito.eq(100L), Mockito.any(SubscriptionUpdateDTO.class)))
-//                .thenReturn(mockSub);
-//        Mockito.when(subscriptionMapper.mapTo(mockSub)).thenReturn(responseDTO);
-//
-//        mockMvc.perform(MockMvcRequestBuilders.put("/subscriptions/{id}", 100L)
-//                        .with(SecurityMockMvcRequestPostProcessors.csrf())
-//                        .contentType(MediaType.APPLICATION_JSON)
-//                        .content(new ObjectMapper().writeValueAsString(updateDTO)))
-//                .andExpect(MockMvcResultMatchers.status().isOk())
-//                .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(100L));
-//    }
+    @Test
+    @WithMockUser(username = "testuser")
+    void updateSubscription() throws Exception {
+        SubscriptionUpdateDTO updateDTO = new SubscriptionUpdateDTO(
+                Set.of(SubscriptionType.PRICEUPDATE),
+                Set.of(NotificationType.SMS)
+        );
+
+        Subscription mockSub = new Subscription();
+        SubscriptionDTO responseDTO = new SubscriptionDTO(100L, 1L, 10L, Set.of(SubscriptionType.PRICEUPDATE), Set.of(NotificationType.SMS));
+
+        Mockito.when(subscriptionService.updateSubscription(Mockito.eq(100L), Mockito.any(SubscriptionUpdateDTO.class)))
+                .thenReturn(mockSub);
+        Mockito.when(subscriptionMapper.mapTo(mockSub)).thenReturn(responseDTO);
+
+        mockMvc.perform(MockMvcRequestBuilders.patch("/subscriptions/{id}", 100L)
+                        .with(SecurityMockMvcRequestPostProcessors.csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(updateDTO)))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(100L));
+    }
 
     @Test
     @WithMockUser(username = "testuser")
