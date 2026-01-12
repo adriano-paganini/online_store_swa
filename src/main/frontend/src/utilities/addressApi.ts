@@ -22,7 +22,7 @@ const createAddress = async (address: TAddressCreateDTO): Promise<TAddressDTO> =
 
 const updateAddress = async (id: number, address: TAddressUpdateDTO): Promise<TAddressDTO> => {
   try {
-    const response = await axios.put<TAddressDTO>(`/addresses/${id}`, address);
+    const response = await axios.patch<TAddressDTO>(`/addresses/${id}`, address);
     return response.data;
   } catch (err: unknown) {
     throw new Error(`Error updating address: ${getErrorMessage(err)}`);

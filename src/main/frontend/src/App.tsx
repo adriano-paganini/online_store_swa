@@ -12,6 +12,7 @@ import PrivateRoute from './components/routes/PrivateRoute';
 import { UserProvider } from './Contexts/authenticatedUserContext';
 import { CartProvider } from './Contexts/cartContext';
 import {
+  AddressesPageRoute,
   AdminProductsPageRoute,
   HomePageRoute,
   LoginsRoute,
@@ -62,6 +63,11 @@ const App: React.FC = () => {
                   <Route
                     path={LogoutsRoute.url}
                     Component={LogoutsRoute.component}
+                  />
+
+                  <Route
+                    path={AddressesPageRoute.url}
+                    Component={AddressesPageRoute.component}
                   />
 
                   <Route
