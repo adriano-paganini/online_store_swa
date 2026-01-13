@@ -65,7 +65,7 @@ export function SubscriptionRow({ subscription, onChanged }: TSubscriptionRowPro
 
   return (
     <>
-      <div className="flex items-center gap-4 px-4 py-4 transition-colors hover:bg-muted/60">
+      <div className="flex items-center gap-3 border-b px-4 py-3 text-sm transition-opacity hover:bg-muted">
         <Avatar className="h-16 w-16 rounded-md">
           <AvatarImage
             src={product.images?.[0]}

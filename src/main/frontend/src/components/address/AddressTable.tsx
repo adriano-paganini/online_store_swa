@@ -29,7 +29,7 @@ export function AddressTable({ addresses, loading, onChanged }: TAddressTablePro
   }
 
   return (
-    <div className="divide-y rounded-lg border">
+    <div className="overflow-hidden rounded-lg">
       {addresses.map((address) => (
         <AddressRow
           key={address.id}

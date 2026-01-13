@@ -44,7 +44,7 @@ export function AddressRow({ address, onChanged }: TAddressRowProps) {
 
   return (
     <>
-      <div className="flex items-center gap-4 px-4 py-4 hover:bg-muted/60">
+      <div className="flex items-center gap-3 border-b px-4 py-3 text-sm transition-opacity hover:bg-muted">
         <div className="flex-1 space-y-1">
           <div className="font-medium">
             {address.street} {address.number}

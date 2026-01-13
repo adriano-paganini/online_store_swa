@@ -4,7 +4,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import type { TPopulatedCartItemDTO } from '@/DTO/cart.types';
 import { getInitials } from '@/lib/utils';
-import { Minus, Plus, Trash } from 'lucide-react';
+import { Minus, Plus, Trash2 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 
 type TCartItemRowProps = {
@@ -79,7 +79,7 @@ export function CartItemRow({ item, isLoading, onIncrement, onDecrement, onRemov
         disabled={isLoading}
         onClick={onRemove}
       >
-        <Trash className="h-4 w-4 text-destructive" />
+        <Trash2 className="h-4 w-4 text-destructive" />
       </Button>
     </div>
   );

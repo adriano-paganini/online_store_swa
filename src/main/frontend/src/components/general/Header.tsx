@@ -141,16 +141,7 @@ export function Header() {
               variant="ghost"
               className="w-full justify-start"
             >
-              My Addresses
-            </Button>
-          </Link>
-
-          <Link to={ROUTES.NOTIFICATIONS}>
-            <Button
-              variant="ghost"
-              className="w-full justify-start"
-            >
-              My Notifications
+              Addresses
             </Button>
           </Link>
 
@@ -159,7 +150,16 @@ export function Header() {
               variant="ghost"
               className="w-full justify-start"
             >
-              My Product Subscriptions
+              Product Subscriptions
+            </Button>
+          </Link>
+
+          <Link to={ROUTES.NOTIFICATIONS}>
+            <Button
+              variant="ghost"
+              className="w-full justify-start"
+            >
+              Notifications
             </Button>
           </Link>
 
@@ -191,7 +191,7 @@ export function Header() {
             <Link to={ROUTES.LOGOUT}>
               <Button
                 variant="ghost"
-                className="w-full justify-start"
+                className="w-full justify-start text-destructive"
               >
                 <LogOut className="mr-2 h-4 w-4" />
                 Logout
@@ -269,13 +269,13 @@ export function Header() {
                 <DropdownMenuSeparator />
 
                 <DropdownMenuItem asChild>
-                  <Link to={ROUTES.ADDRESSES}>My Addresses</Link>
+                  <Link to={ROUTES.ADDRESSES}>Addresses</Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
-                  <Link to={ROUTES.NOTIFICATIONS}>My Notifications</Link>
+                  <Link to={ROUTES.SUBSCRIPTIONS}>Product Subscriptions</Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
-                  <Link to={ROUTES.SUBSCRIPTIONS}>My Product Subscriptions</Link>
+                  <Link to={ROUTES.NOTIFICATIONS}>Notifications</Link>
                 </DropdownMenuItem>
 
                 {isManager && (
@@ -293,7 +293,10 @@ export function Header() {
                 )}
                 <DropdownMenuSeparator />
                 <DropdownMenuItem asChild>
-                  <Link to="/logout">
+                  <Link
+                    to="/logout"
+                    className="text-destructive"
+                  >
                     <LogOut className="mr-2 h-4 w-4" />
                     Logout
                   </Link>
