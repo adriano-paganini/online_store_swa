@@ -5,6 +5,7 @@ import at.qe.skeleton.dtos.AddressUpdateDTO;
 import at.qe.skeleton.dtos.UserxRegistrationDTO;
 import at.qe.skeleton.dtos.UserxUpdateDTO;
 import at.qe.skeleton.exceptions.UsernameDuplicateException;
+import at.qe.skeleton.mappers.AddressMapper;
 import at.qe.skeleton.model.*;
 
 import java.util.Collection;
@@ -41,13 +42,15 @@ public class UserxService implements UserDetailsService {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticatedUserService authenticatedUserService;
     private final SubscriptionService subscriptionService;
+    private final AddressMapper addressMapper;
 
     @Autowired
-    public UserxService(UserxRepository userRepository, PasswordEncoder passwordEncoder, AuthenticatedUserService authenticatedUserService, SubscriptionService subscriptionService) {
+    public UserxService(UserxRepository userRepository, PasswordEncoder passwordEncoder, AuthenticatedUserService authenticatedUserService, SubscriptionService subscriptionService, AddressMapper addressMapper) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.authenticatedUserService = authenticatedUserService;
         this.subscriptionService = subscriptionService;
+        this.addressMapper = addressMapper;
     }
     
     /**
@@ -197,22 +200,30 @@ public class UserxService implements UserDetailsService {
     }
 
     /**
+     * Get address by id of authenticated user
+     *
+     * @param id the id of the address
+     * @return address
+     */
+    public Address getAddressOfCurrentUserById(Long id) {
+        return getAddressesOfCurrentUser().stream()
+                .filter(address -> id.equals(address.getId()))
+                .findFirst()
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "Address not found"
+                ));
+    }
+
+    /**
      * add new address to authenticated user
      *
-     * @param dto AddressCreateDTO with new address fields
+     * @param address the new address
      * @return address object
      */
     @Transactional
-    public Address addAddress(AddressCreateDTO dto) {
+    public Address addAddress(Address address) {
         Userx user = authenticatedUserService.requireAuthenticatedUser();
-
-        Address address = new Address();
-        address.setCountry(dto.country());
-        address.setCity(dto.city());
-        address.setPostalCode(dto.postalCode());
-        address.setStreet(dto.street());
-        address.setNumber(dto.number());
-        address.setExtra(dto.extra());
 
         address.setUser(user);
         user.getAddresses().add(address);
@@ -230,21 +241,8 @@ public class UserxService implements UserDetailsService {
      */
     @Transactional
     public Address updateAddress(Long addressId, AddressUpdateDTO dto) {
-        Userx user = authenticatedUserService.requireAuthenticatedUser();
-
-        Address address = user.getAddresses().stream()
-                .filter(a -> addressId.equals(a.getId()))
-                .findFirst()
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "Address not found"));
-
-        if (dto.country() != null) address.setCountry(dto.country());
-        if (dto.city() != null) address.setCity(dto.city());
-        if (dto.postalCode() != null) address.setPostalCode(dto.postalCode());
-        if (dto.street() != null) address.setStreet(dto.street());
-        if (dto.number() != null) address.setNumber(dto.number());
-        if (dto.extra() != null) address.setExtra(dto.extra());
-
+        Address address = getAddressOfCurrentUserById(addressId);
+        addressMapper.apply(address, dto);
         return address;
     }
 
