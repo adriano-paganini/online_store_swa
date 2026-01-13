@@ -7,6 +7,7 @@ import at.qe.skeleton.dtos.SubscriptionCreateDTO;
 import at.qe.skeleton.dtos.SubscriptionDTO;
 import at.qe.skeleton.dtos.SubscriptionUpdateDTO;
 import at.qe.skeleton.mappers.SubscriptionMapper;
+import at.qe.skeleton.mappers.SubscriptionCreateMapper;
 import at.qe.skeleton.model.NotificationType;
 import at.qe.skeleton.model.Subscription;
 import at.qe.skeleton.model.SubscriptionType;
@@ -42,6 +43,9 @@ public class SubscriptionControllerTest {
     private SubscriptionMapper subscriptionMapper;
 
     @MockitoBean
+    private SubscriptionCreateMapper subscriptionCreateMapper;
+
+    @MockitoBean
     private UserxService userxService;
     @MockitoBean
     private JwtTokenProvider jwtTokenProvider;
@@ -60,9 +64,10 @@ public class SubscriptionControllerTest {
         Subscription mockSub = new Subscription();
         SubscriptionDTO responseDTO = new SubscriptionDTO(1L, 1L, 10L, Set.of(SubscriptionType.RESTOCK), Set.of(NotificationType.EMAIL));
 
-        Mockito.when(subscriptionService.createSubscription(Mockito.any(), Mockito.any(SubscriptionCreateDTO.class)))
+        Mockito.when(subscriptionService.createSubscription(Mockito.any(), Mockito.any(Subscription.class)))
                 .thenReturn(mockSub);
         Mockito.when(subscriptionMapper.mapTo(mockSub)).thenReturn(responseDTO);
+        Mockito.when(subscriptionCreateMapper.mapFrom(createDTO)).thenReturn(mockSub);
 
         mockMvc.perform(MockMvcRequestBuilders.post("/subscriptions")
                         .with(SecurityMockMvcRequestPostProcessors.csrf())

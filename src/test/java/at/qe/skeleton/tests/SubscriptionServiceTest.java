@@ -1,8 +1,8 @@
 package at.qe.skeleton.tests;
 
-import at.qe.skeleton.dtos.SubscriptionCreateDTO;
 import at.qe.skeleton.dtos.SubscriptionUpdateDTO;
 import at.qe.skeleton.mappers.SubscriptionCreateMapper;
+import at.qe.skeleton.mappers.SubscriptionMapper;
 import at.qe.skeleton.model.*;
 import at.qe.skeleton.repositories.SubscriptionRepository;
 import at.qe.skeleton.services.SubscriptionService;
@@ -55,16 +55,7 @@ public class SubscriptionServiceTest {
 
     @Test
     void testCreateSubscriptionLogicAndPersistence() {
-        SubscriptionCreateDTO createDTO = new SubscriptionCreateDTO(
-                10L,
-                Set.of(SubscriptionType.RESTOCK),
-                Set.of(NotificationType.EMAIL)
-        );
-
-        Subscription mappedSub = new Subscription();
-        when(subscriptionCreateMapper.mapFrom(createDTO)).thenReturn(mappedSub);
-
-        Subscription result = subscriptionService.createSubscription(testUser, createDTO);
+        Subscription result = subscriptionService.createSubscription(testUser, testSubscription);
 
         Assertions.assertNotNull(result);
         Assertions.assertEquals(testUser, result.getUser());
@@ -76,10 +67,8 @@ public class SubscriptionServiceTest {
 
     @Test
     void testCreateSubscriptionThrowsUnauthorizedIfUserNull() {
-        SubscriptionCreateDTO createDTO = new SubscriptionCreateDTO(10L, Set.of(), Set.of());
-
         ResponseStatusException ex = Assertions.assertThrows(ResponseStatusException.class,
-                () -> subscriptionService.createSubscription(null, createDTO));
+                () -> subscriptionService.createSubscription(null, testSubscription));
 
         Assertions.assertEquals(HttpStatus.UNAUTHORIZED, ex.getStatusCode());
     }
