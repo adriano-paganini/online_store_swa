@@ -1,8 +1,6 @@
 package at.qe.skeleton.services;
 
-import at.qe.skeleton.dtos.SubscriptionCreateDTO;
 import at.qe.skeleton.dtos.SubscriptionUpdateDTO;
-import at.qe.skeleton.mappers.SubscriptionCreateMapper;
 import at.qe.skeleton.model.*;
 import at.qe.skeleton.repositories.SubscriptionRepository;
 import jakarta.transaction.Transactional;

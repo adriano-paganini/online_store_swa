@@ -2,7 +2,6 @@ package at.qe.skeleton.tests;
 
 import at.qe.skeleton.dtos.SubscriptionUpdateDTO;
 import at.qe.skeleton.mappers.SubscriptionCreateMapper;
-import at.qe.skeleton.mappers.SubscriptionMapper;
 import at.qe.skeleton.model.*;
 import at.qe.skeleton.repositories.SubscriptionRepository;
 import at.qe.skeleton.services.SubscriptionService;
