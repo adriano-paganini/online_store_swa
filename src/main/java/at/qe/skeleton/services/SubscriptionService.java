@@ -23,11 +23,9 @@ import static at.qe.skeleton.Helpers.SortHelper.parseSort;
 public class SubscriptionService {
 
     private final SubscriptionRepository subscriptionRepository;
-    private final SubscriptionCreateMapper subscriptionCreateMapper;
 
-    public SubscriptionService(SubscriptionRepository subscriptionRepository, SubscriptionCreateMapper subscriptionCreateMapper) {
+    public SubscriptionService(SubscriptionRepository subscriptionRepository) {
         this.subscriptionRepository = subscriptionRepository;
-        this.subscriptionCreateMapper = subscriptionCreateMapper;
     }
 
     public Optional<Subscription> loadSubscription(Long id) {
@@ -59,9 +57,7 @@ public class SubscriptionService {
     }
 
 
-    public Subscription createSubscription(Userx user, SubscriptionCreateDTO createDTO) {
-        Subscription subscription = subscriptionCreateMapper.mapFrom(createDTO);
-
+    public Subscription createSubscription(Userx user, Subscription subscription) {
         List<Subscription> userSubscriptions = subscriptionRepository.findByUser(user);
 
         for (Subscription forSubscription:userSubscriptions){

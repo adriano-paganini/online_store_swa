@@ -1,6 +1,7 @@
 package at.qe.skeleton.controllers;
 
 import at.qe.skeleton.dtos.*;
+import at.qe.skeleton.mappers.SubscriptionCreateMapper;
 import at.qe.skeleton.mappers.SubscriptionMapper;
 import at.qe.skeleton.model.*;
 import at.qe.skeleton.services.SubscriptionService;
@@ -21,10 +22,13 @@ public class SubscriptionController {
 
     private final SubscriptionMapper subscriptionMapper;
     private final SubscriptionService subscriptionService;
+    private final SubscriptionCreateMapper subscriptionCreateMapper;
 
-    public SubscriptionController(SubscriptionMapper subscriptionMapper, SubscriptionService subscriptionService) {
+
+    public SubscriptionController(SubscriptionMapper subscriptionMapper, SubscriptionService subscriptionService, SubscriptionCreateMapper subscriptionCreateMapper) {
         this.subscriptionMapper = subscriptionMapper;
         this.subscriptionService = subscriptionService;
+        this.subscriptionCreateMapper = subscriptionCreateMapper;
     }
 
 
@@ -76,7 +80,9 @@ public class SubscriptionController {
             @AuthenticationPrincipal Userx user,
             @Valid @RequestBody SubscriptionCreateDTO createDTO) {
 
-        SubscriptionDTO response = subscriptionMapper.mapTo(subscriptionService.createSubscription(user, createDTO));
+        Subscription subscription = subscriptionCreateMapper.mapFrom(createDTO);
+
+        SubscriptionDTO response = subscriptionMapper.mapTo(subscriptionService.createSubscription(user, subscription));
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
