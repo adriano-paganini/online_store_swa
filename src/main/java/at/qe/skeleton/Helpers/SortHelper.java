@@ -1,6 +1,7 @@
 package at.qe.skeleton.Helpers;
 
 import org.springframework.data.domain.Sort;
+
 import java.util.function.Predicate;
 
 public class SortHelper {

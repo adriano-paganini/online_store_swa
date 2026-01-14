@@ -1,6 +1,6 @@
 package at.qe.skeleton.services;
 
-import at.qe.skeleton.events.ProductEvent;
+import at.qe.skeleton.events.Payload;
 import at.qe.skeleton.model.Notification;
 import at.qe.skeleton.model.NotificationStatus;
 import at.qe.skeleton.model.NotificationType;
@@ -37,8 +37,8 @@ public class NotificationService {
     }
 
     @Transactional
-    public Notification createNotification(Long userId, NotificationType chanel, ProductEvent<?> event) {
-        Notification notification = new Notification(userId, event.getMessage(), chanel);
+    public Notification createNotification(Long userId, NotificationType chanel, Payload<?> event) {
+        Notification notification = new Notification(userId, event.getPayloadInfo().getPayloadSubjectLine(), chanel);
 
         notificationRepository.save(notification);
         return notification;
