@@ -1,0 +1,19 @@
+package at.qe.skeleton.events;
+
+import at.qe.skeleton.model.Order;
+
+import static at.qe.skeleton.Helpers.OrderEmailComposer.composePlainText;
+
+public class OrderCompletionEvent extends Payload<Order>{
+
+    public OrderCompletionEvent(Order payloadInfo) {
+        super(payloadInfo);
+        System.out.println("created");
+    }
+
+    @Override
+    public String getPayloadSubjectLine(){
+        return composePlainText(getPayloadInfo());
+    }
+
+}

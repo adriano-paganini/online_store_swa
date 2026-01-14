@@ -1,5 +1,6 @@
 package at.qe.skeleton.services;
 
+import at.qe.skeleton.events.Payload;
 import at.qe.skeleton.model.Notification;
 import at.qe.skeleton.model.NotificationStatus;
 import org.springframework.stereotype.Service;
@@ -13,10 +14,11 @@ public class SmsNotificationService {
         this.notificationService = notificationService;
     }
 
-    public void sendSms(Long notificationId) {
+    public void sendSms(Long notificationId, Payload<?> payload) {
         //This is a Stub. The actual functionality is not needed, as this is just a proof of concept.
         //90% success rate
         Notification notification = notificationService.getNotificationById(notificationId);
+        System.out.println(payload.getPayloadInfo().getPayloadSubjectLine() + "for User: "+notification.getUserId());
         boolean sendingSuccess = Math.random() < 0.9;
         if (sendingSuccess) {
             notificationService.updateNotificationStatus(NotificationStatus.SENT, notification);

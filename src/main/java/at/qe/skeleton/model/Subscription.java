@@ -1,5 +1,6 @@
 package at.qe.skeleton.model;
 
+import at.qe.skeleton.events.PayloadInterface;
 import jakarta.persistence.*;
 import org.springframework.data.domain.Persistable;
 import org.springframework.lang.Nullable;
@@ -14,7 +15,7 @@ import java.util.Set;
         uniqueConstraints = {@UniqueConstraint(columnNames = {"user_id", "product_id"})},
         indexes = {@Index(name = "idx_product_subscription", columnList = "product_id")}
 )
-public class Subscription implements Persistable<Long>, Serializable {
+public class Subscription implements Persistable<Long>, Serializable, PayloadInterface {
     @Serial
     private static final long serialVersionUID = 1L;
 
@@ -31,12 +32,12 @@ public class Subscription implements Persistable<Long>, Serializable {
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 
-    @ElementCollection(targetClass = SubscriptionType.class, fetch = FetchType.EAGER)
+    @ElementCollection(targetClass = SubscriptionType.class, fetch = FetchType.LAZY)
     @CollectionTable(name = "Subscription_Types")
     @Enumerated(EnumType.STRING)
     private Set<SubscriptionType> types;
 
-    @ElementCollection(targetClass = NotificationType.class, fetch = FetchType.EAGER)
+    @ElementCollection(targetClass = NotificationType.class, fetch = FetchType.LAZY)
     @CollectionTable(name = "Notification_Types")
     @Enumerated(EnumType.STRING)
     private Set<NotificationType> channels;
@@ -45,6 +46,10 @@ public class Subscription implements Persistable<Long>, Serializable {
     @Override
     public Long getId() {
         return id;
+    }
+
+    public String getPayloadSubjectLine(){
+        return " Subscription Update for " + product.getName();
     }
 
     public Set<NotificationType> getChannels() {
@@ -78,7 +83,6 @@ public class Subscription implements Persistable<Long>, Serializable {
     public void setProduct(Product product) {
         this.product = product;
     }
-
     public void setTypes(Set<SubscriptionType> types) {
         this.types = types;
     }

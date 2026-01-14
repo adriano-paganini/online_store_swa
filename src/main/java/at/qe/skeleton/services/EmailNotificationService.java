@@ -1,11 +1,9 @@
 package at.qe.skeleton.services;
 
-import at.qe.skeleton.events.EmailNotificationEvent;
+import at.qe.skeleton.events.NotificationEvent;
 import at.qe.skeleton.model.Notification;
 import at.qe.skeleton.model.NotificationStatus;
-import at.qe.skeleton.model.Subscription;
 import at.qe.skeleton.model.Userx;
-import at.qe.skeleton.repositories.SubscriptionRepository;
 import jakarta.mail.*;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
@@ -18,25 +16,23 @@ import java.util.Properties;
 public class EmailNotificationService {
 
     private final NotificationService notificationService;
-    private final SubscriptionRepository subscriptionRepository;
+    private final UserxService userxService;
 
-    public EmailNotificationService(NotificationService notificationService, SubscriptionRepository subscriptionRepository) {
+    public EmailNotificationService(NotificationService notificationService, UserxService userxService) {
         this.notificationService = notificationService;
-        this.subscriptionRepository = subscriptionRepository;
+        this.userxService = userxService;
     }
 
     @Transactional
-    public void sendEmail(EmailNotificationEvent event) {
+    public void sendEmail(NotificationEvent<?> event) {
         Notification notification = notificationService.getNotificationById(event.getNotificationId());
 
         try {
-            Subscription subscription = subscriptionRepository.findById(event.getSubscription().getId())
-                    .orElseThrow(() -> new RuntimeException("Subscription not found"));
 
-            Userx user = subscription.getUser();
+            Userx user = userxService.getUserById(notification.getUserId());
 
 
-            if (user.getEmail() == null || user.getEmail().isBlank()) {
+              if (user == null || user.getEmail() == null || user.getEmail().isBlank()) {
                 notificationService.updateNotificationStatus(NotificationStatus.FAILED, notification);
                 return;
             }
@@ -65,8 +61,8 @@ public class EmailNotificationService {
             message.setFrom(new InternetAddress(sender));
             message.setRecipient(Message.RecipientType.TO, new InternetAddress(user.getEmail()));
 
-            message.setSubject(notification.getChannel().toString() + " Subscription Update for " + subscription.getProduct().getName());
-            message.setText(notification.getMessage());
+            message.setSubject(notification.getMessage());
+            message.setText(event.getPayload().getPayloadSubjectLine());
 
             Transport.send(message);
 

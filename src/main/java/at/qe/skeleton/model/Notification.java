@@ -24,7 +24,7 @@ public class Notification implements Persistable<Long>, Serializable, Comparable
     @Column(nullable = false)
     private Long userId;
 
-    @Column(nullable = false, length = 500)
+    @Column(nullable = false, length = 5000)
     String message;
 
     @Column(nullable = false)

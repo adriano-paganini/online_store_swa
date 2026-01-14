@@ -1,19 +1,19 @@
 package at.qe.skeleton.events;
 
 import at.qe.skeleton.model.Notification;
-import at.qe.skeleton.model.Subscription;
 
-public class NotificationEvent {
+
+public class NotificationEvent<T extends PayloadInterface> {
     private final Long notificationId;
-    private final Subscription subscription;
+    private final Payload<T> payload;
 
-    public NotificationEvent(Notification notification, Subscription subscription) {
+    public NotificationEvent(Notification notification,Payload<T> payload) {
         this.notificationId = notification.getId();
-        this.subscription = subscription;
+        this.payload = payload;
     }
 
-    public Subscription getSubscription() {
-        return subscription;
+    public Payload<?> getPayload() {
+        return payload;
     }
 
     public Long getNotificationId() {

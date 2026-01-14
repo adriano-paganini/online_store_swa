@@ -11,7 +11,7 @@ public class ProductRestockEvent extends ProductEvent<Integer> {
     }
 
     @Override
-    public String getMessage() {
+    public String getPayloadSubjectLine() {
         DateTimeFormatter dateId = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
         String formattedDate = super.getTimestamp().format(dateId);
 
