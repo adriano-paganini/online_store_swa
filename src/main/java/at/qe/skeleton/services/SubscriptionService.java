@@ -46,7 +46,7 @@ public class SubscriptionService {
             Userx user, int page, int limit, SubscriptionType[] types, NotificationType[] channels, String sort) {
 
         Sort sortObj = parseSort(sort,
-                field -> List.of("userId","types","channels").contains(field),
+                field -> List.of("types","channels").contains(field),
                 "product");
 
         Pageable pageable = PageRequest.of(page, limit, sortObj);

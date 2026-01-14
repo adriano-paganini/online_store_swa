@@ -65,6 +65,55 @@ public class SubscriptionServiceTest {
     }
 
     @Test
+    void testCreateDuplicateSubscription(){
+        Product product = new Product();
+        product.setId(50L);
+
+        Subscription existing = new Subscription();
+        existing.setId(200L);
+        existing.setUser(testUser);
+        existing.setProduct(product);
+
+        testSubscription.setProduct(product);
+
+        when(subscriptionRepository.findByUser(testUser)).thenReturn(List.of(existing));
+
+        ResponseStatusException ex = Assertions.assertThrows(ResponseStatusException.class,
+                () -> subscriptionService.createSubscription(testUser, testSubscription));
+
+        Assertions.assertEquals(HttpStatus.CONFLICT, ex.getStatusCode());
+        Assertions.assertNotNull(ex.getReason());
+        Assertions.assertTrue(ex.getReason().contains("Already Subscribed"));
+    }
+
+    @Test
+    void testLoadSubscriptionById(){
+        when(subscriptionRepository.findById(100L)).thenReturn(Optional.of(testSubscription));
+
+        Optional<Subscription> result = subscriptionService.loadSubscription(100L);
+
+        Assertions.assertTrue(result.isPresent());
+        Assertions.assertEquals(testSubscription, result.get());
+        verify(subscriptionRepository).findById(100L);
+    }
+
+    @Test
+    void testGetSubscriptionByUserAndProduct(){
+        Long userId = 1L;
+        Long productId = 50L;
+
+        when(subscriptionRepository.findByUserAndProduct(userId, productId))
+                .thenReturn(Optional.of(testSubscription));
+
+        Optional<Subscription> result = subscriptionService.getSubscriptionByUserAndProduct(userId, productId);
+
+        Assertions.assertTrue(result.isPresent());
+        Assertions.assertEquals(testSubscription, result.get());
+        verify(subscriptionRepository).findByUserAndProduct(userId, productId);
+    }
+
+
+    @Test
     void testCreateSubscriptionThrowsUnauthorizedIfUserNull() {
         ResponseStatusException ex = Assertions.assertThrows(ResponseStatusException.class,
                 () -> subscriptionService.createSubscription(null, testSubscription));

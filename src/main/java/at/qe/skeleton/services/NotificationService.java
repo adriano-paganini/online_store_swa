@@ -48,7 +48,7 @@ public class NotificationService {
             Userx user, int page, int limit, NotificationStatus status, NotificationType channel, String sort) {
 
         Sort sortObj = parseSort(sort,
-                field -> List.of("channel","status").contains(field),
+                field -> List.of("channel","status", "id").contains(field),
                 "timestamp");
 
         Pageable pageable = PageRequest.of(page, limit, sortObj);
