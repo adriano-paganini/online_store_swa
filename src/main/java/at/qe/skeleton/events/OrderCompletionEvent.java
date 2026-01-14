@@ -8,7 +8,6 @@ public class OrderCompletionEvent extends Payload<Order>{
 
     public OrderCompletionEvent(Order payloadInfo) {
         super(payloadInfo);
-        System.out.println("created");
     }
 
     @Override

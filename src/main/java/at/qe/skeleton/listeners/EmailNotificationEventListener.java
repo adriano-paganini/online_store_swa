@@ -20,7 +20,6 @@ public class EmailNotificationEventListener {
     @Async
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void handleEmailNotificationEvent(EmailNotificationEvent<?> event) {
-        System.out.println("Reached EmailNotificationEventListener");
         emailNotificationService.sendEmail(event);
     }
 }

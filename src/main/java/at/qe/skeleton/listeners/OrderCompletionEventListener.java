@@ -29,7 +29,6 @@ public class OrderCompletionEventListener {
     @Transactional
     @TransactionalEventListener(phase= TransactionPhase.AFTER_COMMIT)
     public void handleOrderCompleteEvent(OrderCompletionEvent event){
-        System.out.println("Received Event!");
         Order order = event.getPayloadInfo();
         Notification notification = notificationService.createNotification(order.getUser().getId(), NotificationType.EMAIL, event);
         applicationEventPublisher.publishEvent(new EmailNotificationEvent<>(notification,event));
