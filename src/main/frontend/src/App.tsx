@@ -20,6 +20,7 @@ import {
   ManageUsersRoute,
   NotFoundRoute,
   NotificationsPageRoute,
+  OrdersPageRoute,
   ProductDetailPageRoute,
   ProductsPageRoute,
   SubscriptionsPageRoute,
@@ -80,6 +81,11 @@ const App: React.FC = () => {
                     Component={NotificationsPageRoute.component}
                   />
 
+                  <Route
+                    path={OrdersPageRoute.url}
+                    Component={OrdersPageRoute.component}
+                  />
+
                   {/* future */}
                   {/*
                   <Route
@@ -90,10 +96,7 @@ const App: React.FC = () => {
                     path={ProfilePageRoute.url}
                     Component={ProfilePageRoute.component}
                   />
-                  <Route
-                    path={OrdersPageRoute.url}
-                    Component={OrdersPageRoute.component}
-                  />
+                  
                   */}
                 </Route>
 

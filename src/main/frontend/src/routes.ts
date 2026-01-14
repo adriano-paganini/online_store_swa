@@ -7,6 +7,7 @@ import Logout from './views/Logout';
 import ManageUsers from './views/ManageUsers';
 import NotFoundPage from './views/NotFoundPage';
 import NotificationsPage from './views/NotificationsPage';
+import OrdersPage from './views/OrdersPage';
 import ProductDetailsPage from './views/ProductDetailsPage';
 import ProductsPage from './views/ProductsPage';
 import SubscriptionsPage from './views/SubscriptionsPage';
@@ -39,6 +40,11 @@ export const NotificationsPageRoute = {
 export const AddressesPageRoute = {
   url: ROUTES.ADDRESSES,
   component: AddressesPage,
+};
+
+export const OrdersPageRoute = {
+  url: ROUTES.ORDERS,
+  component: OrdersPage,
 };
 
 export const AdminProductsPageRoute = {

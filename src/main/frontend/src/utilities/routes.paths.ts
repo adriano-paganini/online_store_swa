@@ -5,6 +5,7 @@ export const ROUTES = {
   SUBSCRIPTIONS: '/subscriptions',
   NOTIFICATIONS: '/notifications',
   ADDRESSES: '/addresses',
+  ORDERS: '/orders',
   ADMIN_USERS: '/admin/users',
   ADMIN_PRODUCTS: '/admin/products',
   LOGIN: '/login',
@@ -13,8 +14,6 @@ export const ROUTES = {
   // future routes
   // CHECKOUT: '/checkout',
   // ORDER_CONFIRMATION: '/order-confirmation',
-  // ORDERS: '/orders',
-  // ORDER_DETAIL: '/orders/:id',
   // PROFILE: '/profile',
   // REGISTER: '/register',
 } as const;
