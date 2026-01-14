@@ -163,6 +163,15 @@ export function Header() {
             </Button>
           </Link>
 
+          <Link to={ROUTES.ORDERS}>
+            <Button
+              variant="ghost"
+              className="w-full justify-start"
+            >
+              Order History
+            </Button>
+          </Link>
+
           {isManager && (
             <Link to={ROUTES.ADMIN_PRODUCTS}>
               <Button
@@ -276,6 +285,9 @@ export function Header() {
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
                   <Link to={ROUTES.NOTIFICATIONS}>Notifications</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link to={ROUTES.ORDERS}>Order History</Link>
                 </DropdownMenuItem>
 
                 {isManager && (
