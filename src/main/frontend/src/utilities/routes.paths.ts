@@ -6,13 +6,14 @@ export const ROUTES = {
   NOTIFICATIONS: '/notifications',
   ADDRESSES: '/addresses',
   ORDERS: '/orders',
+  CHECKOUT: '/checkout',
+  PAYMENT: '/payment',
   ADMIN_USERS: '/admin/users',
   ADMIN_PRODUCTS: '/admin/products',
   LOGIN: '/login',
   LOGOUT: '/logout',
 
   // future routes
-  // CHECKOUT: '/checkout',
   // ORDER_CONFIRMATION: '/order-confirmation',
   // PROFILE: '/profile',
   // REGISTER: '/register',
