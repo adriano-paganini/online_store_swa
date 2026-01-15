@@ -1,6 +1,7 @@
 import { ROUTES } from './utilities/routes.paths';
 import AddressesPage from './views/AddressesPage';
 import AdminProductsPage from './views/AdminProductsPage';
+import { CheckoutPage } from './views/CheckoutPage';
 import HomePage from './views/HomePage';
 import Login from './views/Login';
 import Logout from './views/Logout';
@@ -47,6 +48,11 @@ export const OrdersPageRoute = {
   component: OrdersPage,
 };
 
+export const CheckoutPageRoute = {
+  url: ROUTES.CHECKOUT,
+  component: CheckoutPage,
+};
+
 export const AdminProductsPageRoute = {
   url: ROUTES.ADMIN_PRODUCTS,
   component: AdminProductsPage,
@@ -73,10 +79,7 @@ export const NotFoundRoute = {
 };
 
 // ofr the future routes
-// export const CheckoutPageRoute = {
-//   url: ROUTES.CHECKOUT,
-//   component: CheckoutPage,
-// }
+
 //
 // export const OrderConfirmationPageRoute = {
 //   url: "/order-confirmation/:orderNumber",

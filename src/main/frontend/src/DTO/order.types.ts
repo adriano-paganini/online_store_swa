@@ -1,5 +1,3 @@
-import type { TAddressDTO } from './address.types';
-
 export enum OrderStatus {
   PENDING = 'PENDING',
   PAID = 'PAID',
@@ -25,8 +23,6 @@ export type TOrderDTO = {
 };
 
 export type TOrderCreateDTO = {
-  shippingAddress: TAddressDTO;
-  billingAddress: TAddressDTO;
-  shippingAddressId?: number;
-  billingAddressId?: number;
+  shippingAddressId: number;
+  billingAddressId: number;
 };

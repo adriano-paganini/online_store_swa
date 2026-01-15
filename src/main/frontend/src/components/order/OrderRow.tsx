@@ -3,8 +3,12 @@
 import { ChevronDown } from 'lucide-react';
 import { useState } from 'react';
 
-import type { TOrderDTO } from '@/DTO/order.types';
+import { OrderStatus, type TOrderDTO } from '@/DTO/order.types';
 import { cn } from '@/lib/utils';
+import { OrderStatusLabels } from '@/utilities/orderUtils';
+import { ROUTES } from '@/utilities/routes.paths';
+import { Link } from 'react-router-dom';
+import { Button } from '../ui/button';
 
 type TOrderRowProps = {
   order: TOrderDTO;
@@ -24,9 +28,21 @@ export function OrderRow({ order }: TOrderRowProps) {
           <div className="text-sm text-muted-foreground">{new Date(order.timestamp).toLocaleDateString()}</div>
         </div>
 
-        <div className="w-32 text-sm">{order.status}</div>
+        <div className="flex items-center gap-2 text-sm">
+          {OrderStatusLabels[order.status]}
+          {order.status === OrderStatus.PENDING && (
+            <Link to={`${ROUTES.PAYMENT}/${order.orderNumber}`}>
+              <Button
+                size="sm"
+                variant="outline"
+              >
+                Pay Now
+              </Button>
+            </Link>
+          )}
+        </div>
 
-        <div className="w-24 text-sm font-semibold">${order.total.toFixed(2)}</div>
+        <div className="text-sm font-semibold">${order.total.toFixed(2)}</div>
 
         <ChevronDown className={cn('h-4 w-4 transition-transform', open && 'rotate-180')} />
       </button>
@@ -39,7 +55,7 @@ export function OrderRow({ order }: TOrderRowProps) {
               className="flex justify-between"
             >
               <span>
-                {item.productName} × {item.quantity}
+                {item.productName} x {item.quantity}
               </span>
               <span>${(item.priceAtPurchase * item.quantity).toFixed(2)}</span>
             </div>
