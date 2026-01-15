@@ -13,6 +13,7 @@ const getUserNotifications = async (
         limit: params.limit,
         status: params.status,
         channel: params.channel,
+        sort: params.sort,
       },
     });
     return response.data;
