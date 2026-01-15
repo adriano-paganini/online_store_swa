@@ -3,8 +3,10 @@
  * Architecture" offered by Innsbruck University.
  */
 
-import { TLoginDTO, TLoginResponse } from '../DTO/auth.types';
+import axios from 'axios';
+import { TLoginDTO, TLoginResponse, TRegistrationDTO } from '../DTO/auth.types';
 
+import { getErrorMessage } from '@/config/config';
 import globalAxios from 'axios';
 
 /**
@@ -22,6 +24,16 @@ const login = async (login: TLoginDTO): Promise<TLoginResponse> => {
   return response.data;
 };
 
+const register = async (register: TRegistrationDTO): Promise<void> => {
+  try {
+    const r = await axios.post('/registration', register);
+    console.log('r:', r);
+  } catch (err: unknown) {
+    throw new Error(`Error fetching cart: ${getErrorMessage(err)}`);
+  }
+};
+
 export const AuthApi = {
   login,
+  register,
 };
