@@ -17,6 +17,12 @@ type TOrderRowProps = {
 export function OrderRow({ order }: TOrderRowProps) {
   const [open, setOpen] = useState(false);
 
+  const actualTotal = order.items.reduce((sum, item) => {
+    const discountedPrice = item.priceAtPurchase * (1 - item.appliedDiscount);
+
+    return sum + discountedPrice * item.quantity;
+  }, 0);
+
   return (
     <div className="border-b">
       <button
@@ -42,7 +48,7 @@ export function OrderRow({ order }: TOrderRowProps) {
           )}
         </div>
 
-        <div className="text-sm font-semibold">${order.total.toFixed(2)}</div>
+        <div className="text-sm font-semibold">${actualTotal.toFixed(2)}</div>
 
         <ChevronDown className={cn('h-4 w-4 transition-transform', open && 'rotate-180')} />
       </button>
@@ -57,7 +63,7 @@ export function OrderRow({ order }: TOrderRowProps) {
               <span>
                 {item.productName} x {item.quantity}
               </span>
-              <span>${(item.priceAtPurchase * item.quantity).toFixed(2)}</span>
+              <span>${(item.priceAtPurchase * (1 - item.appliedDiscount) * item.quantity).toFixed(2)}</span>
             </div>
           ))}
         </div>

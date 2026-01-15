@@ -10,13 +10,13 @@ export const ROUTES = {
   PAYMENT: '/payment',
   ADMIN_USERS: '/admin/users',
   ADMIN_PRODUCTS: '/admin/products',
-  LOGIN: '/login',
+  AUTH: '/auth',
+  LOGIN: '/auth/login',
+  REGISTER: '/auth/register',
   LOGOUT: '/logout',
 
   // future routes
-  // ORDER_CONFIRMATION: '/order-confirmation',
   // PROFILE: '/profile',
-  // REGISTER: '/register',
 } as const;
 
 export type TRoutesType = typeof ROUTES;

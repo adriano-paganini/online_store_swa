@@ -1,9 +1,9 @@
 import { ROUTES } from './utilities/routes.paths';
 import AddressesPage from './views/AddressesPage';
 import AdminProductsPage from './views/AdminProductsPage';
+import AuthPage from './views/AuthPage';
 import { CheckoutPage } from './views/CheckoutPage';
 import HomePage from './views/HomePage';
-import Login from './views/Login';
 import Logout from './views/Logout';
 import ManageUsers from './views/ManageUsers';
 import NotFoundPage from './views/NotFoundPage';
@@ -63,9 +63,9 @@ export const ManageUsersRoute = {
   component: ManageUsers,
 };
 
-export const LoginsRoute = {
-  url: ROUTES.LOGIN,
-  component: Login,
+export const AuthPageRoute = {
+  url: `${ROUTES.AUTH}/:mode`,
+  component: AuthPage,
 };
 
 export const LogoutsRoute = {

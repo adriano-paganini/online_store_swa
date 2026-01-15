@@ -14,9 +14,9 @@ import { CartProvider } from './Contexts/cartContext';
 import {
   AddressesPageRoute,
   AdminProductsPageRoute,
+  AuthPageRoute,
   CheckoutPageRoute,
   HomePageRoute,
-  LoginsRoute,
   LogoutsRoute,
   ManageUsersRoute,
   NotFoundRoute,
@@ -42,8 +42,8 @@ const App: React.FC = () => {
             <Routes>
               {/* public routes */}
               <Route
-                path={LoginsRoute.url}
-                Component={LoginsRoute.component}
+                path={AuthPageRoute.url}
+                Component={AuthPageRoute.component}
               />
 
               <Route element={<MainLayout />}>

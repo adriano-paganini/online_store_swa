@@ -69,7 +69,7 @@ export function Header() {
             </Link>
 
             <Link
-              to={ROUTES.HOME}
+              to={ROUTES.REGISTER}
               className="w-full"
             >
               <Button
@@ -212,7 +212,7 @@ export function Header() {
                 <Button className="mb-2 w-full">Log in</Button>
               </Link>
 
-              <Link to={ROUTES.HOME}>
+              <Link to={ROUTES.REGISTER}>
                 <Button
                   variant="outline"
                   className="w-full"
@@ -320,7 +320,7 @@ export function Header() {
               <Link to={ROUTES.LOGIN}>
                 <Button className="px-3">Log in</Button>
               </Link>
-              <Link to={ROUTES.HOME}>
+              <Link to={ROUTES.REGISTER}>
                 <Button variant="outline">Sign up</Button>
               </Link>
             </div>
