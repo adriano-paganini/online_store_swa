@@ -9,6 +9,7 @@ import ManageUsers from './views/ManageUsers';
 import NotFoundPage from './views/NotFoundPage';
 import NotificationsPage from './views/NotificationsPage';
 import OrdersPage from './views/OrdersPage';
+import PaymentPage from './views/PaymentPage';
 import ProductDetailsPage from './views/ProductDetailsPage';
 import ProductsPage from './views/ProductsPage';
 import SubscriptionsPage from './views/SubscriptionsPage';
@@ -51,6 +52,11 @@ export const OrdersPageRoute = {
 export const CheckoutPageRoute = {
   url: ROUTES.CHECKOUT,
   component: CheckoutPage,
+};
+
+export const PaymentPageRoute = {
+  url: ROUTES.PAYMENT,
+  component: PaymentPage,
 };
 
 export const AdminProductsPageRoute = {

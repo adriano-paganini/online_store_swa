@@ -22,6 +22,7 @@ import {
   NotFoundRoute,
   NotificationsPageRoute,
   OrdersPageRoute,
+  PaymentPageRoute,
   ProductDetailPageRoute,
   ProductsPageRoute,
   SubscriptionsPageRoute,
@@ -90,6 +91,11 @@ const App: React.FC = () => {
                   <Route
                     path={CheckoutPageRoute.url}
                     Component={CheckoutPageRoute.component}
+                  />
+
+                  <Route
+                    path={PaymentPageRoute.url}
+                    Component={PaymentPageRoute.component}
                   />
 
                   {/* future */}

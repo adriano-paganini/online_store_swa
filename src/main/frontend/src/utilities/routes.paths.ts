@@ -7,7 +7,7 @@ export const ROUTES = {
   ADDRESSES: '/addresses',
   ORDERS: '/orders',
   CHECKOUT: '/checkout',
-  PAYMENT: '/payment',
+  PAYMENT: '/payment/:orderNumber',
   ADMIN_USERS: '/admin/users',
   ADMIN_PRODUCTS: '/admin/products',
   AUTH: '/auth',

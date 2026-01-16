@@ -11,7 +11,6 @@ import type { TAddressDTO } from '@/DTO/address.types';
 import { AddressSelector } from '@/components/checkout/AddressSelector';
 import { CheckoutCartItems } from '@/components/checkout/CheckoutCartItems';
 import { Button } from '@/components/ui/button';
-import { ROUTES } from '@/utilities/routes.paths';
 
 export function CheckoutPage() {
   const navigate = useNavigate();
@@ -60,7 +59,7 @@ export function CheckoutPage() {
 
       await clearCart();
 
-      navigate(`${ROUTES.PAYMENT}/${order.orderNumber}`);
+      navigate(`/payment/${order.orderNumber}`);
     } catch {
       toast.error('Failed to create order');
     } finally {

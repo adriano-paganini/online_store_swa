@@ -5,8 +5,7 @@ import { useState } from 'react';
 
 import { OrderStatus, type TOrderDTO } from '@/DTO/order.types';
 import { cn } from '@/lib/utils';
-import { OrderStatusLabels } from '@/utilities/orderUtils';
-import { ROUTES } from '@/utilities/routes.paths';
+import { calculateOrderTotal, OrderStatusLabels } from '@/utilities/orderUtils';
 import { Link } from 'react-router-dom';
 import { Button } from '../ui/button';
 
@@ -17,11 +16,7 @@ type TOrderRowProps = {
 export function OrderRow({ order }: TOrderRowProps) {
   const [open, setOpen] = useState(false);
 
-  const actualTotal = order.items.reduce((sum, item) => {
-    const discountedPrice = item.priceAtPurchase * (1 - item.appliedDiscount);
-
-    return sum + discountedPrice * item.quantity;
-  }, 0);
+  const actualTotal = calculateOrderTotal(order.items);
 
   return (
     <div className="border-b">
@@ -37,7 +32,7 @@ export function OrderRow({ order }: TOrderRowProps) {
         <div className="flex items-center gap-2 text-sm">
           {OrderStatusLabels[order.status]}
           {order.status === OrderStatus.PENDING && (
-            <Link to={`${ROUTES.PAYMENT}/${order.orderNumber}`}>
+            <Link to={`/payment/${order.orderNumber}`}>
               <Button
                 size="sm"
                 variant="outline"
