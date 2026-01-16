@@ -112,10 +112,6 @@ public class UserxService implements UserDetailsService {
             if (user.getRoles() == null || user.getRoles().isEmpty()) {
                 user.setRoles(Set.of(UserxRole.CUSTOMER));
             }
-            // DEFAULT CHANNEL
-            if (user.getChannels() == null || user.getChannels().isEmpty()) {
-                user.setChannels(Set.of(NotificationType.EMAIL));
-            }
             user.setCreateUser(authenticatedUserService.getAuthenticatedUser());
         } else {
             user.setUpdateUser(authenticatedUserService.getAuthenticatedUser());

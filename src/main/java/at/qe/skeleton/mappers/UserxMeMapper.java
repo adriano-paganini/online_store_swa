@@ -26,8 +26,7 @@ public class UserxMeMapper {
                 user.getLastName(),
                 user.getEmail(),
                 user.getPhone(),
-                user.getRoles(),
-                user.getChannels()
+                user.getRoles()
         );
     }
 

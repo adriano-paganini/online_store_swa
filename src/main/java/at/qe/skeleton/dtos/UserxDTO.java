@@ -24,7 +24,6 @@ public record UserxDTO(
         String phone,
         boolean enabled,
         boolean deleted,
-        Set<UserxRole> roles,
-        Set<NotificationType> channels
+        Set<UserxRole> roles
 ) {
 }

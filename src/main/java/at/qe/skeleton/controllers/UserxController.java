@@ -2,7 +2,6 @@ package at.qe.skeleton.controllers;
 
 import at.qe.skeleton.dtos.UserxMeDTO;
 import at.qe.skeleton.dtos.UserxMeUpdateDTO;
-import at.qe.skeleton.dtos.UserxUpdateDTO;
 import at.qe.skeleton.mappers.UserxMeMapper;
 import at.qe.skeleton.model.Userx;
 import at.qe.skeleton.services.AuthenticatedUserService;

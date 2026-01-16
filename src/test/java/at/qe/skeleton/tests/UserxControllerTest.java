@@ -49,7 +49,6 @@ public class UserxControllerTest {
                 null,
                 "http@update.at",
                 null,
-                null,
                 null
         );
 

@@ -42,8 +42,7 @@ public class UserxMapper {
                 user.getPhone(), 
                 user.isEnabled(),
                 user.isDeleted(),
-                user.getRoles(),
-                user.getChannels()
+                user.getRoles()
         );
         
         return dto;

@@ -112,7 +112,7 @@ public class AdminControllerTest {
         )).thenReturn(page);
 
         Mockito.when(userMapper.mapTo(Mockito.any(Userx.class))).thenReturn(new UserxDTO(
-                id, null, null, null, null, "testUser", "First", "Last", null, null, false, false,null, null));
+                id, null, null, null, null, "testUser", "First", "Last", null, null, false, false,null));
 
 
         mockMvc.perform(MockMvcRequestBuilders.get("/admin/users"))
@@ -132,7 +132,7 @@ public class AdminControllerTest {
         user1.setFirstName("First");
         user1.setLastName("Last");
         Mockito.when(userService.loadUser(id)).thenReturn(Optional.of(user1));
-        Mockito.when(userMapper.mapTo(user1)).thenReturn(new UserxDTO(id, null, null, null, null, username, "First", "Last", null, null, false, false, null, null));
+        Mockito.when(userMapper.mapTo(user1)).thenReturn(new UserxDTO(id, null, null, null, null, username, "First", "Last", null, null, false, false, null));
 
         mockMvc.perform(MockMvcRequestBuilders.get("/admin/users/{id}", id))
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -171,7 +171,7 @@ public class AdminControllerTest {
 
         Mockito.when(userCreateMapper.mapFrom(newUser)).thenReturn(user);
         Mockito.when(userService.saveUser(user)).thenReturn(user);
-        Mockito.when(userMapper.mapTo(user)).thenReturn(new UserxDTO(id, null, null, null, null, username, firstName, lastName, email, "", isEnabled, false, roles, null));
+        Mockito.when(userMapper.mapTo(user)).thenReturn(new UserxDTO(id, null, null, null, null, username, firstName, lastName, email, "", isEnabled, false, roles));
 
         mockMvc.perform(MockMvcRequestBuilders.post("/admin/users")
                         .with(SecurityMockMvcRequestPostProcessors.csrf())
