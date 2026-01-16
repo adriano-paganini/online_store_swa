@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'sonner';
 
 import { OrderApi } from '@/utilities/orderApi';
@@ -21,6 +21,7 @@ import { PaymentMethodSelector } from '@/components/payment/PaymentMethodSelecto
 
 export default function PaymentPage() {
   const { orderNumber } = useParams<{ orderNumber: string }>();
+  const navigate = useNavigate();
 
   const [order, setOrder] = useState<TOrderDTO | null>(null);
   const [loading, setLoading] = useState(true);
@@ -68,8 +69,12 @@ export default function PaymentPage() {
 
       const res = await PaymentApi.processPayment(payload);
 
-      if (res.success) toast.success(res.message);
-      else toast.error(res.message);
+      if (res.success) {
+        toast.success(res.message);
+        navigate(`/payment/success/${order.orderNumber}`, { replace: true });
+      } else {
+        toast.error(res.message);
+      }
     } finally {
       setSubmitting(false);
     }

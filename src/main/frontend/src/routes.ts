@@ -10,6 +10,7 @@ import NotFoundPage from './views/NotFoundPage';
 import NotificationsPage from './views/NotificationsPage';
 import OrdersPage from './views/OrdersPage';
 import PaymentPage from './views/PaymentPage';
+import PaymentSuccessPage from './views/PaymentSuccessPage';
 import ProductDetailsPage from './views/ProductDetailsPage';
 import ProductsPage from './views/ProductsPage';
 import SubscriptionsPage from './views/SubscriptionsPage';
@@ -57,6 +58,11 @@ export const CheckoutPageRoute = {
 export const PaymentPageRoute = {
   url: ROUTES.PAYMENT,
   component: PaymentPage,
+};
+
+export const PaymentSuccessPageRoute = {
+  url: ROUTES.PAYMENT_SUCCESS,
+  component: PaymentSuccessPage,
 };
 
 export const AdminProductsPageRoute = {

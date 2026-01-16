@@ -23,6 +23,7 @@ import {
   NotificationsPageRoute,
   OrdersPageRoute,
   PaymentPageRoute,
+  PaymentSuccessPageRoute,
   ProductDetailPageRoute,
   ProductsPageRoute,
   SubscriptionsPageRoute,
@@ -96,6 +97,11 @@ const App: React.FC = () => {
                   <Route
                     path={PaymentPageRoute.url}
                     Component={PaymentPageRoute.component}
+                  />
+
+                  <Route
+                    path={PaymentSuccessPageRoute.url}
+                    Component={PaymentSuccessPageRoute.component}
                   />
 
                   {/* future */}

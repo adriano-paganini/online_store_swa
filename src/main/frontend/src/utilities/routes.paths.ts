@@ -8,6 +8,7 @@ export const ROUTES = {
   ORDERS: '/orders',
   CHECKOUT: '/checkout',
   PAYMENT: '/payment/:orderNumber',
+  PAYMENT_SUCCESS: '/payment/success/:orderNum',
   ADMIN_USERS: '/admin/users',
   ADMIN_PRODUCTS: '/admin/products',
   AUTH: '/auth',
