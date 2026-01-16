@@ -476,38 +476,6 @@ SELECT ID, '40','6020','Innsbruck', 'Austria','Technikerstraße', 'RR21'
 FROM USERX
 WHERE USERNAME = 'adriano' OR USERNAME = 'admin' OR USERNAME = 'user1' OR USERNAME = 'user2';
 
---One order of each type for each user
-INSERT INTO ORDERS (
-    USER_ID,
-    TOTAL,
-    TIMESTAMP,
-    ORDER_NUMBER,
-    BILLING_CITY, BILLING_COUNTRY, BILLING_EXTRA, BILLING_NUMBER, BILLING_POSTAL_CODE, BILLING_STREET,
-    SHIPPING_CITY, SHIPPING_COUNTRY, SHIPPING_EXTRA, SHIPPING_NUMBER, SHIPPING_POSTAL_CODE, SHIPPING_STREET,
-    STATUS
-)
-SELECT
-    base.ID,
-    (100.00 + (RAND() * 500)),
-    CURRENT_TIMESTAMP,
-    CONCAT('ORD-', UPPER(SUBSTR(RANDOM_UUID(), 1, 8))),
-    base.CITY, base.COUNTRY, base.EXTRA, base.NUMBER, base.POSTAL_CODE, base.STREET,
-    base.CITY, base.COUNTRY, base.EXTRA, base.NUMBER, base.POSTAL_CODE, base.STREET,
-    s.STATUS_NAME
-FROM (
-         SELECT DISTINCT ON (u.ID)
-             u.ID, a.CITY, a.COUNTRY, a.EXTRA, a.NUMBER, a.POSTAL_CODE, a.STREET
-         FROM USERX u
-             JOIN ADDRESS a ON u.ID = a.USER_ID
-     ) base
-         CROSS JOIN (
-    SELECT 'PENDING' AS STATUS_NAME UNION ALL
-    SELECT 'CONFIRMED' UNION ALL
-    SELECT 'SHIPPED' UNION ALL
-    SELECT 'DELIVERED' UNION ALL
-    SELECT 'COMPLETED' UNION ALL
-    SELECT 'CANCELED'
-) s;
 
 
 -- add comments
@@ -546,6 +514,59 @@ INSERT INTO REVIEW (SCORE, PRODUCT_ID, TIMESTAMP, USER_ID, CONTENT)
 VALUES (4.0, (SELECT ID FROM PRODUCT WHERE NAME = 'Non-Stop Energy Drink'), CURRENT_TIMESTAMP, (SELECT ID FROM USERX WHERE USERNAME = 'adriano'), 'Tasty, not sure how much it really helps.');
 INSERT INTO REVIEW (SCORE, PRODUCT_ID, TIMESTAMP, USER_ID, CONTENT)
 VALUES (5.0, (SELECT ID FROM PRODUCT WHERE NAME = 'Non-Stop Energy Drink'), CURRENT_TIMESTAMP, (SELECT ID FROM USERX WHERE USERNAME = 'user2'), 'At least we still got some nice drinks.');
+
+-- add orders for adriano
+-- Insert the Order
+INSERT INTO orders (TOTAL, TIMESTAMP, USER_ID, ORDER_NUMBER, BILLING_CITY, BILLING_COUNTRY, BILLING_POSTAL_CODE, BILLING_STREET, STATUS)
+VALUES (
+           1015.89,
+           CURRENT_TIMESTAMP,
+           (SELECT ID FROM USERX WHERE USERNAME = 'adriano'),
+           'ORD-ADRIANO-CONFIRMED',
+           'Innsbruck', 'Austria', '6020', 'Technikerstraße',
+           'CONFIRMED'
+       );
+
+-- Insert the Item (1x DDR5 32GB)
+INSERT INTO order_item (ORDER_ID, PRODUCT_ID, PRODUCT_NAME, QUANTITY, PRICE_AT_PURCHASE)
+VALUES (
+           (SELECT ID FROM orders WHERE ORDER_NUMBER = 'ORD-ADRIANO-CONFIRMED'),
+           (SELECT ID FROM PRODUCT WHERE NAME = 'DDR5 32GB'),
+           'DDR5 32GB',
+           1,
+           1015.99
+       );
+
+-- Insert the Order
+INSERT INTO orders (TOTAL, TIMESTAMP, USER_ID, ORDER_NUMBER, BILLING_CITY, BILLING_COUNTRY, BILLING_POSTAL_CODE, BILLING_STREET, STATUS)
+VALUES (
+           5031.97, -- (2 * 1015.99) + 3000.00 (approximate total)
+           CURRENT_TIMESTAMP,
+           (SELECT ID FROM USERX WHERE USERNAME = 'adriano'),
+           'ORD-ADRIANO-PENDING',
+           'Innsbruck', 'Austria', '6020', 'Technikerstraße',
+           'PENDING'
+       );
+
+-- Insert the first item (2x DDR5 32GB)
+INSERT INTO order_item (ORDER_ID, PRODUCT_ID, PRODUCT_NAME, QUANTITY, PRICE_AT_PURCHASE)
+VALUES (
+           (SELECT ID FROM orders WHERE ORDER_NUMBER = 'ORD-ADRIANO-PENDING'),
+           (SELECT ID FROM PRODUCT WHERE NAME = 'DDR5 32GB'),
+           'DDR5 32GB',
+           2,
+           1015.99
+       );
+
+-- Insert the second item (1x Guardian Angel)
+INSERT INTO order_item (ORDER_ID, PRODUCT_ID, PRODUCT_NAME, QUANTITY, PRICE_AT_PURCHASE)
+VALUES (
+           (SELECT ID FROM orders WHERE ORDER_NUMBER = 'ORD-ADRIANO-PENDING'),
+           (SELECT ID FROM PRODUCT WHERE NAME = 'Guardian Angel'),
+           'Guardian Angel',
+           1,
+           3000.00
+       );
 
 -- AI generated Addition for Other users!
 -- =========================
