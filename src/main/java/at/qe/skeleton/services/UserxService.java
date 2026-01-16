@@ -1,10 +1,10 @@
 package at.qe.skeleton.services;
 
-import at.qe.skeleton.dtos.AddressCreateDTO;
-import at.qe.skeleton.dtos.AddressUpdateDTO;
-import at.qe.skeleton.dtos.UserxRegistrationDTO;
-import at.qe.skeleton.dtos.UserxUpdateDTO;
+import at.qe.skeleton.dtos.*;
 import at.qe.skeleton.exceptions.UsernameDuplicateException;
+import at.qe.skeleton.mappers.AddressMapper;
+import at.qe.skeleton.mappers.UserxMapper;
+import at.qe.skeleton.mappers.UserxMeMapper;
 import at.qe.skeleton.model.*;
 
 
@@ -39,13 +39,19 @@ public class UserxService implements UserDetailsService {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticatedUserService authenticatedUserService;
     private final SubscriptionService subscriptionService;
+    private final AddressMapper addressMapper;
+    private final UserxMapper userxMapper;
+    private final UserxMeMapper userxMeMapper;
 
     @Autowired
-    public UserxService(UserxRepository userRepository, PasswordEncoder passwordEncoder, AuthenticatedUserService authenticatedUserService, SubscriptionService subscriptionService) {
+    public UserxService(UserxRepository userRepository, PasswordEncoder passwordEncoder, AuthenticatedUserService authenticatedUserService, SubscriptionService subscriptionService, AddressMapper addressMapper, UserxMapper userxMapper, UserxMeMapper userxMeMapper) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.authenticatedUserService = authenticatedUserService;
         this.subscriptionService = subscriptionService;
+        this.addressMapper = addressMapper;
+        this.userxMapper = userxMapper;
+        this.userxMeMapper = userxMeMapper;
     }
     
     /**
@@ -129,18 +135,7 @@ public class UserxService implements UserDetailsService {
         Userx user = userRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
-        if (dto.username() != null) user.setUsername(dto.username());
-        if (dto.firstName() != null) user.setFirstName(dto.firstName());
-        if (dto.lastName() != null) user.setLastName(dto.lastName());
-        if (dto.email() != null) user.setEmail(dto.email());
-        if (dto.phone() != null) user.setPhone(dto.phone());
-
-        if (dto.password() != null) {
-            user.setPassword(passwordEncoder.encode(dto.password()));
-        }
-
-        if (dto.roles() != null) user.setRoles(dto.roles());
-        if (dto.channels() != null) user.setChannels(dto.channels());
+        userxMapper.apply(user, dto);
 
         user.setUpdateUser(authenticatedUserService.getAuthenticatedUser());
         return userRepository.save(user);
@@ -195,22 +190,30 @@ public class UserxService implements UserDetailsService {
     }
 
     /**
+     * Get address by id of authenticated user
+     *
+     * @param id the id of the address
+     * @return address
+     */
+    public Address getAddressOfCurrentUserById(Long id) {
+        return getAddressesOfCurrentUser().stream()
+                .filter(address -> id.equals(address.getId()))
+                .findFirst()
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "Address not found"
+                ));
+    }
+
+    /**
      * add new address to authenticated user
      *
-     * @param dto AddressCreateDTO with new address fields
+     * @param address the new address
      * @return address object
      */
     @Transactional
-    public Address addAddress(AddressCreateDTO dto) {
+    public Address addAddress(Address address) {
         Userx user = authenticatedUserService.requireAuthenticatedUser();
-
-        Address address = new Address();
-        address.setCountry(dto.country());
-        address.setCity(dto.city());
-        address.setPostalCode(dto.postalCode());
-        address.setStreet(dto.street());
-        address.setNumber(dto.number());
-        address.setExtra(dto.extra());
 
         address.setUser(user);
         user.getAddresses().add(address);
@@ -228,21 +231,8 @@ public class UserxService implements UserDetailsService {
      */
     @Transactional
     public Address updateAddress(Long addressId, AddressUpdateDTO dto) {
-        Userx user = authenticatedUserService.requireAuthenticatedUser();
-
-        Address address = user.getAddresses().stream()
-                .filter(a -> addressId.equals(a.getId()))
-                .findFirst()
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "Address not found"));
-
-        if (dto.country() != null) address.setCountry(dto.country());
-        if (dto.city() != null) address.setCity(dto.city());
-        if (dto.postalCode() != null) address.setPostalCode(dto.postalCode());
-        if (dto.street() != null) address.setStreet(dto.street());
-        if (dto.number() != null) address.setNumber(dto.number());
-        if (dto.extra() != null) address.setExtra(dto.extra());
-
+        Address address = getAddressOfCurrentUserById(addressId);
+        addressMapper.apply(address, dto);
         return address;
     }
 
@@ -258,20 +248,12 @@ public class UserxService implements UserDetailsService {
     }
 
     @Transactional
-    public Userx registerCustomer(UserxRegistrationDTO dto) {
+    public Userx registerCustomer(Userx user) {
 
-        if (userRepository.existsByUsername(dto.username())) {
+        if (userRepository.existsByUsername(user.getUsername())) {
             throw new UsernameDuplicateException(
-                    "Username " + dto.username() + " not available");
+                    "Username " + user.getUsername() + " not available");
         }
-
-        Userx user = new Userx();
-        user.setUsername(dto.username());
-        user.setPassword(passwordEncoder.encode(dto.password()));
-        user.setFirstName(dto.firstName());
-        user.setLastName(dto.lastName());
-        user.setEmail(dto.email());
-        user.setPhone(dto.phone());
 
         // enforced defaults
         user.setRoles(Set.of(UserxRole.CUSTOMER));
@@ -287,26 +269,10 @@ public class UserxService implements UserDetailsService {
     }
 
     @Transactional
-    public Userx updateCurrentUser(UserxUpdateDTO dto) {
-
+    public Userx updateCurrentUser(UserxMeUpdateDTO dto) {
         Userx user = authenticatedUserService.requireAuthenticatedUser();
 
-        if (dto.firstName() != null) user.setFirstName(dto.firstName());
-        if (dto.lastName() != null) user.setLastName(dto.lastName());
-        if (dto.email() != null) user.setEmail(dto.email());
-        if (dto.phone() != null) user.setPhone(dto.phone());
-
-        if (dto.password() != null) {
-            user.setPassword(passwordEncoder.encode(dto.password()));
-        }
-
-        /*
-        intentionally ignored:
-        - roles
-        - enabled
-        - deleted
-        - username
-         */
+        userxMeMapper.apply(user, dto);
 
         return userRepository.save(user);
     }

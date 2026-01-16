@@ -85,6 +85,14 @@ public class OrderService {
         if (cart.getItems().isEmpty()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cart is empty");
         }
+        // orderCreateDTO is deliberately not mapped via a mapper
+        // because it would require to inject services into the mapper
+        if (orderCreateDTO.billingAddressId() == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Billing Address is required.");
+        }
+        if (orderCreateDTO.shippingAddressId() == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Shipping Address is required.");
+        }
 
         OrderAddress billingAddress = snapshotAddress(user, orderCreateDTO.billingAddressId());
         OrderAddress shippingAddress = snapshotAddress(user, orderCreateDTO.shippingAddressId());

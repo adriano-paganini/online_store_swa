@@ -2,9 +2,11 @@ package at.qe.skeleton.mappers;
 
 import at.qe.skeleton.dtos.UserxDTO;
 import at.qe.skeleton.dtos.UserxMeDTO;
+import at.qe.skeleton.dtos.UserxUpdateDTO;
 import at.qe.skeleton.model.Userx;
 import at.qe.skeleton.services.UserxService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 /**
@@ -13,16 +15,15 @@ import org.springframework.stereotype.Service;
  * Architecture" offered by Innsbruck University.
  */
 @Service
-public class UserxMapper implements DTOMapper<Userx, UserxDTO>{
-    
-    private final UserxService userxService;
-    
+public class UserxMapper {
+
+    private final PasswordEncoder passwordEncoder;
+
     @Autowired
-    public UserxMapper(UserxService userxService) {
-        this.userxService = userxService;
+    public UserxMapper(PasswordEncoder passwordEncoder) {
+        this.passwordEncoder = passwordEncoder;
     }
-    
-   @Override
+
     public UserxDTO mapTo(Userx user) {
         if (user == null) {
             return null;
@@ -48,39 +49,12 @@ public class UserxMapper implements DTOMapper<Userx, UserxDTO>{
         return dto;
     }
 
-    @Override
-    public Userx mapFrom(UserxDTO userxDto) {
-        if (null == userxDto) {
-            return null;
-        }
-        Userx user;
-        if (null != userxDto.id()) {
-            user = userxService.loadUser(userxDto.id()).orElse(new Userx());
-        } else {
-            user = new Userx();
-        }
-        user.setFirstName(userxDto.firstName());
-        user.setLastName(userxDto.lastName());
-        user.setEmail(userxDto.email());
-        user.setPhone(userxDto.phone());
-        user.setEnabled(userxDto.enabled());
-        user.setRoles(userxDto.roles());
-
-        return user;
-    }
-
-    public UserxMeDTO mapToMe(Userx user) {
-        if (user == null) {
-            return null;
-        }
-        return new UserxMeDTO(
-                user.getUsername(),
-                user.getFirstName(),
-                user.getLastName(),
-                user.getEmail(),
-                user.getPhone(),
-                user.getRoles(),
-                user.getChannels()
-        );
+    public void apply(Userx user, UserxUpdateDTO dto) {
+        if (dto.firstName() != null) user.setFirstName(dto.firstName());
+        if (dto.lastName() != null) user.setLastName(dto.lastName());
+        if (dto.email() != null) user.setEmail(dto.email());
+        if (dto.phone() != null) user.setPhone(dto.phone());
+        if (dto.password() != null) user.setPassword(passwordEncoder.encode(dto.password()));
+        if (dto.roles() != null && !dto.roles().isEmpty()) user.setRoles(dto.roles());
     }
 }
