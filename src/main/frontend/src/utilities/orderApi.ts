@@ -14,7 +14,7 @@ const fetchOrders = async (
   }
 };
 
-const fetchOrderByNumber = async (num: number): Promise<TOrderDTO> => {
+const fetchOrderByNumber = async (num: string): Promise<TOrderDTO> => {
   try {
     const response = await axios.get<TOrderDTO>(`/orders/${num}`);
     return response.data;
