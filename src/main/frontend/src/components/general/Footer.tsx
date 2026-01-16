@@ -56,7 +56,7 @@ export function Footer() {
               </li>
               <li>
                 <Link
-                  to={ROUTES.HOME}
+                  to={ROUTES.ORDERS}
                   className="text-muted-foreground hover:text-foreground"
                 >
                   Order History
