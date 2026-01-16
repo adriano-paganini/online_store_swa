@@ -65,6 +65,13 @@ public class OrderController {
         return orderMapper.toDto(order);
     }
 
+    @PatchMapping("/{orderNumber}/confirm")
+    public OrderDTO confirmOrder(@PathVariable String orderNumber) {
+        System.out.println("reached");
+        Order order = orderService.confirmPayment(orderNumber);
+        return orderMapper.toDto(order);
+    }
+
     /**
      * Create a new order from the current cart.
      */
