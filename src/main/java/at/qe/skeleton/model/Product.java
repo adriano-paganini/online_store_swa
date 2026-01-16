@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Objects;
 
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.Formula;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.domain.Persistable;
 
@@ -48,7 +49,7 @@ public class Product implements Persistable<Long>, Serializable, Comparable<Prod
     @UpdateTimestamp
     private LocalDateTime updateDate;
 
-    @Column(nullable = false, length = 255)
+    @Column(nullable = false)
     private String name;
 
     @Column(nullable = false, length = 2000)
@@ -74,10 +75,18 @@ public class Product implements Persistable<Long>, Serializable, Comparable<Prod
     @Column(nullable = false)
     private Boolean deleted = false;
 
+    @Formula("price * (1 - (coalesce(discount, 0) / 100.0))")
+    private Double effectivePrice;
+
+
     // Getters and Setters
     @Override
     public Long getId() {
         return id;
+    }
+
+    public Double getEffectivePrice() {
+        return effectivePrice;
     }
 
     public void setId(Long id) {

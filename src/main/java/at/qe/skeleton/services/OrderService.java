@@ -1,9 +1,11 @@
 package at.qe.skeleton.services;
 
 import at.qe.skeleton.dtos.OrderCreateDTO;
+import at.qe.skeleton.events.OrderCompletionEvent;
 import at.qe.skeleton.model.*;
 import at.qe.skeleton.repositories.OrderRepository;
 import jakarta.transaction.Transactional;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -22,17 +24,19 @@ public class OrderService {
     private final CartService cartService;
     private final ProductService productService;
     private final AuthenticatedUserService authenticatedUserService;
+    private final ApplicationEventPublisher applicationEventPublisher;
 
     public OrderService(
             OrderRepository orderRepository,
             CartService cartService,
             ProductService productService,
-            AuthenticatedUserService authenticatedUserService
+            AuthenticatedUserService authenticatedUserService, ApplicationEventPublisher applicationEventPublisher
     ) {
         this.orderRepository = orderRepository;
         this.cartService = cartService;
         this.productService = productService;
         this.authenticatedUserService = authenticatedUserService;
+        this.applicationEventPublisher = applicationEventPublisher;
     }
 
     public Page<Order> getCurrentUserOrders(
@@ -98,7 +102,6 @@ public class OrderService {
 
         Order savedOrder = orderRepository.save(order);
         cartService.clearCart();
-
         return savedOrder;
     }
 
@@ -117,6 +120,22 @@ public class OrderService {
                 address.getNumber(),
                 address.getExtra()
         );
+    }
+
+    @Transactional
+    public Order confirmPayment(String orderNumber){
+        Order updated = updateOrderStatus(OrderStatus.CONFIRMED,orderNumber);
+        applicationEventPublisher.publishEvent(new OrderCompletionEvent(updated));
+
+        return updated;
+    };
+
+    @Transactional
+    public Order updateOrderStatus(OrderStatus status, String orderNumber){
+        Order order = getOrderByNumber(orderNumber);
+        order.setStatus(status);
+        orderRepository.save(order);
+        return order;
     }
 
     private List<OrderItem> createOrderItemsFromCart(Cart cart) {

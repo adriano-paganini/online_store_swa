@@ -7,7 +7,6 @@ import at.qe.skeleton.mappers.UserxMapper;
 import at.qe.skeleton.mappers.UserxMeMapper;
 import at.qe.skeleton.model.*;
 
-import java.util.Collection;
 
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +29,6 @@ import java.util.Set;
 
 /**
  * Service for accessing and manipulating user data.
- *
  * This class is part of the skeleton project provided for students of the
  * course "Software Architecture" offered by Innsbruck University.
  */
@@ -279,4 +277,7 @@ public class UserxService implements UserDetailsService {
         return userRepository.save(user);
     }
 
+    public Userx getUserById(Long userId) {
+        return userRepository.findById(userId).orElse(null);
+    }
 }

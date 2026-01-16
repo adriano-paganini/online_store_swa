@@ -1,11 +1,12 @@
 package at.qe.skeleton.events;
 
 import at.qe.skeleton.model.Product;
+import at.qe.skeleton.model.Subscription;
 import at.qe.skeleton.model.SubscriptionType;
 
 import java.time.LocalDateTime;
 
-public class ProductEvent<T> {
+public class ProductEvent<T> extends Payload<Subscription>{
     private final Product product;
     private final SubscriptionType subscriptionType;
     private final T oldValue;
@@ -14,6 +15,7 @@ public class ProductEvent<T> {
 
 
     public ProductEvent(Product product, SubscriptionType subscriptionType, T oldValue, T newValue) {
+        super(null);
         this.product = product;
         this.subscriptionType = subscriptionType;
         this.oldValue = oldValue;
@@ -21,11 +23,12 @@ public class ProductEvent<T> {
         this.timestamp = LocalDateTime.now();
     }
 
-    public String getMessage() {
+    @Override
+    public String getPayloadSubjectLine() {
         return "";
     }
 
-    public Product getProduct() {
+    public Product getProduct(){
         return product;
     }
 

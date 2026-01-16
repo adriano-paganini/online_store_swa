@@ -69,7 +69,7 @@ export function Header() {
             </Link>
 
             <Link
-              to={ROUTES.HOME}
+              to={ROUTES.REGISTER}
               className="w-full"
             >
               <Button
@@ -163,6 +163,15 @@ export function Header() {
             </Button>
           </Link>
 
+          <Link to={ROUTES.ORDERS}>
+            <Button
+              variant="ghost"
+              className="w-full justify-start"
+            >
+              Order History
+            </Button>
+          </Link>
+
           {isManager && (
             <Link to={ROUTES.ADMIN_PRODUCTS}>
               <Button
@@ -203,7 +212,7 @@ export function Header() {
                 <Button className="mb-2 w-full">Log in</Button>
               </Link>
 
-              <Link to={ROUTES.HOME}>
+              <Link to={ROUTES.REGISTER}>
                 <Button
                   variant="outline"
                   className="w-full"
@@ -277,6 +286,9 @@ export function Header() {
                 <DropdownMenuItem asChild>
                   <Link to={ROUTES.NOTIFICATIONS}>Notifications</Link>
                 </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link to={ROUTES.ORDERS}>Order History</Link>
+                </DropdownMenuItem>
 
                 {isManager && (
                   <>
@@ -308,7 +320,7 @@ export function Header() {
               <Link to={ROUTES.LOGIN}>
                 <Button className="px-3">Log in</Button>
               </Link>
-              <Link to={ROUTES.HOME}>
+              <Link to={ROUTES.REGISTER}>
                 <Button variant="outline">Sign up</Button>
               </Link>
             </div>

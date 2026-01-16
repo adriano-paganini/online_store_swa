@@ -3,6 +3,9 @@
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { useCart } from '@/Contexts/cartContext';
+import { ROUTES } from '@/utilities/routes.paths';
+import { BaggageClaim, Trash2 } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { CartItemRow } from './CartItemRow';
 
 export function CartSidebar() {
@@ -51,7 +54,12 @@ export function CartSidebar() {
           <span>${subtotal.toFixed(2)}</span>
         </div>
 
-        <Button className="w-full">Checkout</Button>
+        <Link to={ROUTES.CHECKOUT}>
+          <Button className="w-full">
+            <BaggageClaim />
+            Checkout
+          </Button>
+        </Link>
 
         <Button
           variant="outline"
@@ -59,6 +67,7 @@ export function CartSidebar() {
           disabled={clearingCart}
           onClick={() => void clearCart()}
         >
+          <Trash2 />
           {clearingCart ? 'Clearing…' : 'Clear cart'}
         </Button>
       </div>

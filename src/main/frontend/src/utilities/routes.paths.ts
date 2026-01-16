@@ -5,18 +5,19 @@ export const ROUTES = {
   SUBSCRIPTIONS: '/subscriptions',
   NOTIFICATIONS: '/notifications',
   ADDRESSES: '/addresses',
+  ORDERS: '/orders',
+  CHECKOUT: '/checkout',
+  PAYMENT: '/payment/:orderNumber',
+  PAYMENT_SUCCESS: '/payment/success/:orderNum',
   ADMIN_USERS: '/admin/users',
   ADMIN_PRODUCTS: '/admin/products',
-  LOGIN: '/login',
+  AUTH: '/auth',
+  LOGIN: '/auth/login',
+  REGISTER: '/auth/register',
   LOGOUT: '/logout',
 
   // future routes
-  // CHECKOUT: '/checkout',
-  // ORDER_CONFIRMATION: '/order-confirmation',
-  // ORDERS: '/orders',
-  // ORDER_DETAIL: '/orders/:id',
   // PROFILE: '/profile',
-  // REGISTER: '/register',
 } as const;
 
 export type TRoutesType = typeof ROUTES;

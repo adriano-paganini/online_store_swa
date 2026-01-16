@@ -14,12 +14,16 @@ import { CartProvider } from './Contexts/cartContext';
 import {
   AddressesPageRoute,
   AdminProductsPageRoute,
+  AuthPageRoute,
+  CheckoutPageRoute,
   HomePageRoute,
-  LoginsRoute,
   LogoutsRoute,
   ManageUsersRoute,
   NotFoundRoute,
   NotificationsPageRoute,
+  OrdersPageRoute,
+  PaymentPageRoute,
+  PaymentSuccessPageRoute,
   ProductDetailPageRoute,
   ProductsPageRoute,
   SubscriptionsPageRoute,
@@ -40,8 +44,8 @@ const App: React.FC = () => {
             <Routes>
               {/* public routes */}
               <Route
-                path={LoginsRoute.url}
-                Component={LoginsRoute.component}
+                path={AuthPageRoute.url}
+                Component={AuthPageRoute.component}
               />
 
               <Route element={<MainLayout />}>
@@ -80,20 +84,34 @@ const App: React.FC = () => {
                     Component={NotificationsPageRoute.component}
                   />
 
-                  {/* future */}
-                  {/*
-                  <Route
-                    path={CheckoutPageRoute.url}
-                    Component={CheckoutPageRoute.component}
-                  />
-                  <Route
-                    path={ProfilePageRoute.url}
-                    Component={ProfilePageRoute.component}
-                  />
                   <Route
                     path={OrdersPageRoute.url}
                     Component={OrdersPageRoute.component}
                   />
+
+                  <Route
+                    path={CheckoutPageRoute.url}
+                    Component={CheckoutPageRoute.component}
+                  />
+
+                  <Route
+                    path={PaymentPageRoute.url}
+                    Component={PaymentPageRoute.component}
+                  />
+
+                  <Route
+                    path={PaymentSuccessPageRoute.url}
+                    Component={PaymentSuccessPageRoute.component}
+                  />
+
+                  {/* future */}
+                  {/*
+                  
+                  <Route
+                    path={ProfilePageRoute.url}
+                    Component={ProfilePageRoute.component}
+                  />
+                  
                   */}
                 </Route>
 

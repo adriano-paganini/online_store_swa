@@ -54,13 +54,24 @@ public class NotificationServiceTest {
 
     @Test
     void testCreateNotification() {
-        ProductEvent<?> mockEvent = Mockito.mock(ProductEvent.class);
-        when(mockEvent.getMessage()).thenReturn("Product Price Changed");
+        Product product = new Product();
+        product.setName("Guardian Angel");
 
-        Notification result = notificationService.createNotification(1L, NotificationType.EMAIL, mockEvent);
+        Subscription subscription = new Subscription();
+        subscription.setProduct(product);
+
+        ProductEvent<Double> event = new ProductEvent<>(
+                product,
+                SubscriptionType.PRICEUPDATE,
+                10.0,
+                9.0
+        );
+        event.setPayloadInfo(subscription);
+
+        Notification result = notificationService.createNotification(1L, NotificationType.EMAIL, event);
 
         Assertions.assertNotNull(result);
-        Assertions.assertEquals("Product Price Changed", result.getMessage());
+        Assertions.assertEquals(" Subscription Update for " + product.getName(), result.getMessage());
         Assertions.assertEquals(NotificationType.EMAIL, result.getChannel());
         Assertions.assertEquals(1L, result.getUserId());
 

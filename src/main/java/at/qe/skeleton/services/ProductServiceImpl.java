@@ -213,6 +213,11 @@ public class ProductServiceImpl implements ProductService {
             return Sort.by(Sort.Direction.ASC, "id");
         }
 
+
+        if (field.equals("price")){
+            field = "effectivePrice";
+        }
+
         return Sort.by(sortDirection, field);
     }
 
@@ -221,7 +226,7 @@ public class ProductServiceImpl implements ProductService {
      */
     private boolean isValidSortField(String field) {
         return field.matches("^[a-zA-Z]+$") &&
-                (field.equals("id") || field.equals("name") || field.equals("price") ||
+                (field.equals("id") || field.equals("name") || field.equals("price") || field.equals("effectivePrice")||
                         field.equals("stock") || field.equals("discount") || field.equals("avgScore") ||
                         field.equals("createDate") || field.equals("updateDate"));
     }

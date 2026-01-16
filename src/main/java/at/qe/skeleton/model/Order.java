@@ -1,5 +1,6 @@
 package at.qe.skeleton.model;
 
+import at.qe.skeleton.events.PayloadInterface;
 import jakarta.persistence.*;
 import org.springframework.data.domain.Persistable;
 
@@ -10,9 +11,10 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
+
 @Entity
 @Table(name = "orders")
-public class Order implements Persistable<Long>, Serializable {
+public class Order implements Persistable<Long>, Serializable, PayloadInterface {
 
     @Serial
     private static final long serialVersionUID = 1L;
@@ -94,7 +96,6 @@ public class Order implements Persistable<Long>, Serializable {
             this.timestamp = LocalDateTime.now();
         }
     }
-
     @Override
     public Long getId() {
         return id;
@@ -175,5 +176,10 @@ public class Order implements Persistable<Long>, Serializable {
     @Override
     public int hashCode() {
         return Objects.hashCode(id);
+    }
+
+    @Override
+    public String getPayloadSubjectLine() {
+        return "Order "+orderNumber+" has been confirmed and will be on it's way!";
     }
 }

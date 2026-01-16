@@ -13,7 +13,6 @@ import java.util.Optional;
 
 /**
  * Repository for managing {@link Userx} entities.
- *
  * This class is part of the skeleton project provided for students of the
  * course "Software Architecture" offered by Innsbruck University.
  */
@@ -34,4 +33,5 @@ public interface UserxRepository extends AbstractRepository<Userx, Long> {
     Page<Userx> findByDeleted(boolean deleted, Pageable pageable);
     Page<Userx> findByRolesContainingAndDeleted(UserxRole role, boolean deleted, Pageable pageable);
 
+    Optional<Userx> findById(Long id);
 }

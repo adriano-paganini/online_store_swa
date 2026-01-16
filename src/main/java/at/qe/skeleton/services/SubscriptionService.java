@@ -1,8 +1,6 @@
 package at.qe.skeleton.services;
 
-import at.qe.skeleton.dtos.SubscriptionCreateDTO;
 import at.qe.skeleton.dtos.SubscriptionUpdateDTO;
-import at.qe.skeleton.mappers.SubscriptionCreateMapper;
 import at.qe.skeleton.model.*;
 import at.qe.skeleton.repositories.SubscriptionRepository;
 import jakarta.transaction.Transactional;
@@ -23,11 +21,9 @@ import static at.qe.skeleton.Helpers.SortHelper.parseSort;
 public class SubscriptionService {
 
     private final SubscriptionRepository subscriptionRepository;
-    private final SubscriptionCreateMapper subscriptionCreateMapper;
 
-    public SubscriptionService(SubscriptionRepository subscriptionRepository, SubscriptionCreateMapper subscriptionCreateMapper) {
+    public SubscriptionService(SubscriptionRepository subscriptionRepository) {
         this.subscriptionRepository = subscriptionRepository;
-        this.subscriptionCreateMapper = subscriptionCreateMapper;
     }
 
     public Optional<Subscription> loadSubscription(Long id) {
@@ -59,9 +55,7 @@ public class SubscriptionService {
     }
 
 
-    public Subscription createSubscription(Userx user, SubscriptionCreateDTO createDTO) {
-        Subscription subscription = subscriptionCreateMapper.mapFrom(createDTO);
-
+    public Subscription createSubscription(Userx user, Subscription subscription) {
         List<Subscription> userSubscriptions = subscriptionRepository.findByUser(user);
 
         for (Subscription forSubscription:userSubscriptions){
