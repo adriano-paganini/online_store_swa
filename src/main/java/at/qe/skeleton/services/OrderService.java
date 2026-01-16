@@ -102,7 +102,6 @@ public class OrderService {
 
         Order savedOrder = orderRepository.save(order);
         cartService.clearCart();
-        applicationEventPublisher.publishEvent(new OrderCompletionEvent(savedOrder));
         return savedOrder;
     }
 
@@ -121,6 +120,22 @@ public class OrderService {
                 address.getNumber(),
                 address.getExtra()
         );
+    }
+
+    @Transactional
+    public Order confirmPayment(String orderNumber){
+        Order updated = updateOrderStatus(OrderStatus.CONFIRMED,orderNumber);
+        applicationEventPublisher.publishEvent(new OrderCompletionEvent(updated));
+
+        return updated;
+    };
+
+    @Transactional
+    public Order updateOrderStatus(OrderStatus status, String orderNumber){
+        Order order = getOrderByNumber(orderNumber);
+        order.setStatus(status);
+        orderRepository.save(order);
+        return order;
     }
 
     private List<OrderItem> createOrderItemsFromCart(Cart cart) {

@@ -180,6 +180,6 @@ public class Order implements Persistable<Long>, Serializable, PayloadInterface 
 
     @Override
     public String getPayloadSubjectLine() {
-        return "Order "+orderNumber+" has been created and will be on it's way!";
+        return "Order "+orderNumber+" has been confirmed and will be on it's way!";
     }
 }
