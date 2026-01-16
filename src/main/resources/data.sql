@@ -513,39 +513,39 @@ FROM (
 -- add comments
 -- Reviews for DDR5 32GB
 INSERT INTO REVIEW (SCORE, PRODUCT_ID, TIMESTAMP, USER_ID, CONTENT)
-VALUES (5.0, (SELECT ID FROM PRODUCT WHERE NAME = 'DDR5 32GB'), CURRENT_TIMESTAMP, (SELECT ID FROM USERX WHERE USERNAME = 'adriano'), 'Super fast delivery and the RAM works perfectly with my setup.');
+VALUES (5.0, (SELECT ID FROM PRODUCT WHERE NAME = 'DDR5 32GB'), CURRENT_TIMESTAMP, (SELECT ID FROM USERX WHERE USERNAME = 'adriano'), 'A small price to pay for RAM.');
 INSERT INTO REVIEW (SCORE, PRODUCT_ID, TIMESTAMP, USER_ID, CONTENT)
-VALUES (3.0, (SELECT ID FROM PRODUCT WHERE NAME = 'DDR5 32GB'), CURRENT_TIMESTAMP, (SELECT ID FROM USERX WHERE USERNAME = 'user2'), 'It is okay, but I had some stability issues initially.');
+VALUES (3.0, (SELECT ID FROM PRODUCT WHERE NAME = 'DDR5 32GB'), CURRENT_TIMESTAMP, (SELECT ID FROM USERX WHERE USERNAME = 'user2'), 'This is the most expensive part of my whole build...');
 
 -- Reviews for Aerondight Silver Sword
 INSERT INTO REVIEW (SCORE, PRODUCT_ID, TIMESTAMP, USER_ID, CONTENT)
-VALUES (5.0, (SELECT ID FROM PRODUCT WHERE NAME = 'Aerondight Silver Sword'), CURRENT_TIMESTAMP, (SELECT ID FROM USERX WHERE USERNAME = 'adriano'), 'Truly a legendary blade. The silver finish is exquisite.');
+VALUES (5.0, (SELECT ID FROM PRODUCT WHERE NAME = 'Aerondight Silver Sword'), CURRENT_TIMESTAMP, (SELECT ID FROM USERX WHERE USERNAME = 'adriano'), 'Even works on highwaymen.');
 INSERT INTO REVIEW (SCORE, PRODUCT_ID, TIMESTAMP, USER_ID, CONTENT)
-VALUES (4.0, (SELECT ID FROM PRODUCT WHERE NAME = 'Aerondight Silver Sword'), CURRENT_TIMESTAMP, (SELECT ID FROM USERX WHERE USERNAME = 'user2'), 'Very sharp, though a bit heavy for one-handed use.');
+VALUES (4.0, (SELECT ID FROM PRODUCT WHERE NAME = 'Aerondight Silver Sword'), CURRENT_TIMESTAMP, (SELECT ID FROM USERX WHERE USERNAME = 'user2'), 'Very sharp, cut my thumb.');
 
 -- Reviews for Guardian Angel
 INSERT INTO REVIEW (SCORE, PRODUCT_ID, TIMESTAMP, USER_ID, CONTENT)
-VALUES (5.0, (SELECT ID FROM PRODUCT WHERE NAME = 'Guardian Angel'), CURRENT_TIMESTAMP, (SELECT ID FROM USERX WHERE USERNAME = 'adriano'), 'Saved my life in a tight spot. Literally a game changer.');
+VALUES (3.5, (SELECT ID FROM PRODUCT WHERE NAME = 'Guardian Angel'), CURRENT_TIMESTAMP, (SELECT ID FROM USERX WHERE USERNAME = 'adriano'), 'Did not even need it, Zilean had my back...');
 INSERT INTO REVIEW (SCORE, PRODUCT_ID, TIMESTAMP, USER_ID, CONTENT)
-VALUES (4.5, (SELECT ID FROM PRODUCT WHERE NAME = 'Guardian Angel'), CURRENT_TIMESTAMP, (SELECT ID FROM USERX WHERE USERNAME = 'user2'), 'Great protection, but the cooldown feels like forever.');
+VALUES (4.5, (SELECT ID FROM PRODUCT WHERE NAME = 'Guardian Angel'), CURRENT_TIMESTAMP, (SELECT ID FROM USERX WHERE USERNAME = 'user2'), 'Works wonders, too bad it does not increase my skills.');
 
 -- Reviews for Schrödinger’s Laptop
 INSERT INTO REVIEW (SCORE, PRODUCT_ID, TIMESTAMP, USER_ID, CONTENT)
-VALUES (3.0, (SELECT ID FROM PRODUCT WHERE NAME = 'Schrödinger’s Laptop'), CURRENT_TIMESTAMP, (SELECT ID FROM USERX WHERE USERNAME = 'adriano'), 'I opened the box and now I am not sure if I like it or hate it.');
+VALUES (5.0, (SELECT ID FROM PRODUCT WHERE NAME = 'Schrödinger’s Laptop'), CURRENT_TIMESTAMP, (SELECT ID FROM USERX WHERE USERNAME = 'adriano'), 'Outperforms my 15K build for 500.');
 INSERT INTO REVIEW (SCORE, PRODUCT_ID, TIMESTAMP, USER_ID, CONTENT)
-VALUES (2.0, (SELECT ID FROM PRODUCT WHERE NAME = 'Schrödinger’s Laptop'), CURRENT_TIMESTAMP, (SELECT ID FROM USERX WHERE USERNAME = 'user2'), 'The screen only works when I am not looking directly at it. Very confusing.');
+VALUES (1.0, (SELECT ID FROM PRODUCT WHERE NAME = 'Schrödinger’s Laptop'), CURRENT_TIMESTAMP, (SELECT ID FROM USERX WHERE USERNAME = 'user2'), 'Thespacebarisbroken:(');
 
 -- Reviews for Pip-Boy 3000
 INSERT INTO REVIEW (SCORE, PRODUCT_ID, TIMESTAMP, USER_ID, CONTENT)
-VALUES (5.0, (SELECT ID FROM PRODUCT WHERE NAME = 'Pip-Boy 3000'), CURRENT_TIMESTAMP, (SELECT ID FROM USERX WHERE USERNAME = 'adriano'), 'Essential for my morning hikes in the wasteland. Highly recommend.');
+VALUES (5.0, (SELECT ID FROM PRODUCT WHERE NAME = 'Pip-Boy 3000'), CURRENT_TIMESTAMP, (SELECT ID FROM USERX WHERE USERNAME = 'adriano'), 'Offers nice radio for those morning runs!');
 INSERT INTO REVIEW (SCORE, PRODUCT_ID, TIMESTAMP, USER_ID, CONTENT)
-VALUES (4.0, (SELECT ID FROM PRODUCT WHERE NAME = 'Pip-Boy 3000'), CURRENT_TIMESTAMP, (SELECT ID FROM USERX WHERE USERNAME = 'user2'), 'The interface is a bit retro, but the map function is reliable.');
+VALUES (2.0, (SELECT ID FROM PRODUCT WHERE NAME = 'Pip-Boy 3000'), CURRENT_TIMESTAMP, (SELECT ID FROM USERX WHERE USERNAME = 'user2'), 'Interface is ancient, almost got me killed. Still nice to have though.');
 
 -- Reviews for Non-Stop Energy Drink
 INSERT INTO REVIEW (SCORE, PRODUCT_ID, TIMESTAMP, USER_ID, CONTENT)
-VALUES (4.0, (SELECT ID FROM PRODUCT WHERE NAME = 'Non-Stop Energy Drink'), CURRENT_TIMESTAMP, (SELECT ID FROM USERX WHERE USERNAME = 'adriano'), 'Keeps me going during long coding sessions. Tastes like lightning.');
+VALUES (4.0, (SELECT ID FROM PRODUCT WHERE NAME = 'Non-Stop Energy Drink'), CURRENT_TIMESTAMP, (SELECT ID FROM USERX WHERE USERNAME = 'adriano'), 'Tasty, not sure how much it really helps.');
 INSERT INTO REVIEW (SCORE, PRODUCT_ID, TIMESTAMP, USER_ID, CONTENT)
-VALUES (5.0, (SELECT ID FROM PRODUCT WHERE NAME = 'Non-Stop Energy Drink'), CURRENT_TIMESTAMP, (SELECT ID FROM USERX WHERE USERNAME = 'user2'), 'The best energy drink in the zone. No anomalies detected in the flavor.');
+VALUES (5.0, (SELECT ID FROM PRODUCT WHERE NAME = 'Non-Stop Energy Drink'), CURRENT_TIMESTAMP, (SELECT ID FROM USERX WHERE USERNAME = 'user2'), 'At least we still got some nice drinks.');
 
 -- AI generated Addition for Other users!
 -- =========================
