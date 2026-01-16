@@ -11,6 +11,5 @@ public record UserxMeDTO(
         String lastName,
         String email,
         String phone,
-        Set<UserxRole> roles,
-        Set<NotificationType> channels
+        Set<UserxRole> roles
 ) {}

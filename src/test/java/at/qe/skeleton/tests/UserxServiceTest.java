@@ -329,7 +329,6 @@ public class UserxServiceTest {
                 "Encoded password does not match original");
 
         Assertions.assertTrue(user.getRoles().contains(UserxRole.CUSTOMER));
-        Assertions.assertTrue(user.getChannels().contains(NotificationType.EMAIL));
         Assertions.assertTrue(user.isEnabled());
         Assertions.assertFalse(user.isDeleted());
 
