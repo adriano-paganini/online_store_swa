@@ -174,7 +174,9 @@ public class ReviewServiceTest {
     @Test
     @WithMockUser(username = "testuser")
     void testCreateReview() {
-        ReviewCreateDTO createDTO = new ReviewCreateDTO(5, "Excellent product!");
+        Review review = new Review();
+        review.setScore(5);
+        review.setContent("Excellent product!");
 
         Mockito.when(reviewRepository.findByUser_IdAndProductId(testUser.getId(), testProductId))
                 .thenReturn(Optional.empty());
@@ -182,13 +184,13 @@ public class ReviewServiceTest {
                 .thenReturn(5.0);
         Mockito.when(reviewRepository.save(Mockito.any(Review.class)))
                 .thenAnswer(invocation -> {
-                    Review review = invocation.getArgument(0);
-                    review.setId(1L);
-                    review.setTimestamp(LocalDateTime.now());
-                    return review;
+                    Review savedReview = invocation.getArgument(0);
+                    savedReview.setId(1L);
+                    savedReview.setTimestamp(LocalDateTime.now());
+                    return savedReview;
                 });
 
-        Review result = reviewService.createReview(testProductId, createDTO);
+        Review result = reviewService.createReview(testProductId, review);
 
         Assertions.assertNotNull(result, "Review should not be null");
         Assertions.assertEquals(testUser, result.getUser(), "User should match");
@@ -210,7 +212,9 @@ public class ReviewServiceTest {
     @Test
     @WithMockUser(username = "testuser")
     void testCreateReviewWithContentTrim() {
-        ReviewCreateDTO createDTO = new ReviewCreateDTO(4, "  Good product  ");
+        Review review = new Review();
+        review.setScore(4);
+        review.setContent("  Good product  ");
 
         Mockito.when(reviewRepository.findByUser_IdAndProductId(testUser.getId(), testProductId))
                 .thenReturn(Optional.empty());
@@ -218,13 +222,13 @@ public class ReviewServiceTest {
                 .thenReturn(4.0);
         Mockito.when(reviewRepository.save(Mockito.any(Review.class)))
                 .thenAnswer(invocation -> {
-                    Review review = invocation.getArgument(0);
-                    review.setId(1L);
-                    review.setTimestamp(LocalDateTime.now());
-                    return review;
+                    Review savedReview = invocation.getArgument(0);
+                    savedReview.setId(1L);
+                    savedReview.setTimestamp(LocalDateTime.now());
+                    return savedReview;
                 });
 
-        Review result = reviewService.createReview(testProductId, createDTO);
+        Review result = reviewService.createReview(testProductId, review);
 
         Assertions.assertNotNull(result, "Review should not be null");
         ArgumentCaptor<Review> reviewCaptor = ArgumentCaptor.forClass(Review.class);
@@ -236,7 +240,9 @@ public class ReviewServiceTest {
     @Test
     @WithMockUser(username = "testuser")
     void testCreateReviewDuplicate() {
-        ReviewCreateDTO createDTO = new ReviewCreateDTO(5, "Great product!");
+        Review review = new Review();
+        review.setScore(5);
+        review.setContent("Great product!");
 
         Review existingReview = createTestReview(1L, testProductId, 4, "Previous review");
 
@@ -244,7 +250,7 @@ public class ReviewServiceTest {
                 .thenReturn(Optional.of(existingReview));
 
         Assertions.assertThrows(ResponseStatusException.class, () -> {
-            reviewService.createReview(testProductId, createDTO);
+            reviewService.createReview(testProductId, review);
         }, "Should throw exception when user already has a review");
 
         Mockito.verify(reviewRepository, Mockito.never()).save(Mockito.any(Review.class));
@@ -253,13 +259,15 @@ public class ReviewServiceTest {
     @Test
     @WithMockUser(username = "testuser")
     void testCreateReviewScoreTooLow() {
-        ReviewCreateDTO createDTO = new ReviewCreateDTO(0, "Bad product");
+        Review review = new Review();
+        review.setScore(0);
+        review.setContent("Bad product");
 
         Mockito.when(reviewRepository.findByUser_IdAndProductId(testUser.getId(), testProductId))
                 .thenReturn(Optional.empty());
 
         Assertions.assertThrows(ResponseStatusException.class, () -> {
-            reviewService.createReview(testProductId, createDTO);
+            reviewService.createReview(testProductId, review);
         }, "Should throw exception when score is too low");
 
         Mockito.verify(reviewRepository, Mockito.never()).save(Mockito.any(Review.class));
@@ -268,13 +276,15 @@ public class ReviewServiceTest {
     @Test
     @WithMockUser(username = "testuser")
     void testCreateReviewScoreTooHigh() {
-        ReviewCreateDTO createDTO = new ReviewCreateDTO(6, "Amazing product");
+        Review review = new Review();
+        review.setScore(6);
+        review.setContent("Amazing product");
 
         Mockito.when(reviewRepository.findByUser_IdAndProductId(testUser.getId(), testProductId))
                 .thenReturn(Optional.empty());
 
         Assertions.assertThrows(ResponseStatusException.class, () -> {
-            reviewService.createReview(testProductId, createDTO);
+            reviewService.createReview(testProductId, review);
         }, "Should throw exception when score is too high");
 
         Mockito.verify(reviewRepository, Mockito.never()).save(Mockito.any(Review.class));
@@ -283,7 +293,9 @@ public class ReviewServiceTest {
     @Test
     @WithMockUser(username = "testuser")
     void testCreateReviewScoreBoundary1() {
-        ReviewCreateDTO createDTO = new ReviewCreateDTO(1, "Poor product");
+        Review review = new Review();
+        review.setScore(1);
+        review.setContent("Poor product");
 
         Mockito.when(reviewRepository.findByUser_IdAndProductId(testUser.getId(), testProductId))
                 .thenReturn(Optional.empty());
@@ -291,13 +303,13 @@ public class ReviewServiceTest {
                 .thenReturn(1.0);
         Mockito.when(reviewRepository.save(Mockito.any(Review.class)))
                 .thenAnswer(invocation -> {
-                    Review review = invocation.getArgument(0);
-                    review.setId(1L);
-                    review.setTimestamp(LocalDateTime.now());
-                    return review;
+                    Review savedReview = invocation.getArgument(0);
+                    savedReview.setId(1L);
+                    savedReview.setTimestamp(LocalDateTime.now());
+                    return savedReview;
                 });
 
-        Review result = reviewService.createReview(testProductId, createDTO);
+        Review result = reviewService.createReview(testProductId, review);
 
         Assertions.assertNotNull(result, "Review should be created");
         Assertions.assertEquals(1, result.getScore(), "Score should be 1");
@@ -307,7 +319,9 @@ public class ReviewServiceTest {
     @Test
     @WithMockUser(username = "testuser")
     void testCreateReviewScoreBoundary5() {
-        ReviewCreateDTO createDTO = new ReviewCreateDTO(5, "Excellent product");
+        Review review = new Review();
+        review.setScore(5);
+        review.setContent("Excellent product");
 
         Mockito.when(reviewRepository.findByUser_IdAndProductId(testUser.getId(), testProductId))
                 .thenReturn(Optional.empty());
@@ -315,13 +329,13 @@ public class ReviewServiceTest {
                 .thenReturn(5.0);
         Mockito.when(reviewRepository.save(Mockito.any(Review.class)))
                 .thenAnswer(invocation -> {
-                    Review review = invocation.getArgument(0);
-                    review.setId(1L);
-                    review.setTimestamp(LocalDateTime.now());
-                    return review;
+                    Review savedReview = invocation.getArgument(0);
+                    savedReview.setId(1L);
+                    savedReview.setTimestamp(LocalDateTime.now());
+                    return savedReview;
                 });
 
-        Review result = reviewService.createReview(testProductId, createDTO);
+        Review result = reviewService.createReview(testProductId, review);
 
         Assertions.assertNotNull(result, "Review should be created");
         Assertions.assertEquals(5, result.getScore(), "Score should be 5");
@@ -329,12 +343,14 @@ public class ReviewServiceTest {
 
     @Test
     void testCreateReviewUnauthenticated() {
-        ReviewCreateDTO createDTO = new ReviewCreateDTO(5, "Great product!");
+        Review review = new Review();
+        review.setScore(5);
+        review.setContent("Great product!");
 
         Mockito.when(authenticatedUserService.getAuthenticatedUser()).thenReturn(null);
 
         Assertions.assertThrows(ResponseStatusException.class, () -> {
-            reviewService.createReview(testProductId, createDTO);
+            reviewService.createReview(testProductId, review);
         }, "Should throw exception when user is not authenticated");
 
         Mockito.verify(reviewRepository, Mockito.never()).save(Mockito.any(Review.class));
@@ -343,7 +359,9 @@ public class ReviewServiceTest {
     @Test
     @WithMockUser(username = "testuser")
     void testCreateReviewUpdatesProductAverageScore() {
-        ReviewCreateDTO createDTO = new ReviewCreateDTO(4, "Good product");
+        Review review = new Review();
+        review.setScore(4);
+        review.setContent("Good product");
 
         Mockito.when(reviewRepository.findByUser_IdAndProductId(testUser.getId(), testProductId))
                 .thenReturn(Optional.empty());
@@ -351,13 +369,13 @@ public class ReviewServiceTest {
                 .thenReturn(4.5);
         Mockito.when(reviewRepository.save(Mockito.any(Review.class)))
                 .thenAnswer(invocation -> {
-                    Review review = invocation.getArgument(0);
-                    review.setId(1L);
-                    review.setTimestamp(LocalDateTime.now());
-                    return review;
+                    Review savedReview = invocation.getArgument(0);
+                    savedReview.setId(1L);
+                    savedReview.setTimestamp(LocalDateTime.now());
+                    return savedReview;
                 });
 
-        reviewService.createReview(testProductId, createDTO);
+        reviewService.createReview(testProductId, review);
 
         Mockito.verify(productService).updateProductAverageScore(testProductId, 4.5);
     }
@@ -365,7 +383,9 @@ public class ReviewServiceTest {
     @Test
     @WithMockUser(username = "testuser")
     void testCreateReviewDoesNotUpdateWhenAverageIsNull() {
-        ReviewCreateDTO createDTO = new ReviewCreateDTO(4, "Good product");
+        Review review = new Review();
+        review.setScore(4);
+        review.setContent("Good product");
 
         Mockito.when(reviewRepository.findByUser_IdAndProductId(testUser.getId(), testProductId))
                 .thenReturn(Optional.empty());
@@ -373,13 +393,13 @@ public class ReviewServiceTest {
                 .thenReturn(null);
         Mockito.when(reviewRepository.save(Mockito.any(Review.class)))
                 .thenAnswer(invocation -> {
-                    Review review = invocation.getArgument(0);
-                    review.setId(1L);
-                    review.setTimestamp(LocalDateTime.now());
-                    return review;
+                    Review savedReview = invocation.getArgument(0);
+                    savedReview.setId(1L);
+                    savedReview.setTimestamp(LocalDateTime.now());
+                    return savedReview;
                 });
 
-        reviewService.createReview(testProductId, createDTO);
+        reviewService.createReview(testProductId, review);
 
         Mockito.verify(productService, Mockito.never()).updateProductAverageScore(
                 Mockito.anyLong(), Mockito.anyDouble());
