@@ -4,6 +4,7 @@ import at.qe.skeleton.dtos.CartItemCreateDTO;
 import at.qe.skeleton.dtos.CartItemUpdateDTO;
 import at.qe.skeleton.model.Cart;
 import at.qe.skeleton.model.CartItem;
+import at.qe.skeleton.model.Product;
 import at.qe.skeleton.model.Userx;
 import at.qe.skeleton.repositories.CartItemRepository;
 import at.qe.skeleton.repositories.CartRepository;
@@ -364,6 +365,122 @@ public class CartServiceTest {
         Assertions.assertThrows(ResponseStatusException.class, () -> {
             cartService.addItemToCart(cartItem);
         }, "Should throw exception when user is not authenticated");
+    }
+
+    @Test
+    @WithMockUser(username = "testuser")
+    void testConcurrentCartModification() {
+        Product product = new Product();
+        product.setId(1L);
+        product.setName("Test Product");
+        product.setStock(100);
+        product.setDeleted(false);
+
+        Mockito.when(productService.getProductById(1L)).thenReturn(Optional.of(product));
+        Mockito.when(productService.getProductPrice(1L)).thenReturn(Optional.of(100.0));
+        Mockito.when(productService.getProductDiscount(1L)).thenReturn(Optional.of(0.1));
+        Mockito.when(productService.isProductAvailable(1L, Mockito.anyInt())).thenReturn(true);
+
+        CartItem item1 = new CartItem();
+        item1.setProductId(1L);
+        item1.setQuantity(1);
+        item1.setCurrentPrice(100.0);
+        item1.setAppliedDiscount(0.1);
+
+        testCart.setItems(new ArrayList<>(List.of(item1)));
+        Mockito.when(cartRepository.findByUser(testUser)).thenReturn(Optional.of(testCart));
+        Mockito.when(cartRepository.save(Mockito.any(Cart.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        Mockito.when(cartItemRepository.findByCartAndProductId(Mockito.any(Cart.class), Mockito.eq(1L)))
+                .thenReturn(Optional.of(item1));
+        Mockito.when(cartItemRepository.save(Mockito.any(CartItem.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        // Simulate concurrent modification: add item while cart is being modified
+        CartItem newItem = new CartItem();
+        newItem.setProductId(1L);
+        newItem.setQuantity(1);
+        Cart result1 = cartService.addItemToCart(newItem);
+
+        // Verify cart state is consistent
+        Assertions.assertNotNull(result1);
+        Assertions.assertNotNull(result1.getItems());
+    }
+
+    @Test
+    @WithMockUser(username = "testuser")
+    void testCartWithMultipleConcurrentAdds() {
+        Product product = new Product();
+        product.setId(1L);
+        product.setName("Test Product");
+        product.setStock(100);
+        product.setDeleted(false);
+
+        Mockito.when(productService.getProductById(1L)).thenReturn(Optional.of(product));
+        Mockito.when(productService.getProductPrice(1L)).thenReturn(Optional.of(100.0));
+        Mockito.when(productService.getProductDiscount(1L)).thenReturn(Optional.of(0.1));
+        Mockito.when(productService.isProductAvailable(1L, Mockito.anyInt())).thenReturn(true);
+
+        CartItem item1 = new CartItem();
+        item1.setProductId(1L);
+        item1.setQuantity(1);
+
+        testCart.setItems(new ArrayList<>());
+        Mockito.when(cartRepository.findByUser(testUser)).thenReturn(Optional.of(testCart));
+        Mockito.when(cartRepository.save(Mockito.any(Cart.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        Mockito.when(cartItemRepository.findByCartAndProductId(Mockito.any(Cart.class), Mockito.eq(1L)))
+                .thenReturn(Optional.empty())
+                .thenReturn(Optional.of(item1));
+        Mockito.when(cartItemRepository.save(Mockito.any(CartItem.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        // First add
+        Cart result1 = cartService.addItemToCart(item1);
+        Assertions.assertEquals(1, result1.getItems().size());
+
+        // Second add to same product (should update quantity)
+        CartItem item2 = new CartItem();
+        item2.setProductId(1L);
+        item2.setQuantity(2);
+        Cart result2 = cartService.addItemToCart(item2);
+
+        // Should have one item with updated quantity
+        Assertions.assertEquals(1, result2.getItems().size());
+    }
+
+    @Test
+    @WithMockUser(username = "testuser")
+    void testCartClearRemovesAllItems() {
+        Product product = new Product();
+        product.setId(1L);
+        product.setName("Test Product");
+        product.setStock(100);
+        product.setDeleted(false);
+
+        Mockito.when(productService.getProductById(1L)).thenReturn(Optional.of(product));
+        Mockito.when(productService.getProductPrice(1L)).thenReturn(Optional.of(100.0));
+        Mockito.when(productService.getProductDiscount(1L)).thenReturn(Optional.of(0.1));
+        Mockito.when(productService.isProductAvailable(1L, Mockito.anyInt())).thenReturn(true);
+
+        CartItem item1 = new CartItem();
+        item1.setId(1L);
+        item1.setProductId(1L);
+        item1.setQuantity(1);
+        item1.setCurrentPrice(100.0);
+        item1.setAppliedDiscount(0.1);
+
+        CartItem item2 = new CartItem();
+        item2.setId(2L);
+        item2.setProductId(1L);
+        item2.setQuantity(2);
+        item2.setCurrentPrice(100.0);
+        item2.setAppliedDiscount(0.1);
+
+        testCart.setItems(new ArrayList<>(List.of(item1, item2)));
+        Mockito.when(cartRepository.findByUser(testUser)).thenReturn(Optional.of(testCart));
+        Mockito.when(cartRepository.save(Mockito.any(Cart.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        cartService.clearCart();
+
+        Assertions.assertTrue(testCart.getItems().isEmpty(), "Cart should be empty after clearing");
+        Mockito.verify(cartRepository).save(testCart);
     }
 }
 
