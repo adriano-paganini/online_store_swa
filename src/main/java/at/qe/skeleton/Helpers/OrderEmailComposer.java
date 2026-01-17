@@ -74,7 +74,7 @@ public final class OrderEmailComposer {
                     .append(" (unit ").append(money.format(p.unitFinal()));
 
             if (p.discountPercent() > 0.0) {
-                sb.append(" - ").append(trimZeros(p.discountPercent()*100)).append("% off");
+                sb.append(" - ").append(p.discountPercent()*100).append("% off");
             }
 
             sb.append(")\n");
@@ -131,10 +131,5 @@ public final class OrderEmailComposer {
 
     private static double nullSafeDouble(Double d) {
         return d != null ? d : 0.0;
-    }
-
-    private static String trimZeros(double v) {
-        if (v == (long) v) return Long.toString((long) v);
-        return Double.toString(v);
     }
 }

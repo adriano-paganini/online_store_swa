@@ -443,4 +443,35 @@ public class OrderEmailComposerTest {
 
         return order;
     }
+
+    @Test
+    void trimZerosLogicThroughPriceFormatting() {
+        Userx user = createTestUser("John", "Doe");
+        Order order = createCompleteOrder(user);
+
+        order.setTotal(150.0);
+        String result1 = OrderEmailComposer.composePlainText(order);
+        assertTrue(result1.contains("150,00"), "Should show 150 instead of 150,0");
+
+        order.setTotal(150.75);
+        String result2 = OrderEmailComposer.composePlainText(order);
+        assertTrue(result2.contains("150,75"), "Should preserve decimals for non-whole numbers");
+    }
+
+    @Test
+    void trimZerosLogicThroughDiscountFormatting() {
+        Userx user = createTestUser("John", "Doe");
+        Order order = createCompleteOrder(user);
+
+        OrderItem item = new OrderItem();
+        item.setProductName("Discount Test");
+        item.setQuantity(1);
+        item.setPriceAtPurchase(100.0);
+
+        item.setAppliedDiscount(0.1);
+        order.setItems(List.of(item));
+
+        String result = OrderEmailComposer.composePlainText(order);
+        assertTrue(result.contains("10% off"), "Should show 10% instead of 10.0%");
+    }
 }
