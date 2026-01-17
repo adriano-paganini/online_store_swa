@@ -340,7 +340,7 @@ public class OrderEmailComposerTest {
         item.setProductName("Test Product");
         item.setQuantity(1);
         item.setPriceAtPurchase(100.0);
-        item.setAppliedDiscount(50.0); // 50% discount
+        item.setAppliedDiscount(0.50); // 50% discount
 
         order.setItems(List.of(item));
 
