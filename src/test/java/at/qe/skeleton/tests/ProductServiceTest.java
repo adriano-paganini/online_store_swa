@@ -258,23 +258,24 @@ public class ProductServiceTest {
     @Test
     @WithMockUser(username = "testuser")
     void testCreateProduct() {
-        ProductCreateDTO createDTO = new ProductCreateDTO(
-                "New Product",
-                new ArrayList<>(),
-                "New Description",
-                149.99,
-                20,
-                0.15
-        );
+        Product product = new Product();
+        product.setName("New Product");
+        product.setDescription("New Description");
+        product.setPrice(149.99);
+        product.setStock(20);
+        product.setDiscount(0.15);
+        product.setImages(new ArrayList<>());
+        product.setAvgScore(0.0);
+        product.setDeleted(false);
 
         Mockito.when(productRepository.save(Mockito.any(Product.class)))
                 .thenAnswer(invocation -> {
-                    Product product = invocation.getArgument(0);
-                    product.setId(2L);
-                    return product;
+                    Product savedProduct = invocation.getArgument(0);
+                    savedProduct.setId(2L);
+                    return savedProduct;
                 });
 
-        Product result = productService.createProduct(createDTO);
+        Product result = productService.createProduct(product);
 
         Assertions.assertNotNull(result, "Product should not be null");
         Assertions.assertEquals("New Product", result.getName(), "Name should match");
@@ -296,23 +297,24 @@ public class ProductServiceTest {
     @Test
     @WithMockUser(username = "testuser")
     void testCreateProductWithDefaultDiscount() {
-        ProductCreateDTO createDTO = new ProductCreateDTO(
-                "New Product",
-                new ArrayList<>(),
-                "Description",
-                99.99,
-                10,
-                null // Discount not provided
-        );
+        Product product = new Product();
+        product.setName("New Product");
+        product.setDescription("Description");
+        product.setPrice(99.99);
+        product.setStock(10);
+        product.setDiscount(0.0); // Default discount
+        product.setImages(new ArrayList<>());
+        product.setAvgScore(0.0);
+        product.setDeleted(false);
 
         Mockito.when(productRepository.save(Mockito.any(Product.class)))
                 .thenAnswer(invocation -> {
-                    Product product = invocation.getArgument(0);
-                    product.setId(2L);
-                    return product;
+                    Product savedProduct = invocation.getArgument(0);
+                    savedProduct.setId(2L);
+                    return savedProduct;
                 });
 
-        Product result = productService.createProduct(createDTO);
+        Product result = productService.createProduct(product);
 
         Assertions.assertEquals(0.0, result.getDiscount(), "Discount should default to 0.0");
     }
@@ -321,23 +323,24 @@ public class ProductServiceTest {
     @WithMockUser(username = "testuser")
     void testCreateProductWithImages() {
         List<String> images = List.of("https://example.com/image1.jpg", "https://example.com/image2.jpg");
-        ProductCreateDTO createDTO = new ProductCreateDTO(
-                "New Product",
-                images,
-                "Description",
-                99.99,
-                10,
-                0.0
-        );
+        Product product = new Product();
+        product.setName("New Product");
+        product.setDescription("Description");
+        product.setPrice(99.99);
+        product.setStock(10);
+        product.setDiscount(0.0);
+        product.setImages(images);
+        product.setAvgScore(0.0);
+        product.setDeleted(false);
 
         Mockito.when(productRepository.save(Mockito.any(Product.class)))
                 .thenAnswer(invocation -> {
-                    Product product = invocation.getArgument(0);
-                    product.setId(2L);
-                    return product;
+                    Product savedProduct = invocation.getArgument(0);
+                    savedProduct.setId(2L);
+                    return savedProduct;
                 });
 
-        Product result = productService.createProduct(createDTO);
+        Product result = productService.createProduct(product);
 
         Assertions.assertNotNull(result, "Product should not be null");
         Assertions.assertEquals(images, result.getImages(), "Images should match");
@@ -345,24 +348,25 @@ public class ProductServiceTest {
 
     @Test
     void testCreateProductUnauthenticated() {
-        ProductCreateDTO createDTO = new ProductCreateDTO(
-                "New Product",
-                new ArrayList<>(),
-                "Description",
-                99.99,
-                10,
-                0.0
-        );
+        Product product = new Product();
+        product.setName("New Product");
+        product.setDescription("Description");
+        product.setPrice(99.99);
+        product.setStock(10);
+        product.setDiscount(0.0);
+        product.setImages(new ArrayList<>());
+        product.setAvgScore(0.0);
+        product.setDeleted(false);
 
         Mockito.when(authenticatedUserService.getAuthenticatedUser()).thenReturn(null);
         Mockito.when(productRepository.save(Mockito.any(Product.class)))
                 .thenAnswer(invocation -> {
-                    Product product = invocation.getArgument(0);
-                    product.setId(2L);
-                    return product;
+                    Product savedProduct = invocation.getArgument(0);
+                    savedProduct.setId(2L);
+                    return savedProduct;
                 });
 
-        Product result = productService.createProduct(createDTO);
+        Product result = productService.createProduct(product);
 
         Assertions.assertNotNull(result, "Product should still be created");
         Assertions.assertEquals("New Product", result.getName(), "Name should match");

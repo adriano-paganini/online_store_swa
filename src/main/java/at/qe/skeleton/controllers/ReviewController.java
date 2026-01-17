@@ -3,6 +3,7 @@ package at.qe.skeleton.controllers;
 import at.qe.skeleton.dtos.PageResponseDTO;
 import at.qe.skeleton.dtos.ReviewCreateDTO;
 import at.qe.skeleton.dtos.ReviewDTO;
+import at.qe.skeleton.mappers.ReviewCreateMapper;
 import at.qe.skeleton.mappers.ReviewMapper;
 import at.qe.skeleton.model.Review;
 import at.qe.skeleton.services.ReviewService;
@@ -29,10 +30,12 @@ public class ReviewController {
 
     private final ReviewService reviewService;
     private final ReviewMapper reviewMapper;
+    private final ReviewCreateMapper reviewCreateMapper;
 
-    public ReviewController(ReviewService reviewService, ReviewMapper reviewMapper) {
+    public ReviewController(ReviewService reviewService, ReviewMapper reviewMapper, ReviewCreateMapper reviewCreateMapper) {
         this.reviewService = reviewService;
         this.reviewMapper = reviewMapper;
+        this.reviewCreateMapper = reviewCreateMapper;
     }
 
     /**
@@ -72,14 +75,18 @@ public class ReviewController {
     }
 
 
+    /**
+     * Create a new review for a product
+     */
     @PostMapping("")
     public ResponseEntity<ReviewDTO> createReview(
             @PathVariable Long productId,
             @Valid @RequestBody ReviewCreateDTO createDTO) {
 
         try {
-            Review review = reviewService.createReview(productId, createDTO);
-            ReviewDTO reviewDTO = reviewMapper.mapTo(review);
+            Review review = reviewCreateMapper.mapFrom(createDTO);
+            Review createdReview = reviewService.createReview(productId, review);
+            ReviewDTO reviewDTO = reviewMapper.mapTo(createdReview);
             return ResponseEntity.status(HttpStatus.CREATED).body(reviewDTO);
         } catch (ResponseStatusException e) {
             throw e;

@@ -7,6 +7,7 @@ import at.qe.skeleton.controllers.ProductController;
 import at.qe.skeleton.dtos.ProductCreateDTO;
 import at.qe.skeleton.dtos.ProductDTO;
 import at.qe.skeleton.dtos.ProductUpdateDTO;
+import at.qe.skeleton.mappers.ProductCreateMapper;
 import at.qe.skeleton.mappers.ProductMapper;
 import at.qe.skeleton.model.Product;
 import at.qe.skeleton.services.ProductService;
@@ -67,6 +68,9 @@ public class ProductControllerTest {
 
     @MockitoBean
     private ProductMapper productMapper;
+
+    @MockitoBean
+    private ProductCreateMapper productCreateMapper;
 
     private Product testProduct;
     private ProductDTO testProductDTO;
@@ -293,6 +297,13 @@ public class ProductControllerTest {
                 0.15
         );
 
+        Product productEntity = new Product();
+        productEntity.setName(createDTO.name());
+        productEntity.setDescription(createDTO.description());
+        productEntity.setPrice(createDTO.price());
+        productEntity.setStock(createDTO.stock());
+        productEntity.setDiscount(createDTO.discount());
+
         Product newProduct = new Product();
         newProduct.setId(2L);
         newProduct.setName(createDTO.name());
@@ -314,7 +325,8 @@ public class ProductControllerTest {
                 null, null, null, null
         );
 
-        Mockito.when(productService.createProduct(createDTO)).thenReturn(newProduct);
+        Mockito.when(productCreateMapper.mapFrom(createDTO)).thenReturn(productEntity);
+        Mockito.when(productService.createProduct(productEntity)).thenReturn(newProduct);
         Mockito.when(productMapper.mapTo(Mockito.eq(newProduct), Mockito.any()))
                 .thenReturn(newProductDTO);
 

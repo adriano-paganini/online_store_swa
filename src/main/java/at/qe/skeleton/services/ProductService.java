@@ -27,7 +27,7 @@ public interface ProductService {
     
     Optional<Product> getProductById(Long id);
     
-    Product createProduct(ProductCreateDTO createDTO);
+    Product createProduct(Product product);
     
     Product updateProduct(Long id, ProductUpdateDTO updateDTO);
     

@@ -8,6 +8,7 @@ import at.qe.skeleton.dtos.CartDTO;
 import at.qe.skeleton.dtos.CartItemCreateDTO;
 import at.qe.skeleton.dtos.CartItemDTO;
 import at.qe.skeleton.dtos.CartItemUpdateDTO;
+import at.qe.skeleton.mappers.CartItemCreateMapper;
 import at.qe.skeleton.mappers.CartMapper;
 import at.qe.skeleton.model.Cart;
 import at.qe.skeleton.model.CartItem;
@@ -63,6 +64,9 @@ public class CartControllerTest {
 
     @MockitoBean
     private CartMapper cartMapper;
+
+    @MockitoBean
+    private CartItemCreateMapper cartItemCreateMapper;
 
     @BeforeEach
     void setUp() throws Exception {
@@ -155,6 +159,10 @@ public class CartControllerTest {
     void addItemToCart() throws Exception {
         CartItemCreateDTO createDTO = new CartItemCreateDTO(10L, 2);
 
+        CartItem cartItem = new CartItem();
+        cartItem.setProductId(10L);
+        cartItem.setQuantity(2);
+
         Cart cart = new Cart();
         cart.setId(1L);
         CartItem item = new CartItem();
@@ -168,7 +176,8 @@ public class CartControllerTest {
         CartItemDTO itemDTO = new CartItemDTO(1L, 10L, 2, null, 29.99);
         CartDTO cartDTO = new CartDTO(List.of(itemDTO));
 
-        Mockito.when(cartService.addItemToCart(createDTO)).thenReturn(cart);
+        Mockito.when(cartItemCreateMapper.mapFrom(createDTO)).thenReturn(cartItem);
+        Mockito.when(cartService.addItemToCart(cartItem)).thenReturn(cart);
         Mockito.when(cartMapper.mapTo(cart)).thenReturn(cartDTO);
 
         mockMvc.perform(MockMvcRequestBuilders.post("/cart/items")
