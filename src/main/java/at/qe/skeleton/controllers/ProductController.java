@@ -4,6 +4,7 @@ import at.qe.skeleton.dtos.PageResponseDTO;
 import at.qe.skeleton.dtos.ProductCreateDTO;
 import at.qe.skeleton.dtos.ProductDTO;
 import at.qe.skeleton.dtos.ProductUpdateDTO;
+import at.qe.skeleton.mappers.ProductCreateMapper;
 import at.qe.skeleton.mappers.ProductMapper;
 import at.qe.skeleton.model.Product;
 import at.qe.skeleton.services.ProductService;
@@ -35,10 +36,12 @@ public class ProductController {
 
     private final ProductService productService;
     private final ProductMapper productMapper;
+    private final ProductCreateMapper productCreateMapper;
 
-    public ProductController(ProductService productService, ProductMapper productMapper) {
+    public ProductController(ProductService productService, ProductMapper productMapper, ProductCreateMapper productCreateMapper) {
         this.productService = productService;
         this.productMapper = productMapper;
+        this.productCreateMapper = productCreateMapper;
     }
 
 
@@ -98,14 +101,18 @@ public class ProductController {
     }
 
 
+    /**
+     * Create a new product
+     */
     @PostMapping("")
     public ResponseEntity<ProductDTO> createProduct(
             @Valid @RequestBody ProductCreateDTO createDTO) {
 
         try {
-            Product product = productService.createProduct(createDTO);
+            Product product = productCreateMapper.mapFrom(createDTO);
+            Product createdProduct = productService.createProduct(product);
             final Collection<? extends GrantedAuthority> authorities = getAuthorities();
-            ProductDTO productDTO = productMapper.mapTo(product, authorities);
+            ProductDTO productDTO = productMapper.mapTo(createdProduct, authorities);
             return ResponseEntity.status(HttpStatus.CREATED).body(productDTO);
         } catch (ResponseStatusException e) {
             throw e;

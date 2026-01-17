@@ -1,6 +1,7 @@
 package at.qe.skeleton.mappers;
 
 import at.qe.skeleton.dtos.ProductDTO;
+import at.qe.skeleton.dtos.ProductUpdateDTO;
 import at.qe.skeleton.model.Product;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Service;
@@ -56,6 +57,27 @@ public class ProductMapper {
 
     public ProductDTO mapTo(Product product) {
         return mapTo(product, null);
+    }
+
+    public void apply(Product product, ProductUpdateDTO dto) {
+        if (dto.name() != null) {
+            product.setName(dto.name());
+        }
+        if (dto.description() != null) {
+            product.setDescription(dto.description());
+        }
+        if (dto.price() != null) {
+            product.setPrice(dto.price());
+        }
+        if (dto.stock() != null) {
+            product.setStock(dto.stock());
+        }
+        if (dto.discount() != null) {
+            product.setDiscount(dto.discount());
+        }
+        if (dto.images() != null) {
+            product.setImages(dto.images());
+        }
     }
 }
 
