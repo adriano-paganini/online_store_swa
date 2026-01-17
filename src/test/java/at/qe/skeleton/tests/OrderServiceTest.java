@@ -121,7 +121,8 @@ class OrderServiceTest {
     void createOrderSuccess() {
         OrderCreateDTO dto = new OrderCreateDTO(
                 SHIPPING_ADDRESS_ID,
-                BILLING_ADDRESS_ID
+                BILLING_ADDRESS_ID,
+                ShippingMethod.FAIRY_DUST_DISPATCH
         );
 
         Mockito.when(cartService.getCart()).thenReturn(cart);
@@ -178,7 +179,8 @@ class OrderServiceTest {
 
         OrderCreateDTO dto = new OrderCreateDTO(
                 SHIPPING_ADDRESS_ID,
-                BILLING_ADDRESS_ID
+                BILLING_ADDRESS_ID,
+                ShippingMethod.FAIRY_DUST_DISPATCH
         );
 
         ResponseStatusException ex = Assertions.assertThrows(
@@ -199,7 +201,8 @@ class OrderServiceTest {
 
         OrderCreateDTO dto = new OrderCreateDTO(
                 SHIPPING_ADDRESS_ID,
-                BILLING_ADDRESS_ID
+                BILLING_ADDRESS_ID,
+                ShippingMethod.FAIRY_DUST_DISPATCH
         );
 
         ResponseStatusException ex = Assertions.assertThrows(
@@ -216,7 +219,8 @@ class OrderServiceTest {
     void createOrderBillingAddressNotOwnedFails() {
         OrderCreateDTO dto = new OrderCreateDTO(
                 SHIPPING_ADDRESS_ID,
-                999L
+                999L,
+                ShippingMethod.FAIRY_DUST_DISPATCH
         );
 
         Mockito.when(cartService.getCart()).thenReturn(cart);
@@ -235,7 +239,8 @@ class OrderServiceTest {
     void createOrderShippingAddressNotOwnedFails() {
         OrderCreateDTO dto = new OrderCreateDTO(
                 999L,
-                BILLING_ADDRESS_ID
+                BILLING_ADDRESS_ID,
+                ShippingMethod.FAIRY_DUST_DISPATCH
         );
 
         Mockito.when(cartService.getCart()).thenReturn(cart);
@@ -254,7 +259,8 @@ class OrderServiceTest {
     void createOrderProductNotFoundFails() {
         OrderCreateDTO dto = new OrderCreateDTO(
                 SHIPPING_ADDRESS_ID,
-                BILLING_ADDRESS_ID
+                BILLING_ADDRESS_ID,
+                ShippingMethod.FAIRY_DUST_DISPATCH
         );
 
         Mockito.when(cartService.getCart()).thenReturn(cart);
@@ -272,12 +278,34 @@ class OrderServiceTest {
     }
 
     @Test
+    void createOrderMissingShippingMethodFails() {
+        OrderCreateDTO dto = new OrderCreateDTO(
+                SHIPPING_ADDRESS_ID,
+                BILLING_ADDRESS_ID,
+                null
+        );
+
+        Mockito.when(cartService.getCart()).thenReturn(cart);
+
+        ResponseStatusException ex = Assertions.assertThrows(
+                ResponseStatusException.class,
+                () -> orderService.createOrder(dto)
+        );
+
+        Assertions.assertEquals(HttpStatus.BAD_REQUEST, ex.getStatusCode());
+        Assertions.assertTrue(ex.getMessage().contains("Shipping Method is required"));
+        Mockito.verify(orderRepository, Mockito.never()).save(Mockito.any());
+        Mockito.verify(cartService, Mockito.never()).clearCart();
+    }
+
+    @Test
     void createOrderNullDiscountIsTreatedAsZero() {
         cartItem.setAppliedDiscount(null); // important edge case
 
         OrderCreateDTO dto = new OrderCreateDTO(
                 SHIPPING_ADDRESS_ID,
-                BILLING_ADDRESS_ID
+                BILLING_ADDRESS_ID,
+                ShippingMethod.FAIRY_DUST_DISPATCH
         );
 
         Mockito.when(cartService.getCart()).thenReturn(cart);
@@ -301,6 +329,7 @@ class OrderServiceTest {
                 List.of(),
                 new OrderAddress(COUNTRY, CITY_INNSBRUCK, POSTAL, STREET, NUMBER, EXTRA),
                 new OrderAddress(COUNTRY, CITY_GRAZ, POSTAL, STREET, NUMBER, null),
+                ShippingMethod.FAIRY_DUST_DISPATCH,
                 0.0
         );
         order.setOrderNumber(ORDER_NUMBER);
@@ -333,6 +362,7 @@ class OrderServiceTest {
                 List.of(),
                 new OrderAddress(COUNTRY, CITY_INNSBRUCK, POSTAL, STREET, NUMBER, EXTRA),
                 new OrderAddress(COUNTRY, CITY_GRAZ, POSTAL, STREET, NUMBER, null),
+                ShippingMethod.FAIRY_DUST_DISPATCH,
                 0.0
         );
         order.setOrderNumber(ORDER_NUMBER);
@@ -370,6 +400,7 @@ class OrderServiceTest {
                 List.of(),
                 new OrderAddress(COUNTRY, CITY_INNSBRUCK, POSTAL, STREET, NUMBER, EXTRA),
                 new OrderAddress(COUNTRY, CITY_GRAZ, POSTAL, STREET, NUMBER, null),
+                ShippingMethod.FAIRY_DUST_DISPATCH,
                 0.0
         )));
 
@@ -396,6 +427,7 @@ class OrderServiceTest {
                 List.of(),
                 new OrderAddress(COUNTRY, CITY_INNSBRUCK, POSTAL, STREET, NUMBER, EXTRA),
                 new OrderAddress(COUNTRY, CITY_GRAZ, POSTAL, STREET, NUMBER, null),
+                ShippingMethod.FAIRY_DUST_DISPATCH,
                 0.0
         )));
 
@@ -434,7 +466,8 @@ class OrderServiceTest {
     void orderAddressIsFrozenAfterCreation() {
         OrderCreateDTO dto = new OrderCreateDTO(
                 SHIPPING_ADDRESS_ID,
-                BILLING_ADDRESS_ID
+                BILLING_ADDRESS_ID,
+                ShippingMethod.FAIRY_DUST_DISPATCH
         );
 
         Mockito.when(cartService.getCart()).thenReturn(cart);
@@ -463,7 +496,8 @@ class OrderServiceTest {
     void productNameIsFrozenAtPurchaseTime() {
         OrderCreateDTO dto = new OrderCreateDTO(
                 SHIPPING_ADDRESS_ID,
-                BILLING_ADDRESS_ID
+                BILLING_ADDRESS_ID,
+                ShippingMethod.FAIRY_DUST_DISPATCH
         );
 
         Mockito.when(cartService.getCart()).thenReturn(cart);
@@ -485,7 +519,8 @@ class OrderServiceTest {
     void productPriceIsFrozenAtPurchaseTime() {
         OrderCreateDTO dto = new OrderCreateDTO(
                 SHIPPING_ADDRESS_ID,
-                BILLING_ADDRESS_ID
+                BILLING_ADDRESS_ID,
+                ShippingMethod.FAIRY_DUST_DISPATCH
         );
 
         Mockito.when(cartService.getCart()).thenReturn(cart);
@@ -507,7 +542,8 @@ class OrderServiceTest {
     void orderTotalIsFrozenAfterCreation() {
         OrderCreateDTO dto = new OrderCreateDTO(
                 SHIPPING_ADDRESS_ID,
-                BILLING_ADDRESS_ID
+                BILLING_ADDRESS_ID,
+                ShippingMethod.FAIRY_DUST_DISPATCH
         );
 
         Mockito.when(cartService.getCart()).thenReturn(cart);
