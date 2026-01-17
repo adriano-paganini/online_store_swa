@@ -13,7 +13,7 @@ import java.util.Objects;
 //AI helped with Text generation here
 public final class OrderEmailComposer {
 
-    private static final Locale LOCALE_AT = Locale.forLanguageTag("de-AT");
+    private static final Locale LOCALE_EN = Locale.US;
     private static final DateTimeFormatter DATE_FMT = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
 
     private OrderEmailComposer() {}
@@ -30,7 +30,7 @@ public final class OrderEmailComposer {
         String orderDate = order.getTimestamp() != null ? order.getTimestamp().format(DATE_FMT) : "(unknown)";
         String status = order.getStatus() != null ? order.getStatus().name() : "(unknown)";
 
-        NumberFormat money = NumberFormat.getCurrencyInstance(LOCALE_AT);
+        NumberFormat money = NumberFormat.getCurrencyInstance(LOCALE_EN);
 
         return "Hi " + fullName + ",\n\n" +
                 "thanks for your order — we’ve received it and it’s now being processed.\n\n" +
@@ -137,4 +137,5 @@ public final class OrderEmailComposer {
         if (v == (long) v) return Long.toString((long) v);
         return Double.toString(v);
     }
+
 }
