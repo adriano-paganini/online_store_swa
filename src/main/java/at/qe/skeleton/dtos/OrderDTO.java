@@ -1,6 +1,7 @@
 package at.qe.skeleton.dtos;
 
 import at.qe.skeleton.model.OrderStatus;
+import at.qe.skeleton.model.ShippingMethod;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -12,5 +13,6 @@ public record OrderDTO (
         LocalDateTime timestamp,
         List<OrderItemDTO> items,
         AddressDTO shippingAddress,
-        AddressDTO billingAddress
+        AddressDTO billingAddress,
+        ShippingMethod shippingMethod
 ) {}

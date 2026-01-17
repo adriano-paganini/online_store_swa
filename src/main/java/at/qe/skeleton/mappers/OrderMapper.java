@@ -19,7 +19,8 @@ public class OrderMapper {
                 order.getTimestamp(),
                 mapItems(order.getItems()),
                 mapAddress(order.getShippingAddress()),
-                mapAddress(order.getBillingAddress())
+                mapAddress(order.getBillingAddress()),
+                order.getShippingMethod()
         );
     }
 

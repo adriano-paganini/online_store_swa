@@ -33,6 +33,10 @@ public class Order implements Persistable<Long>, Serializable, PayloadInterface 
     @Column(nullable = false, length = 30)
     private OrderStatus status;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 50)
+    private ShippingMethod shippingMethod;
+
     @Column(nullable = false)
     private Double total;
 
@@ -74,12 +78,14 @@ public class Order implements Persistable<Long>, Serializable, PayloadInterface 
             List<OrderItem> items,
             OrderAddress billingAddress,
             OrderAddress shippingAddress,
+            ShippingMethod shippingMethod,
             Double total
     ) {
         this.user = user;
         this.items = items;
         this.billingAddress = billingAddress;
         this.shippingAddress = shippingAddress;
+        this.shippingMethod = shippingMethod;
         this.total = total;
         this.status = OrderStatus.PENDING;
     }
@@ -164,6 +170,14 @@ public class Order implements Persistable<Long>, Serializable, PayloadInterface 
 
     public void setShippingAddress(OrderAddress shippingAddress) {
         this.shippingAddress = shippingAddress;
+    }
+
+    public ShippingMethod getShippingMethod() {
+        return shippingMethod;
+    }
+
+    public void setShippingMethod(ShippingMethod shippingMethod) {
+        this.shippingMethod = shippingMethod;
     }
 
     @Override
