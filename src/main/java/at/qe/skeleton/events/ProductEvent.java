@@ -23,11 +23,6 @@ public class ProductEvent<T> extends Payload<Subscription>{
         this.timestamp = LocalDateTime.now();
     }
 
-    @Override
-    public String getPayloadSubjectLine() {
-        return "";
-    }
-
     public Product getProduct(){
         return product;
     }
