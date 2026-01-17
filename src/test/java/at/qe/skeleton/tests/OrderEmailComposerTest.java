@@ -1,10 +1,13 @@
 package at.qe.skeleton.tests;
 
 import at.qe.skeleton.Helpers.OrderEmailComposer;
+import at.qe.skeleton.events.OrderCompletionEvent;
+import at.qe.skeleton.events.ProductDiscountUpdateEvent;
 import at.qe.skeleton.model.*;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -451,11 +454,11 @@ public class OrderEmailComposerTest {
 
         order.setTotal(150.0);
         String result1 = OrderEmailComposer.composePlainText(order);
-        assertTrue(result1.contains("150,00"), "Should show 150 instead of 150,0");
+        assertTrue(result1.contains("150.00"), "Should show 150 instead of 150.0");
 
         order.setTotal(150.75);
         String result2 = OrderEmailComposer.composePlainText(order);
-        assertTrue(result2.contains("150,75"), "Should preserve decimals for non-whole numbers");
+        assertTrue(result2.contains("150.75"), "Should preserve decimals for non-whole numbers");
     }
 
     @Test
