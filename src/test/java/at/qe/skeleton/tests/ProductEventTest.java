@@ -7,7 +7,6 @@ import at.qe.skeleton.model.SubscriptionType;
 import at.qe.skeleton.model.Userx;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 
 import java.time.format.DateTimeFormatter;
 

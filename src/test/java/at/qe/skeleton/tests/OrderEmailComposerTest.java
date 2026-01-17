@@ -1,13 +1,11 @@
 package at.qe.skeleton.tests;
 
 import at.qe.skeleton.Helpers.OrderEmailComposer;
-import at.qe.skeleton.events.OrderCompletionEvent;
-import at.qe.skeleton.events.ProductDiscountUpdateEvent;
+
 import at.qe.skeleton.model.*;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
