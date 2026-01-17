@@ -124,7 +124,9 @@ public class CartServiceTest {
         Double productPrice = 29.99;
         Double productDiscount = 0.0;
 
-        CartItemCreateDTO createDTO = new CartItemCreateDTO(productId, quantity);
+        CartItem cartItem = new CartItem();
+        cartItem.setProductId(productId);
+        cartItem.setQuantity(quantity);
 
         Mockito.when(cartRepository.findByUser(testUser)).thenReturn(Optional.of(testCart));
         Mockito.when(cartItemRepository.findByCartAndProductId(testCart, productId))
@@ -139,7 +141,7 @@ public class CartServiceTest {
             return item;
         });
 
-        Cart result = cartService.addItemToCart(createDTO);
+        Cart result = cartService.addItemToCart(cartItem);
 
         Assertions.assertNotNull(result, "Cart should not be null");
         ArgumentCaptor<CartItem> itemCaptor = ArgumentCaptor.forClass(CartItem.class);
@@ -158,7 +160,9 @@ public class CartServiceTest {
         Integer addQuantity = 1;
         Integer expectedQuantity = existingQuantity + addQuantity;
 
-        CartItemCreateDTO createDTO = new CartItemCreateDTO(productId, addQuantity);
+        CartItem cartItem = new CartItem();
+        cartItem.setProductId(productId);
+        cartItem.setQuantity(addQuantity);
 
         CartItem existingItem = new CartItem();
         existingItem.setId(1L);
@@ -176,7 +180,7 @@ public class CartServiceTest {
         Mockito.when(cartItemRepository.save(Mockito.any(CartItem.class))).thenReturn(existingItem);
         Mockito.when(cartRepository.save(Mockito.any(Cart.class))).thenReturn(testCart);
 
-        Cart result = cartService.addItemToCart(createDTO);
+        Cart result = cartService.addItemToCart(cartItem);
 
         Assertions.assertNotNull(result, "Cart should not be null");
         Assertions.assertEquals(expectedQuantity, existingItem.getQuantity(), "Quantity should be incremented");
@@ -188,13 +192,15 @@ public class CartServiceTest {
     void testAddItemToCartProductNotAvailable() {
         Long productId = 10L;
         Integer quantity = 2;
-        CartItemCreateDTO createDTO = new CartItemCreateDTO(productId, quantity);
+        CartItem cartItem = new CartItem();
+        cartItem.setProductId(productId);
+        cartItem.setQuantity(quantity);
 
         Mockito.when(cartRepository.findByUser(testUser)).thenReturn(Optional.of(testCart));
         Mockito.when(productService.isProductAvailable(productId, quantity)).thenReturn(false);
 
         Assertions.assertThrows(ResponseStatusException.class, () -> {
-            cartService.addItemToCart(createDTO);
+            cartService.addItemToCart(cartItem);
         }, "Should throw exception when product is not available");
     }
 
@@ -350,11 +356,13 @@ public class CartServiceTest {
 
     @Test
     void testAddItemToCartUnauthenticated() {
-        CartItemCreateDTO createDTO = new CartItemCreateDTO(10L, 1);
+        CartItem cartItem = new CartItem();
+        cartItem.setProductId(10L);
+        cartItem.setQuantity(1);
         Mockito.when(authenticatedUserService.getAuthenticatedUser()).thenReturn(null);
 
         Assertions.assertThrows(ResponseStatusException.class, () -> {
-            cartService.addItemToCart(createDTO);
+            cartService.addItemToCart(cartItem);
         }, "Should throw exception when user is not authenticated");
     }
 }
