@@ -580,16 +580,16 @@ class OrderServiceTest {
                 .thenAnswer(invocation -> invocation.getArgument(0));
 
         // Test transition from PENDING to CONFIRMED
-        Order confirmed = orderService.updateOrderStatus(OrderStatus.CONFIRMED, ORDER_NUMBER);
-        Assertions.assertEquals(OrderStatus.CONFIRMED, confirmed.getStatus());
+        Order confirmed = orderService.updateOrderStatus(OrderStatus.PAID, ORDER_NUMBER);
+        Assertions.assertEquals(OrderStatus.PAID, confirmed.getStatus());
 
         // Test transition from CONFIRMED to SHIPPED
-        order.setStatus(OrderStatus.CONFIRMED);
-        Order shipped = orderService.updateOrderStatus(OrderStatus.SHIPPED, ORDER_NUMBER);
-        Assertions.assertEquals(OrderStatus.SHIPPED, shipped.getStatus());
+        order.setStatus(OrderStatus.PAID);
+        Order shipped = orderService.updateOrderStatus(OrderStatus.PAID, ORDER_NUMBER);
+        Assertions.assertEquals(OrderStatus.PAID, shipped.getStatus());
 
         // Test transition from SHIPPED to DELIVERED
-        order.setStatus(OrderStatus.SHIPPED);
+        order.setStatus(OrderStatus.PAID);
         Order delivered = orderService.updateOrderStatus(OrderStatus.DELIVERED, ORDER_NUMBER);
         Assertions.assertEquals(OrderStatus.DELIVERED, delivered.getStatus());
 
@@ -764,7 +764,7 @@ class OrderServiceTest {
 
         Order result = orderService.confirmPayment(ORDER_NUMBER);
 
-        Assertions.assertEquals(OrderStatus.CONFIRMED, result.getStatus());
+        Assertions.assertEquals(OrderStatus.PAID, result.getStatus());
         // Verify event was published (would need to inject ApplicationEventPublisher mock)
     }
 }

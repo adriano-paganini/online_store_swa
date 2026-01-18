@@ -77,7 +77,7 @@ public class OrderCompletionEventListenerTest {
                 100.0
         );
         testOrder.setOrderNumber("ORD-12345");
-        testOrder.setStatus(OrderStatus.CONFIRMED);
+        testOrder.setStatus(OrderStatus.PAID);
         
         // Set timestamp using reflection
         try {

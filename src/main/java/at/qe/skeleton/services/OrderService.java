@@ -136,7 +136,7 @@ public class OrderService {
 
     @Transactional
     public Order confirmPayment(String orderNumber){
-        Order updated = updateOrderStatus(OrderStatus.CONFIRMED,orderNumber);
+        Order updated = updateOrderStatus(OrderStatus.PAID,orderNumber);
         applicationEventPublisher.publishEvent(new OrderCompletionEvent(updated));
 
         return updated;

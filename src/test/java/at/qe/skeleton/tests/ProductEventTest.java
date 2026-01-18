@@ -110,7 +110,7 @@ class ProductEventTest {
         when(mockUser.getLastName()).thenReturn("Doe");
         when(mockOrder.getOrderNumber()).thenReturn("ORD-MOCK-123");
         when(mockOrder.getTotal()).thenReturn(250.0);
-        when(mockOrder.getStatus()).thenReturn(at.qe.skeleton.model.OrderStatus.CONFIRMED);
+        when(mockOrder.getStatus()).thenReturn(at.qe.skeleton.model.OrderStatus.PAID);
 
         OrderCompletionEvent event = new OrderCompletionEvent(mockOrder);
 
