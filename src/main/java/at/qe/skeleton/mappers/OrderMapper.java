@@ -32,6 +32,7 @@ public class OrderMapper {
     private OrderItemDTO toItemDto(OrderItem item) {
         return new OrderItemDTO(
                 item.getProductId(),
+                item.getProductName(),
                 item.getQuantity(),
                 item.getPriceAtPurchase(),
                 item.getAppliedDiscount()
