@@ -1,23 +1,8 @@
+import { getErrorMessage } from '@/config/config';
 import { TPageResponseDTO } from '@/DTO/pagination.types';
 import axios from 'axios';
-import { TUserDTO, UserxTypes } from '../DTO/userx.types';
+import { TUserDTO, TUserMeDTO, TUserMeUpdateDTO, UserxTypes } from '../DTO/userx.types';
 import { createUserxFromInterfaces } from './userxUtilities';
-
-// hopefully?
-type TBackendError = { message: string };
-
-/**
- * Extract a safe error message from unknown errors
- */
-const getErrorMessage = (err: unknown): string => {
-  if (axios.isAxiosError<TBackendError>(err)) {
-    return err.response?.data?.message ?? err.message;
-  }
-  if (err instanceof Error) {
-    return err.message;
-  }
-  return String(err);
-};
 
 /**
  * Fetch all users from the backend
@@ -92,6 +77,24 @@ const isAuthenticated = async (): Promise<boolean> => {
   }
 };
 
+const getMe = async (): Promise<TUserMeDTO> => {
+  try {
+    const response = await axios.get<TUserMeDTO>('/users/me');
+    return response.data;
+  } catch (err: unknown) {
+    throw new Error(`Error fetching current user: ${getErrorMessage(err)}`);
+  }
+};
+
+const updateMe = async (dto: TUserMeUpdateDTO): Promise<TUserMeDTO> => {
+  try {
+    const response = await axios.patch<TUserMeDTO>('/users/me', dto);
+    return response.data;
+  } catch (err: unknown) {
+    throw new Error(`Error updating current user: ${getErrorMessage(err)}`);
+  }
+};
+
 export const UserxApi = {
   fetchAllUsers,
   createUser,
@@ -99,4 +102,6 @@ export const UserxApi = {
   deleteUser,
   getCurrentUser,
   isAuthenticated,
+  getMe,
+  updateMe,
 };

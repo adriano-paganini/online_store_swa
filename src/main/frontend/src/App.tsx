@@ -26,6 +26,7 @@ import {
   PaymentSuccessPageRoute,
   ProductDetailPageRoute,
   ProductsPageRoute,
+  ProfilePageRoute,
   SubscriptionsPageRoute,
 } from './routes';
 
@@ -80,6 +81,11 @@ const App: React.FC = () => {
                   />
 
                   <Route
+                    path={ProfilePageRoute.url}
+                    Component={ProfilePageRoute.component}
+                  />
+
+                  <Route
                     path={NotificationsPageRoute.url}
                     Component={NotificationsPageRoute.component}
                   />
@@ -103,16 +109,6 @@ const App: React.FC = () => {
                     path={PaymentSuccessPageRoute.url}
                     Component={PaymentSuccessPageRoute.component}
                   />
-
-                  {/* future */}
-                  {/*
-                  
-                  <Route
-                    path={ProfilePageRoute.url}
-                    Component={ProfilePageRoute.component}
-                  />
-                  
-                  */}
                 </Route>
 
                 {/* manager routes */}

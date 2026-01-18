@@ -13,6 +13,7 @@ import PaymentPage from './views/PaymentPage';
 import PaymentSuccessPage from './views/PaymentSuccessPage';
 import ProductDetailsPage from './views/ProductDetailsPage';
 import ProductsPage from './views/ProductsPage';
+import ProfilePage from './views/ProfilePage';
 import SubscriptionsPage from './views/SubscriptionsPage';
 
 export const HomePageRoute = {
@@ -38,6 +39,11 @@ export const SubscriptionsPageRoute = {
 export const NotificationsPageRoute = {
   url: ROUTES.NOTIFICATIONS,
   component: NotificationsPage,
+};
+
+export const ProfilePageRoute = {
+  url: ROUTES.PROFILE,
+  component: ProfilePage,
 };
 
 export const AddressesPageRoute = {
