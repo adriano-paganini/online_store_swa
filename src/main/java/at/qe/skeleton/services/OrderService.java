@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -21,6 +22,7 @@ import java.util.stream.Collectors;
 public class OrderService {
 
     private final OrderRepository orderRepository;
+    private final OrderLifecycleService orderLifecycleService;
     private final CartService cartService;
     private final ProductService productService;
     private final AuthenticatedUserService authenticatedUserService;
@@ -28,11 +30,14 @@ public class OrderService {
 
     public OrderService(
             OrderRepository orderRepository,
+            OrderLifecycleService orderLifecycleService,
             CartService cartService,
             ProductService productService,
-            AuthenticatedUserService authenticatedUserService, ApplicationEventPublisher applicationEventPublisher
+            AuthenticatedUserService authenticatedUserService,
+            ApplicationEventPublisher applicationEventPublisher
     ) {
         this.orderRepository = orderRepository;
+        this.orderLifecycleService = orderLifecycleService;
         this.cartService = cartService;
         this.productService = productService;
         this.authenticatedUserService = authenticatedUserService;
@@ -50,31 +55,38 @@ public class OrderService {
         if (status != null) {
             return orderRepository.findByUserAndStatus(user, status, pageable);
         }
-        return orderRepository.findByUser(user, pageable);
+
+        Page<Order> pageResult = orderRepository.findByUser(user, pageable);
+
+        pageResult.forEach(order -> {
+            if (orderLifecycleService.applyResolvedStatus(order, LocalDateTime.now())) {
+                orderRepository.save(order);
+            }
+        });
+
+        return pageResult;
     }
+
 
 
     public Order getOrderByNumber(String orderNumber) {
         Userx user = authenticatedUserService.requireAuthenticatedUser();
 
         Order order = orderRepository.findByOrderNumber(orderNumber)
-                .orElseThrow(() ->
-                        new ResponseStatusException(
-                                HttpStatus.NOT_FOUND,
-                                "Order not found"
-                        )
-                );
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "Order not found"));
 
         if (!order.getUser().getId().equals(user.getId())) {
-            // 404 instead of 403 (no leak of existence)
-            throw new ResponseStatusException(
-                    HttpStatus.NOT_FOUND,
-                    "Order not found"
-            );
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Order not found");
+        }
+
+        if (orderLifecycleService.applyResolvedStatus(order, LocalDateTime.now())) {
+            orderRepository.save(order);
         }
 
         return order;
     }
+
 
     @Transactional
     public Order createOrder(OrderCreateDTO orderCreateDTO) {
@@ -136,7 +148,7 @@ public class OrderService {
 
     @Transactional
     public Order confirmPayment(String orderNumber){
-        Order updated = updateOrderStatus(OrderStatus.CONFIRMED,orderNumber);
+        Order updated = updateOrderStatus(OrderStatus.PAID,orderNumber);
         applicationEventPublisher.publishEvent(new OrderCompletionEvent(updated));
 
         return updated;
@@ -148,6 +160,26 @@ public class OrderService {
         order.setStatus(status);
         orderRepository.save(order);
         return order;
+    }
+
+    @Transactional
+    public Order cancelOrder(String orderNumber) {
+        Order order = getOrderByNumber(orderNumber);
+
+        if (order.getStatus() == OrderStatus.SHIPPING ||
+                order.getStatus() == OrderStatus.DELIVERED) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Order can no longer be canceled"
+            );
+        }
+
+        if (order.getStatus() == OrderStatus.CANCELED) {
+            return order;
+        }
+
+        order.setStatus(OrderStatus.CANCELED);
+        return orderRepository.save(order);
     }
 
     private List<OrderItem> createOrderItemsFromCart(Cart cart) {

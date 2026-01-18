@@ -69,7 +69,7 @@ public class OrderMapperTest {
                 240.0
         );
         testOrder.setOrderNumber("ORD-12345");
-        testOrder.setStatus(OrderStatus.CONFIRMED);
+        testOrder.setStatus(OrderStatus.PAID);
         
         // Set timestamp using reflection
         try {
@@ -87,7 +87,7 @@ public class OrderMapperTest {
 
         assertNotNull(dto);
         assertEquals("ORD-12345", dto.orderNumber());
-        assertEquals(OrderStatus.CONFIRMED, dto.status());
+        assertEquals(OrderStatus.PAID, dto.status());
         assertEquals(240.0, dto.total());
         assertNotNull(dto.timestamp());
         assertEquals(2, dto.items().size());

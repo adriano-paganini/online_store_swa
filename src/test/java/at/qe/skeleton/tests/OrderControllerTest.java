@@ -240,10 +240,36 @@ class OrderControllerTest {
 
     @Test
     @WithMockUser
+    void cancelOrderSuccess() throws Exception {
+        Mockito.when(orderService.cancelOrder(ORDER_NUMBER))
+                .thenReturn(order);
+
+        Mockito.when(orderMapper.toDto(order))
+                .thenReturn(orderDTO);
+
+        mockMvc.perform(MockMvcRequestBuilders
+                        .post(ENDPOINT + "/{orderNumber}/cancel", ORDER_NUMBER)
+                        .with(SecurityMockMvcRequestPostProcessors.csrf()))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.orderNumber")
+                        .value(ORDER_NUMBER));
+    }
+
+    @Test
+    void cancelOrderUnauthenticatedFails() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders
+                        .post(ENDPOINT + "/{orderNumber}/cancel", ORDER_NUMBER)
+                        .with(SecurityMockMvcRequestPostProcessors.csrf()))
+                .andExpect(MockMvcResultMatchers.status().isUnauthorized());
+    }
+
+    @Test
+    @WithMockUser
     void createOrderSuccess_returnsExactDtoJson() throws Exception {
         OrderCreateDTO createDTO = new OrderCreateDTO(
                 ADDRESS_SHIPPING,
-                ADDRESS_BILLING
+                ADDRESS_BILLING,
+                ShippingMethod.FAIRY_DUST_DISPATCH
         );
 
         Mockito.when(orderService.createOrder(Mockito.any()))

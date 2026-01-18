@@ -19,6 +19,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -580,16 +581,16 @@ class OrderServiceTest {
                 .thenAnswer(invocation -> invocation.getArgument(0));
 
         // Test transition from PENDING to CONFIRMED
-        Order confirmed = orderService.updateOrderStatus(OrderStatus.CONFIRMED, ORDER_NUMBER);
-        Assertions.assertEquals(OrderStatus.CONFIRMED, confirmed.getStatus());
+        Order confirmed = orderService.updateOrderStatus(OrderStatus.PAID, ORDER_NUMBER);
+        Assertions.assertEquals(OrderStatus.PAID, confirmed.getStatus());
 
         // Test transition from CONFIRMED to SHIPPED
-        order.setStatus(OrderStatus.CONFIRMED);
-        Order shipped = orderService.updateOrderStatus(OrderStatus.SHIPPED, ORDER_NUMBER);
-        Assertions.assertEquals(OrderStatus.SHIPPED, shipped.getStatus());
+        order.setStatus(OrderStatus.PAID);
+        Order shipped = orderService.updateOrderStatus(OrderStatus.PAID, ORDER_NUMBER);
+        Assertions.assertEquals(OrderStatus.PAID, shipped.getStatus());
 
         // Test transition from SHIPPED to DELIVERED
-        order.setStatus(OrderStatus.SHIPPED);
+        order.setStatus(OrderStatus.PAID);
         Order delivered = orderService.updateOrderStatus(OrderStatus.DELIVERED, ORDER_NUMBER);
         Assertions.assertEquals(OrderStatus.DELIVERED, delivered.getStatus());
 
@@ -764,7 +765,112 @@ class OrderServiceTest {
 
         Order result = orderService.confirmPayment(ORDER_NUMBER);
 
-        Assertions.assertEquals(OrderStatus.CONFIRMED, result.getStatus());
+        Assertions.assertEquals(OrderStatus.PAID, result.getStatus());
         // Verify event was published (would need to inject ApplicationEventPublisher mock)
+    }
+
+    @Test
+    void getOrderByNumberAppliesLifecycleAndPersistsStatus() throws Exception {
+        Order order = new Order(
+                user,
+                List.of(),
+                new OrderAddress(COUNTRY, CITY_INNSBRUCK, POSTAL, STREET, NUMBER, EXTRA),
+                new OrderAddress(COUNTRY, CITY_GRAZ, POSTAL, STREET, NUMBER, null),
+                ShippingMethod.FAIRY_DUST_DISPATCH,
+                0.0
+        );
+        order.setOrderNumber(ORDER_NUMBER);
+        order.setStatus(OrderStatus.PAID);
+
+        // set timestamp via reflection (same technique as before)
+        var field = Order.class.getDeclaredField("timestamp");
+        field.setAccessible(true);
+        field.set(order, LocalDateTime.now().minusHours(13));
+
+        Mockito.when(orderRepository.findByOrderNumber(ORDER_NUMBER))
+                .thenReturn(Optional.of(order));
+
+        Mockito.when(orderRepository.save(Mockito.any(Order.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
+
+        // when
+        Order result = orderService.getOrderByNumber(ORDER_NUMBER);
+
+        // then
+        Assertions.assertEquals(OrderStatus.SHIPPING, result.getStatus());
+
+        // verify persistence
+        Mockito.verify(orderRepository).save(
+                Mockito.argThat(o -> o.getStatus() == OrderStatus.SHIPPING)
+        );
+    }
+
+    @Test
+    void cancelPendingOrderSucceeds() {
+        Order order = new Order(
+                user,
+                List.of(),
+                new OrderAddress(COUNTRY, CITY_INNSBRUCK, POSTAL, STREET, NUMBER, EXTRA),
+                new OrderAddress(COUNTRY, CITY_GRAZ, POSTAL, STREET, NUMBER, null),
+                ShippingMethod.FAIRY_DUST_DISPATCH,
+                0.0
+        );
+        order.setOrderNumber(ORDER_NUMBER);
+        order.setStatus(OrderStatus.PENDING);
+
+        Mockito.when(orderRepository.findByOrderNumber(ORDER_NUMBER))
+                .thenReturn(Optional.of(order));
+        Mockito.when(orderRepository.save(Mockito.any()))
+                .thenAnswer(invocation -> invocation.getArgument(0));
+
+        Order canceled = orderService.cancelOrder(ORDER_NUMBER);
+
+        Assertions.assertEquals(OrderStatus.CANCELED, canceled.getStatus());
+    }
+
+    @Test
+    void cancelShippingOrderFails() {
+        Order order = new Order(
+                user,
+                List.of(),
+                new OrderAddress(COUNTRY, CITY_INNSBRUCK, POSTAL, STREET, NUMBER, EXTRA),
+                new OrderAddress(COUNTRY, CITY_GRAZ, POSTAL, STREET, NUMBER, null),
+                ShippingMethod.FAIRY_DUST_DISPATCH,
+                0.0
+        );
+        order.setOrderNumber(ORDER_NUMBER);
+        order.setStatus(OrderStatus.SHIPPING);
+
+        Mockito.when(orderRepository.findByOrderNumber(ORDER_NUMBER))
+                .thenReturn(Optional.of(order));
+
+        ResponseStatusException ex = Assertions.assertThrows(
+                ResponseStatusException.class,
+                () -> orderService.cancelOrder(ORDER_NUMBER)
+        );
+
+        Assertions.assertEquals(HttpStatus.BAD_REQUEST, ex.getStatusCode());
+    }
+
+    @Test
+    void cancelAlreadyCanceledOrderIsIdempotent() {
+        Order order = new Order(
+                user,
+                List.of(),
+                new OrderAddress(COUNTRY, CITY_INNSBRUCK, POSTAL, STREET, NUMBER, EXTRA),
+                new OrderAddress(COUNTRY, CITY_GRAZ, POSTAL, STREET, NUMBER, null),
+                ShippingMethod.FAIRY_DUST_DISPATCH,
+                0.0
+        );
+        order.setOrderNumber(ORDER_NUMBER);
+        order.setStatus(OrderStatus.CANCELED);
+
+        Mockito.when(orderRepository.findByOrderNumber(ORDER_NUMBER))
+                .thenReturn(Optional.of(order));
+
+        Order result = orderService.cancelOrder(ORDER_NUMBER);
+
+        Assertions.assertEquals(OrderStatus.CANCELED, result.getStatus());
+        Mockito.verify(orderRepository, Mockito.never()).save(Mockito.any());
     }
 }

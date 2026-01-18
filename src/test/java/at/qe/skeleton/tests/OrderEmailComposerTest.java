@@ -30,7 +30,7 @@ public class OrderEmailComposerTest {
         assertNotNull(result);
         assertTrue(result.contains("Hi John Doe,"));
         assertTrue(result.contains("Order number: ORD-12345"));
-        assertTrue(result.contains("Status: CONFIRMED"));
+        assertTrue(result.contains("Status: PAID"));
         assertTrue(result.contains("Order total:"));
         assertTrue(result.contains("Shipping address"));
         assertTrue(result.contains("Billing address"));
@@ -432,7 +432,7 @@ public class OrderEmailComposerTest {
                 150.0
         );
         order.setOrderNumber("ORD-12345");
-        order.setStatus(OrderStatus.CONFIRMED);
+        order.setStatus(OrderStatus.PAID);
         
         // Set timestamp using reflection since there's no setter
         try {
