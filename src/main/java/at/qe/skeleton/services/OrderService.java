@@ -162,6 +162,26 @@ public class OrderService {
         return order;
     }
 
+    @Transactional
+    public Order cancelOrder(String orderNumber) {
+        Order order = getOrderByNumber(orderNumber);
+
+        if (order.getStatus() == OrderStatus.SHIPPING ||
+                order.getStatus() == OrderStatus.DELIVERED) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Order can no longer be canceled"
+            );
+        }
+
+        if (order.getStatus() == OrderStatus.CANCELED) {
+            return order;
+        }
+
+        order.setStatus(OrderStatus.CANCELED);
+        return orderRepository.save(order);
+    }
+
     private List<OrderItem> createOrderItemsFromCart(Cart cart) {
         return cart.getItems().stream()
                 .map(cartItem -> {
