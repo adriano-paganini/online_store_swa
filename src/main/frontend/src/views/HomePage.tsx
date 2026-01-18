@@ -48,12 +48,6 @@ export default function HomePage() {
                 <ArrowRight className="h-4 w-4" />
               </Button>
             </Link>
-            <Button
-              size="lg"
-              variant="outline"
-            >
-              Learn More
-            </Button>
           </div>
         </div>
       </section>

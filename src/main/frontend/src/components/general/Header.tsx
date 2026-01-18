@@ -1,10 +1,9 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { useUser } from '@/Contexts/authenticatedUserContext';
 import { useCart } from '@/Contexts/cartContext';
-import { LogOut, Menu, Search, ShoppingCart } from 'lucide-react';
+import { LogOut, Menu, ShoppingCart } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { ROUTES } from '../../utilities/routes.paths';
 import { CartSidebar } from '../cart/CartSidebar';
@@ -116,15 +115,6 @@ export function Header() {
             </div>
           </div>
         </SheetHeader>
-
-        <div className="relative mx-4 mt-4">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          <Input
-            type="search"
-            placeholder="Search products..."
-            className="pl-10"
-          />
-        </div>
 
         <nav className="mb-auto mt-6 flex flex-1 flex-col gap-1 px-4">
           <Link to={ROUTES.HOME}>
@@ -248,17 +238,6 @@ export function Header() {
           </div>
           <span className="text-lg font-semibold">Shop</span>
         </Link>
-
-        <div className="hidden max-w-lg flex-1 px-8 md:flex">
-          <div className="relative w-full">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <Input
-              type="search"
-              placeholder="Search products..."
-              className="pl-10"
-            />
-          </div>
-        </div>
 
         <div className="flex items-center gap-2">
           <div className="hidden md:block">{CartSheet}</div>
