@@ -522,17 +522,17 @@ VALUES (
            1015.89,
            CURRENT_TIMESTAMP,
            (SELECT ID FROM USERX WHERE USERNAME = 'adriano'),
-           'ORD-ADRIANO-CONFIRMED',
+           'ORD-ADRIANO-PAID',
            'Innsbruck', 'Austria', '6020', 'Technikerstraße', '40',
            'Innsbruck', 'Austria', '6020', 'Technikerstraße', '40',
-           'CONFIRMED',
+           'PAID',
            'FAIRY_DUST_DISPATCH'
        );
 
 -- Insert the Item (1x DDR5 32GB)
 INSERT INTO order_item (ORDER_ID, PRODUCT_ID, PRODUCT_NAME, QUANTITY, PRICE_AT_PURCHASE)
 VALUES (
-           (SELECT ID FROM orders WHERE ORDER_NUMBER = 'ORD-ADRIANO-CONFIRMED'),
+           (SELECT ID FROM orders WHERE ORDER_NUMBER = 'ORD-ADRIANO-PAID'),
            (SELECT ID FROM PRODUCT WHERE NAME = 'DDR5 32GB'),
            'DDR5 32GB',
            1,
@@ -780,3 +780,91 @@ INSERT INTO NOTIFICATION (USER_ID, CHANNEL, STATUS, TIMESTAMP, MESSAGE)
 SELECT ID, 1, 2, CURRENT_TIMESTAMP,
        '13.01.2026 10:26 - Delivery failed for "Aerondight Silver Sword" discount notification.'
 FROM USERX WHERE USERNAME = 'user2';
+
+-- =========================
+-- ORDERS - add old orders to see STATUS
+-- =========================
+
+INSERT INTO orders (
+    TOTAL, TIMESTAMP, USER_ID, ORDER_NUMBER,
+    BILLING_CITY, BILLING_COUNTRY, BILLING_POSTAL_CODE,
+    BILLING_STREET, BILLING_NUMBER,
+    SHIPPING_CITY, SHIPPING_COUNTRY, SHIPPING_POSTAL_CODE,
+    SHIPPING_STREET, SHIPPING_NUMBER,
+    STATUS, SHIPPING_METHOD
+)
+VALUES (
+           1015.99,
+           DATEADD('DAY', -1, CURRENT_TIMESTAMP),
+               (SELECT ID FROM USERX WHERE USERNAME = 'adriano'),
+           'ORD-ADRIANO-PAID-OLD',
+           'Innsbruck', 'Austria', '6020', 'Technikerstraße', '40',
+           'Innsbruck', 'Austria', '6020', 'Technikerstraße', '40',
+           'PAID',
+           'FAIRY_DUST_DISPATCH'
+       );
+
+INSERT INTO order_item (ORDER_ID, PRODUCT_ID, PRODUCT_NAME, QUANTITY, PRICE_AT_PURCHASE)
+VALUES (
+           (SELECT ID FROM orders WHERE ORDER_NUMBER = 'ORD-ADRIANO-PAID-OLD'),
+           (SELECT ID FROM PRODUCT WHERE NAME = 'DDR5 32GB'),
+           'DDR5 32GB',
+           1,
+           1015.99
+       );
+
+INSERT INTO orders (
+    TOTAL, TIMESTAMP, USER_ID, ORDER_NUMBER,
+    BILLING_CITY, BILLING_COUNTRY, BILLING_POSTAL_CODE,
+    BILLING_STREET, BILLING_NUMBER,
+    SHIPPING_CITY, SHIPPING_COUNTRY, SHIPPING_POSTAL_CODE,
+    SHIPPING_STREET, SHIPPING_NUMBER,
+    STATUS, SHIPPING_METHOD
+)
+VALUES (
+           3000.00,
+           DATEADD('DAY', -5, CURRENT_TIMESTAMP),
+               (SELECT ID FROM USERX WHERE USERNAME = 'adriano'),
+           'ORD-ADRIANO-SHIPPING-OLD',
+           'Innsbruck', 'Austria', '6020', 'Technikerstraße', '40',
+           'Innsbruck', 'Austria', '6020', 'Technikerstraße', '40',
+           'SHIPPING',
+           'CARRIER_PIGEON'
+       );
+
+INSERT INTO order_item (ORDER_ID, PRODUCT_ID, PRODUCT_NAME, QUANTITY, PRICE_AT_PURCHASE)
+VALUES (
+           (SELECT ID FROM orders WHERE ORDER_NUMBER = 'ORD-ADRIANO-SHIPPING-OLD'),
+           (SELECT ID FROM PRODUCT WHERE NAME = 'DDR5 32GB'),
+           'DDR5 32GB',
+           1,
+           1015.99
+       );
+
+INSERT INTO orders (
+    TOTAL, TIMESTAMP, USER_ID, ORDER_NUMBER,
+    BILLING_CITY, BILLING_COUNTRY, BILLING_POSTAL_CODE,
+    BILLING_STREET, BILLING_NUMBER,
+    SHIPPING_CITY, SHIPPING_COUNTRY, SHIPPING_POSTAL_CODE,
+    SHIPPING_STREET, SHIPPING_NUMBER,
+    STATUS, SHIPPING_METHOD
+)
+VALUES (
+           500.00,
+           DATEADD('DAY', -2, CURRENT_TIMESTAMP),
+               (SELECT ID FROM USERX WHERE USERNAME = 'adriano'),
+           'ORD-ADRIANO-CANCELED',
+           'Innsbruck', 'Austria', '6020', 'Technikerstraße', '40',
+           'Innsbruck', 'Austria', '6020', 'Technikerstraße', '40',
+           'CANCELED',
+           'FAIRY_DUST_DISPATCH'
+       );
+
+INSERT INTO order_item (ORDER_ID, PRODUCT_ID, PRODUCT_NAME, QUANTITY, PRICE_AT_PURCHASE)
+VALUES (
+           (SELECT ID FROM orders WHERE ORDER_NUMBER = 'ORD-ADRIANO-CANCELED'),
+           (SELECT ID FROM PRODUCT WHERE NAME = 'DDR5 32GB'),
+           'DDR5 32GB',
+           1,
+           1015.99
+       );
