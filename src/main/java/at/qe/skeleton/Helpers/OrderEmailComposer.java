@@ -28,6 +28,7 @@ public final class OrderEmailComposer {
 
         String orderNumber = safe(order.getOrderNumber(), "(unknown)");
         String orderDate = order.getTimestamp() != null ? order.getTimestamp().format(DATE_FMT) : "(unknown)";
+        String shippingMethod = order.getShippingMethod() != null ? order.getShippingMethod().getDisplayName() : "(unknown)";
         String status = order.getStatus() != null ? order.getStatus().name() : "(unknown)";
 
         NumberFormat money = NumberFormat.getCurrencyInstance(LOCALE_EN);
@@ -37,6 +38,7 @@ public final class OrderEmailComposer {
                 "Order details\n" +
                 "- Order number: " + orderNumber + "\n" +
                 "- Order date: " + orderDate + "\n" +
+                "Shipping via: " + shippingMethod + "\n" +
                 "- Status: " + status + "\n\n" +
                 "Items\n" +
                 formatItems(order, money) + "\n" +
