@@ -93,6 +93,9 @@ public class OrderService {
         if (orderCreateDTO.shippingAddressId() == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Shipping Address is required.");
         }
+        if (orderCreateDTO.shippingMethod() == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Shipping Method is required.");
+        }
 
         OrderAddress billingAddress = snapshotAddress(user, orderCreateDTO.billingAddressId());
         OrderAddress shippingAddress = snapshotAddress(user, orderCreateDTO.shippingAddressId());
@@ -105,6 +108,7 @@ public class OrderService {
                 orderItems,
                 billingAddress,
                 shippingAddress,
+                orderCreateDTO.shippingMethod(),
                 total
         );
 

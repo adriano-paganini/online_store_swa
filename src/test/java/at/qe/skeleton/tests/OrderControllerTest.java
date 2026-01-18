@@ -8,6 +8,7 @@ import at.qe.skeleton.dtos.*;
 import at.qe.skeleton.mappers.OrderMapper;
 import at.qe.skeleton.model.Order;
 import at.qe.skeleton.model.OrderStatus;
+import at.qe.skeleton.model.ShippingMethod;
 import at.qe.skeleton.services.OrderService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
@@ -86,6 +87,7 @@ class OrderControllerTest {
                 List.of(),
                 null,
                 null,
+                ShippingMethod.FAIRY_DUST_DISPATCH,
                 TOTAL
         );
 
@@ -96,7 +98,8 @@ class OrderControllerTest {
                 LocalDateTime.now(),
                 List.of(),
                 null,
-                null
+                null,
+                ShippingMethod.FAIRY_DUST_DISPATCH
         );
 
         Mockito.doAnswer(invocation -> {
@@ -203,7 +206,8 @@ class OrderControllerTest {
     void createOrderSuccess() throws Exception {
         OrderCreateDTO createDTO = new OrderCreateDTO(
                 ADDRESS_SHIPPING,
-                ADDRESS_BILLING
+                ADDRESS_BILLING,
+                ShippingMethod.FAIRY_DUST_DISPATCH
         );
 
         Mockito.when(orderService.createOrder(Mockito.any()))
@@ -225,7 +229,7 @@ class OrderControllerTest {
 
     @Test
     void createOrderUnauthenticatedFails() throws Exception {
-        OrderCreateDTO createDTO = new OrderCreateDTO(ADDRESS_SHIPPING, ADDRESS_BILLING);
+        OrderCreateDTO createDTO = new OrderCreateDTO(ADDRESS_SHIPPING, ADDRESS_BILLING, ShippingMethod.FAIRY_DUST_DISPATCH);
 
         mockMvc.perform(MockMvcRequestBuilders.post(ENDPOINT)
                         .with(SecurityMockMvcRequestPostProcessors.csrf())

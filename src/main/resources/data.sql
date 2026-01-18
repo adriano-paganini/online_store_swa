@@ -517,14 +517,16 @@ VALUES (5.0, (SELECT ID FROM PRODUCT WHERE NAME = 'Non-Stop Energy Drink'), CURR
 
 -- add orders for adriano
 -- Insert the Order
-INSERT INTO orders (TOTAL, TIMESTAMP, USER_ID, ORDER_NUMBER, BILLING_CITY, BILLING_COUNTRY, BILLING_POSTAL_CODE, BILLING_STREET, STATUS)
+INSERT INTO orders (TOTAL, TIMESTAMP, USER_ID, ORDER_NUMBER, BILLING_CITY, BILLING_COUNTRY, BILLING_POSTAL_CODE, BILLING_STREET, BILLING_NUMBER, SHIPPING_CITY, SHIPPING_COUNTRY, SHIPPING_POSTAL_CODE, SHIPPING_STREET, SHIPPING_NUMBER, STATUS, SHIPPING_METHOD)
 VALUES (
            1015.89,
            CURRENT_TIMESTAMP,
            (SELECT ID FROM USERX WHERE USERNAME = 'adriano'),
            'ORD-ADRIANO-CONFIRMED',
-           'Innsbruck', 'Austria', '6020', 'Technikerstraße',
-           'CONFIRMED'
+           'Innsbruck', 'Austria', '6020', 'Technikerstraße', '40',
+           'Innsbruck', 'Austria', '6020', 'Technikerstraße', '40',
+           'CONFIRMED',
+           'FAIRY_DUST_DISPATCH'
        );
 
 -- Insert the Item (1x DDR5 32GB)
@@ -538,14 +540,16 @@ VALUES (
        );
 
 -- Insert the Order
-INSERT INTO orders (TOTAL, TIMESTAMP, USER_ID, ORDER_NUMBER, BILLING_CITY, BILLING_COUNTRY, BILLING_POSTAL_CODE, BILLING_STREET, STATUS)
+INSERT INTO orders (TOTAL, TIMESTAMP, USER_ID, ORDER_NUMBER, BILLING_CITY, BILLING_COUNTRY, BILLING_POSTAL_CODE, BILLING_STREET, BILLING_NUMBER, SHIPPING_CITY, SHIPPING_COUNTRY, SHIPPING_POSTAL_CODE, SHIPPING_STREET, SHIPPING_NUMBER, STATUS, SHIPPING_METHOD)
 VALUES (
            5031.97, -- (2 * 1015.99) + 3000.00 (approximate total)
            CURRENT_TIMESTAMP,
            (SELECT ID FROM USERX WHERE USERNAME = 'adriano'),
            'ORD-ADRIANO-PENDING',
-           'Innsbruck', 'Austria', '6020', 'Technikerstraße',
-           'PENDING'
+           'Innsbruck', 'Austria', '6020', 'Technikerstraße', '40',
+           'Innsbruck', 'Austria', '6020', 'Technikerstraße', '40',
+           'PENDING',
+           'CARRIER_PIGEON'
        );
 
 -- Insert the first item (2x DDR5 32GB)

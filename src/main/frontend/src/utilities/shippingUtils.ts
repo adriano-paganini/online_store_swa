@@ -1,0 +1,25 @@
+import { ShippingMethod } from '@/DTO/order.types';
+
+export type TShippingMethodConfig = {
+  key: ShippingMethod;
+  label: string;
+  description: string;
+};
+
+export const SHIPPING_METHODS: TShippingMethodConfig[] = [
+  {
+    key: ShippingMethod.FAIRY_DUST_DISPATCH,
+    label: 'Fairy Dust Dispatch',
+    description: '✨ Probably enchanted.',
+  },
+  {
+    key: ShippingMethod.CARRIER_PIGEON,
+    label: 'Carrier Pigeon',
+    description: 'May stop for snacks. Or get lost.',
+  },
+  {
+    key: ShippingMethod.WELL_FIGURE_IT_OUT,
+    label: "We'll Figure It Out",
+    description: 'No further details.',
+  },
+];

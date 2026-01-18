@@ -7,10 +7,13 @@ import { AddressApi } from '@/utilities/addressApi';
 import { OrderApi } from '@/utilities/orderApi';
 
 import type { TAddressDTO } from '@/DTO/address.types';
+import { ShippingMethod } from '@/DTO/order.types';
 
 import { AddressSelector } from '@/components/checkout/AddressSelector';
 import { CheckoutCartItems } from '@/components/checkout/CheckoutCartItems';
+import { ShippingMethodSelector } from '@/components/checkout/ShippingMethodSelector';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 export function CheckoutPage() {
   const navigate = useNavigate();
@@ -20,6 +23,7 @@ export function CheckoutPage() {
   const [shippingAddressId, setShippingAddressId] = useState<number | null>(null);
   const [billingAddressId, setBillingAddressId] = useState<number | null>(null);
   const [useSameAddress, setUseSameAddress] = useState(true);
+  const [shippingMethod, setShippingMethod] = useState<ShippingMethod | null>(ShippingMethod.FAIRY_DUST_DISPATCH);
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
@@ -49,12 +53,18 @@ export function CheckoutPage() {
       return;
     }
 
+    if (!shippingMethod) {
+      toast.error('Please select a shipping method');
+      return;
+    }
+
     try {
       setSubmitting(true);
 
       const order = await OrderApi.createOrder({
         shippingAddressId,
         billingAddressId: useSameAddress ? shippingAddressId : billingAddressId!,
+        shippingMethod,
       });
 
       await clearCart();
@@ -80,6 +90,18 @@ export function CheckoutPage() {
         onBillingChange={setBillingAddressId}
         onToggleSame={setUseSameAddress}
       />
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Shipping Method</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <ShippingMethodSelector
+            value={shippingMethod}
+            onChange={setShippingMethod}
+          />
+        </CardContent>
+      </Card>
 
       <Button
         className="w-full"
