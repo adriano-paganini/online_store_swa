@@ -14,14 +14,14 @@ export function Footer() {
           </div>
 
           <div className="text-left md:text-center">
-            <h4 className="mb-4 font-semibold">Products</h4>
+            <h4 className="mb-4 font-semibold">Navigation</h4>
             <ul className="flex flex-col items-start space-y-2 text-sm md:items-center">
               <li>
                 <Link
-                  to={ROUTES.PRODUCTS}
+                  to={ROUTES.HOME}
                   className="text-muted-foreground hover:text-foreground"
                 >
-                  All Products
+                  Start Page
                 </Link>
               </li>
               <li>
@@ -29,15 +29,15 @@ export function Footer() {
                   to={ROUTES.PRODUCTS}
                   className="text-muted-foreground hover:text-foreground"
                 >
-                  New Arrivals
+                  Products
                 </Link>
               </li>
               <li>
                 <Link
-                  to={ROUTES.PRODUCTS}
+                  to={ROUTES.CHECKOUT}
                   className="text-muted-foreground hover:text-foreground"
                 >
-                  Best Sellers
+                  Checkout
                 </Link>
               </li>
             </ul>
@@ -56,49 +56,41 @@ export function Footer() {
               </li>
               <li>
                 <Link
-                  to={ROUTES.ORDERS}
-                  className="text-muted-foreground hover:text-foreground"
-                >
-                  Order History
-                </Link>
-              </li>
-              <li>
-                <Link
                   to={ROUTES.ADDRESSES}
                   className="text-muted-foreground hover:text-foreground"
                 >
                   Addresses
                 </Link>
               </li>
+              <li>
+                <Link
+                  to={ROUTES.NOTIFICATIONS}
+                  className="text-muted-foreground hover:text-foreground"
+                >
+                  Notifications
+                </Link>
+              </li>
             </ul>
           </div>
 
           <div className="text-left md:text-center">
-            <h4 className="mb-4 font-semibold">Support</h4>
+            <h4 className="mb-4 font-semibold">Personal</h4>
             <ul className="flex flex-col items-start space-y-2 text-sm md:items-center">
               <li>
-                <a
-                  href="#"
+                <Link
+                  to={ROUTES.ORDERS}
                   className="text-muted-foreground hover:text-foreground"
                 >
-                  Contact Us
-                </a>
+                  Orders
+                </Link>
               </li>
               <li>
-                <a
-                  href="#"
+                <Link
+                  to={ROUTES.SUBSCRIPTIONS}
                   className="text-muted-foreground hover:text-foreground"
                 >
-                  FAQ
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  className="text-muted-foreground hover:text-foreground"
-                >
-                  Shipping Info
-                </a>
+                  Subscriptions
+                </Link>
               </li>
             </ul>
           </div>

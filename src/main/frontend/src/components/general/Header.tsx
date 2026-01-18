@@ -159,7 +159,7 @@ export function Header() {
               variant="ghost"
               className="w-full justify-start"
             >
-              Product Subscriptions
+              Subscriptions
             </Button>
           </Link>
 
@@ -177,7 +177,7 @@ export function Header() {
               variant="ghost"
               className="w-full justify-start"
             >
-              Order History
+              Orders
             </Button>
           </Link>
 
@@ -293,13 +293,13 @@ export function Header() {
                   <Link to={ROUTES.ADDRESSES}>Addresses</Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
-                  <Link to={ROUTES.SUBSCRIPTIONS}>Product Subscriptions</Link>
+                  <Link to={ROUTES.SUBSCRIPTIONS}>Subscriptions</Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
                   <Link to={ROUTES.NOTIFICATIONS}>Notifications</Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
-                  <Link to={ROUTES.ORDERS}>Order History</Link>
+                  <Link to={ROUTES.ORDERS}>Orders</Link>
                 </DropdownMenuItem>
 
                 {isManager && (
