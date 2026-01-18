@@ -38,7 +38,7 @@ public final class OrderEmailComposer {
                 "Order details\n" +
                 "- Order number: " + orderNumber + "\n" +
                 "- Order date: " + orderDate + "\n" +
-                "Shipping via: " + shippingMethod + "\n" +
+                "- Shipping: " + shippingMethod + "\n" +
                 "- Status: " + status + "\n\n" +
                 "Items\n" +
                 formatItems(order, money) + "\n" +
