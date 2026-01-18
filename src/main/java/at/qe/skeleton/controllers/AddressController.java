@@ -4,7 +4,9 @@ package at.qe.skeleton.controllers;
 import at.qe.skeleton.dtos.AddressCreateDTO;
 import at.qe.skeleton.dtos.AddressDTO;
 import at.qe.skeleton.dtos.AddressUpdateDTO;
+import at.qe.skeleton.mappers.AddressCreateMapper;
 import at.qe.skeleton.mappers.AddressMapper;
+import at.qe.skeleton.model.Address;
 import at.qe.skeleton.services.UserxService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -18,10 +20,12 @@ public class AddressController {
 
     private final UserxService userxService;
     private final AddressMapper addressMapper;
+    private final AddressCreateMapper addressCreateMapper;
 
-    public AddressController(UserxService userxService, AddressMapper addressMapper) {
+    public AddressController(UserxService userxService, AddressMapper addressMapper, AddressCreateMapper addressCreateMapper) {
         this.userxService = userxService;
         this.addressMapper = addressMapper;
+        this.addressCreateMapper = addressCreateMapper;
     }
 
     /**
@@ -40,7 +44,8 @@ public class AddressController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public AddressDTO addAddress(@Valid @RequestBody AddressCreateDTO dto) {
-        return addressMapper.toDTO(userxService.addAddress(dto));
+        Address address = addressCreateMapper.mapFrom(dto);
+        return addressMapper.toDTO(userxService.addAddress(address));
     }
 
     /**

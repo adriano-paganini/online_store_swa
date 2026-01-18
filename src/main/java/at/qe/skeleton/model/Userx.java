@@ -210,10 +210,6 @@ public class Userx implements Persistable<Long>, Serializable, Comparable<Userx>
       this.addresses = addresses;
   }
 
-  public Set<NotificationType> getChannels() {
-      return channels;
-  }
-
   public void setChannels(Set<NotificationType> channels) {
       this.channels = channels;
   }

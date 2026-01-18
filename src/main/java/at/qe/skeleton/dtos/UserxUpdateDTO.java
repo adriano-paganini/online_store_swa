@@ -25,7 +25,5 @@ public record UserxUpdateDTO(
         @Size(max = 20)
         String phone,
 
-        Set<UserxRole> roles,
-
-        Set<NotificationType> channels
+        Set<UserxRole> roles
 ) {}

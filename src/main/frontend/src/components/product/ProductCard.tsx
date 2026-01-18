@@ -8,11 +8,12 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import { cn } from '@/lib/utils';
+import { cn, getInitials } from '@/lib/utils';
 
 import { useCart } from '@/Contexts/cartContext';
 import { toast } from 'sonner';
 import type { TProductDTO } from '../../DTO/product.types';
+import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 
 type TProductCardProps = {
   product: TProductDTO;
@@ -64,13 +65,18 @@ export function ProductCard({ product }: TProductCardProps) {
               </Badge>
             )}
 
-            <img
-              src={
-                product.images[0] || `/placeholder.svg?height=400&width=400&query=${encodeURIComponent(product.name)}`
-              }
-              alt={product.name}
-              className="aspect-square w-full object-cover transition-transform duration-300 group-hover:scale-105"
-            />
+            <div className="aspect-square w-full">
+              <Avatar className="h-full w-full rounded-md">
+                <AvatarImage
+                  src={product.images?.[0]}
+                  alt={product.name}
+                  className="object-cover transition-transform duration-300 group-hover:scale-105"
+                />
+                <AvatarFallback className="flex h-full w-full items-center justify-center bg-background text-3xl font-semibold">
+                  {getInitials(product.name)}
+                </AvatarFallback>
+              </Avatar>
+            </div>
 
             <div
               className={cn(

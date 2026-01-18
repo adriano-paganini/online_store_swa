@@ -1,8 +1,8 @@
 package at.qe.skeleton.controllers;
 
 import at.qe.skeleton.dtos.UserxMeDTO;
-import at.qe.skeleton.dtos.UserxUpdateDTO;
-import at.qe.skeleton.mappers.UserxMapper;
+import at.qe.skeleton.dtos.UserxMeUpdateDTO;
+import at.qe.skeleton.mappers.UserxMeMapper;
 import at.qe.skeleton.model.Userx;
 import at.qe.skeleton.services.AuthenticatedUserService;
 import at.qe.skeleton.services.UserxService;
@@ -23,13 +23,13 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/users")
 public class UserxController {
  
-    private final UserxMapper userxMapper;
+    private final UserxMeMapper userxMeMapper;
     private final UserxService userxService;
     private final AuthenticatedUserService authenticatedUserService;
 
     @Autowired
-    public UserxController(UserxMapper userMapper, UserxService userService, AuthenticatedUserService authenticatedUserService) {
-        this.userxMapper = userMapper;
+    public UserxController(UserxMeMapper userMeMapper, UserxService userService, AuthenticatedUserService authenticatedUserService) {
+        this.userxMeMapper = userMeMapper;
         this.userxService = userService;
         this.authenticatedUserService = authenticatedUserService;
     }
@@ -38,15 +38,15 @@ public class UserxController {
     @GetMapping("/me")
     public ResponseEntity<UserxMeDTO> getMe() {
         Userx user = authenticatedUserService.requireAuthenticatedUser();
-        return ResponseEntity.ok(userxMapper.mapToMe(user));
+        return ResponseEntity.ok(userxMeMapper.mapTo(user));
     }
 
     @PatchMapping("/me")
     public ResponseEntity<UserxMeDTO> updateMe(
-            @Valid @RequestBody UserxUpdateDTO dto
+            @Valid @RequestBody UserxMeUpdateDTO dto
     ) {
         Userx updated = userxService.updateCurrentUser(dto);
-        return ResponseEntity.ok(userxMapper.mapToMe(updated));
+        return ResponseEntity.ok(userxMeMapper.mapTo(updated));
     }
      
     @GetMapping("/authenticated")

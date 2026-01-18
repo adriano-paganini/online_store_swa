@@ -97,8 +97,6 @@ export function NotificationFilters({
             <option value="timestamp,desc">Newest first</option>
             <option value="timestamp,asc">Oldest first</option>
           </select>
-
-          <p className="mt-2 text-xs text-muted-foreground">Sorting is applied server-side.</p>
         </div>
 
         <Button

@@ -1,11 +1,10 @@
 package at.qe.skeleton.events;
 
 import at.qe.skeleton.model.Notification;
-import at.qe.skeleton.model.Subscription;
 
-public class EmailNotificationEvent extends NotificationEvent {
+public class EmailNotificationEvent<T extends PayloadInterface> extends NotificationEvent<T> {
 
-    public EmailNotificationEvent(Notification notification, Subscription subscription) {
-        super(notification, subscription);
+    public EmailNotificationEvent(Notification notification, Payload<T> payload) {
+        super(notification, payload);
     }
 }

@@ -38,6 +38,8 @@ class UserxServiceAddressTest {
     private static final String NUMBER = "1";
     private static final String EXTRA = "RR15";
 
+    private Address TEST_ADDRESS;
+
     @Autowired
     private UserxService userxService;
 
@@ -56,6 +58,17 @@ class UserxServiceAddressTest {
         testUser.setUsername(USERNAME);
         testUser.setAddresses(new ArrayList<>());
 
+        Address address = new Address();
+        address.setId(ADDRESS_ID);
+        address.setStreet(STREET);
+        address.setNumber(NUMBER);
+        address.setCountry(COUNTRY);
+        address.setCity(CITY_INNSBRUCK);
+        address.setPostalCode(POSTAL_CODE);
+        address.setExtra(EXTRA);
+
+        TEST_ADDRESS = address;
+
         Mockito.when(authenticatedUserService.requireAuthenticatedUser())
                 .thenReturn(testUser);
     }
@@ -63,16 +76,7 @@ class UserxServiceAddressTest {
     @Test
     @WithMockUser(username = USERNAME)
     void addAddressSuccess() {
-        AddressCreateDTO dto = new AddressCreateDTO(
-                COUNTRY,
-                CITY_INNSBRUCK,
-                POSTAL_CODE,
-                STREET,
-                NUMBER,
-                EXTRA
-        );
-
-        Address result = userxService.addAddress(dto);
+        Address result = userxService.addAddress(TEST_ADDRESS);
 
         Assertions.assertNotNull(result);
         Assertions.assertEquals(COUNTRY, result.getCountry());
@@ -94,7 +98,7 @@ class UserxServiceAddressTest {
 
         ResponseStatusException ex =
                 Assertions.assertThrows(ResponseStatusException.class,
-                        () -> userxService.addAddress(dto));
+                        () -> userxService.addAddress(TEST_ADDRESS));
 
         Assertions.assertEquals(HttpStatus.UNAUTHORIZED, ex.getStatusCode());
     }
@@ -113,7 +117,7 @@ class UserxServiceAddressTest {
 
         ResponseStatusException ex =
                 Assertions.assertThrows(ResponseStatusException.class,
-                        () -> userxService.addAddress(dto));
+                        () -> userxService.addAddress(TEST_ADDRESS));
 
         Assertions.assertEquals(HttpStatus.UNAUTHORIZED, ex.getStatusCode());
     }

@@ -29,7 +29,7 @@ export function SubscriptionTable({ subscriptions, loading, onChanged }: TSubscr
   }
 
   return (
-    <div className="divide-y rounded-lg border">
+    <div className="overflow-hidden rounded-lg">
       {subscriptions.map((subscription) => (
         <SubscriptionRow
           key={subscription.id}

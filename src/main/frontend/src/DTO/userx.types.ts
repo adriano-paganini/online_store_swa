@@ -12,6 +12,19 @@ export enum UserxRole {
   CUSTOMER = 'CUSTOMER',
 }
 
+export type TUserMeDTO = {
+  username: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  roles: UserxRole[];
+};
+
+export type TUserMeUpdateDTO = Partial<TUserMeDTO> & {
+  password?: string;
+};
+
 /**
  * User DTO
  */

@@ -1,6 +1,5 @@
 package at.qe.skeleton.services;
 
-import at.qe.skeleton.dtos.ReviewCreateDTO;
 import at.qe.skeleton.model.Review;
 import at.qe.skeleton.model.Userx;
 import at.qe.skeleton.repositories.ReviewRepository;
@@ -55,7 +54,7 @@ public class ReviewService {
 
 
     @Transactional
-    public Review createReview(Long productId, ReviewCreateDTO createDTO) {
+    public Review createReview(Long productId, Review review) {
         Userx currentUser = authenticatedUserService.getAuthenticatedUser();
         if (currentUser == null) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User must be authenticated");
@@ -70,17 +69,20 @@ public class ReviewService {
                     "User already has a review for this product");
         }
 
-        if (createDTO.score() < 1 || createDTO.score() > 5) {
+        // Validate business rules on entity attributes
+        if (review.getScore() == null || review.getScore() < 1 || review.getScore() > 5) {
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST,
                     "Score must be between 1 and 5");
         }
 
-        Review review = new Review();
+        // Trim content if present
+        if (review.getContent() != null) {
+            review.setContent(review.getContent().trim());
+        }
+
         review.setUser(currentUser);
         review.setProductId(productId);
-        review.setScore(createDTO.score());
-        review.setContent(createDTO.content().trim());
 
         Review savedReview = reviewRepository.save(review);
 

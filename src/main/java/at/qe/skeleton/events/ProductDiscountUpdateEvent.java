@@ -11,11 +11,11 @@ public class ProductDiscountUpdateEvent extends ProductEvent<Double> {
     }
 
     @Override
-    public String getMessage() {
+    public String getPayloadSubjectLine() {
         DateTimeFormatter dateId = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
         String formattedDate = super.getTimestamp().format(dateId);
 
-        return String.format("%s - The discount of \"%s\" has been updated from %.2f to %.2f.",
+        return String.format(java.util.Locale.US, "%s - The discount of \"%s\" has been updated from %.2f to %.2f.",
                 formattedDate,
                 super.getProduct().getName(),
                 super.getOldValue(),

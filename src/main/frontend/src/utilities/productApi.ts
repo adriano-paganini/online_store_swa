@@ -6,7 +6,7 @@ import type { TProductCreateDTO, TProductDTO, TProductUpdateDTO } from '../DTO/p
 const fetchProducts = async (
   params?: TPaginationParams & {
     minPrice?: number;
-    maxPrice?: number;
+    maxPrice?: number | null;
     inStock?: boolean;
     minRating?: number;
   }

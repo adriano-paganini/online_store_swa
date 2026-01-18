@@ -1,13 +1,19 @@
 import { ROUTES } from './utilities/routes.paths';
+import AddressesPage from './views/AddressesPage';
 import AdminProductsPage from './views/AdminProductsPage';
+import AuthPage from './views/AuthPage';
+import { CheckoutPage } from './views/CheckoutPage';
 import HomePage from './views/HomePage';
-import Login from './views/Login';
 import Logout from './views/Logout';
 import ManageUsers from './views/ManageUsers';
 import NotFoundPage from './views/NotFoundPage';
 import NotificationsPage from './views/NotificationsPage';
+import OrdersPage from './views/OrdersPage';
+import PaymentPage from './views/PaymentPage';
+import PaymentSuccessPage from './views/PaymentSuccessPage';
 import ProductDetailsPage from './views/ProductDetailsPage';
 import ProductsPage from './views/ProductsPage';
+import ProfilePage from './views/ProfilePage';
 import SubscriptionsPage from './views/SubscriptionsPage';
 
 export const HomePageRoute = {
@@ -35,6 +41,36 @@ export const NotificationsPageRoute = {
   component: NotificationsPage,
 };
 
+export const ProfilePageRoute = {
+  url: ROUTES.PROFILE,
+  component: ProfilePage,
+};
+
+export const AddressesPageRoute = {
+  url: ROUTES.ADDRESSES,
+  component: AddressesPage,
+};
+
+export const OrdersPageRoute = {
+  url: ROUTES.ORDERS,
+  component: OrdersPage,
+};
+
+export const CheckoutPageRoute = {
+  url: ROUTES.CHECKOUT,
+  component: CheckoutPage,
+};
+
+export const PaymentPageRoute = {
+  url: ROUTES.PAYMENT,
+  component: PaymentPage,
+};
+
+export const PaymentSuccessPageRoute = {
+  url: ROUTES.PAYMENT_SUCCESS,
+  component: PaymentSuccessPage,
+};
+
 export const AdminProductsPageRoute = {
   url: ROUTES.ADMIN_PRODUCTS,
   component: AdminProductsPage,
@@ -45,9 +81,9 @@ export const ManageUsersRoute = {
   component: ManageUsers,
 };
 
-export const LoginsRoute = {
-  url: ROUTES.LOGIN,
-  component: Login,
+export const AuthPageRoute = {
+  url: `${ROUTES.AUTH}/:mode`,
+  component: AuthPage,
 };
 
 export const LogoutsRoute = {
@@ -61,10 +97,7 @@ export const NotFoundRoute = {
 };
 
 // ofr the future routes
-// export const CheckoutPageRoute = {
-//   url: ROUTES.CHECKOUT,
-//   component: CheckoutPage,
-// }
+
 //
 // export const OrderConfirmationPageRoute = {
 //   url: "/order-confirmation/:orderNumber",
@@ -85,18 +118,3 @@ export const NotFoundRoute = {
 //   url: ROUTES.NOTIFICATIONS,
 //   component: NotificationsPage,
 // }
-
-// Array of all routes for easy iteration
-export const allRoutes = [
-  HomePageRoute,
-  ProductsPageRoute,
-  ManageUsersRoute,
-  LoginsRoute,
-  LogoutsRoute,
-  // ProductDetailPageRoute,
-  // CheckoutPageRoute,
-  // OrderConfirmationPageRoute,
-  // ProfilePageRoute,
-  // OrdersPageRoute,
-  // NotificationsPageRoute,
-];

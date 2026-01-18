@@ -1,8 +1,8 @@
 package at.qe.skeleton.services;
 
-import at.qe.skeleton.dtos.ProductCreateDTO;
 import at.qe.skeleton.dtos.ProductUpdateDTO;
 import at.qe.skeleton.events.*;
+import at.qe.skeleton.mappers.ProductMapper;
 import at.qe.skeleton.model.Product;
 import at.qe.skeleton.model.Subscription;
 import at.qe.skeleton.model.Userx;
@@ -29,16 +29,19 @@ public class ProductServiceImpl implements ProductService {
     private final AuthenticatedUserService authenticatedUserService;
     private final ApplicationEventPublisher applicationEventPublisher;
     private final SubscriptionService subscriptionService;
+    private final ProductMapper productMapper;
 
     public ProductServiceImpl(
             ProductRepository productRepository,
             AuthenticatedUserService authenticatedUserService,
             ApplicationEventPublisher applicationEventPublisher,
-            SubscriptionService subscriptionService) {
+            SubscriptionService subscriptionService,
+            ProductMapper productMapper) {
         this.productRepository = productRepository;
         this.authenticatedUserService = authenticatedUserService;
         this.applicationEventPublisher = applicationEventPublisher;
         this.subscriptionService = subscriptionService;
+        this.productMapper = productMapper;
     }
 
     @Override
@@ -55,6 +58,9 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public boolean isProductAvailable(Long productId, Integer quantity) {
+        if (quantity == null || quantity <= 0) {
+            return false;
+        }
         return productRepository.findById(productId)
                 .map(product -> product.getStock() >= quantity && !product.getDeleted())
                 .orElse(false);
@@ -94,17 +100,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Transactional
-    public Product createProduct(ProductCreateDTO createDTO) {
-        Product product = new Product();
-        product.setName(createDTO.name());
-        product.setDescription(createDTO.description());
-        product.setPrice(createDTO.price());
-        product.setStock(createDTO.stock());
-        product.setDiscount(createDTO.discount() != null ? createDTO.discount() : 0.0);
-        product.setAvgScore(0.0);
-        product.setDeleted(false);
-        product.setImages(new java.util.ArrayList<>());
-
+    public Product createProduct(Product product) {
         Userx currentUser = authenticatedUserService.getAuthenticatedUser();
         if (currentUser != null) {
             product.setCreateUser(currentUser);
@@ -119,46 +115,41 @@ public class ProductServiceImpl implements ProductService {
         Product product = productRepository.findByIdAndNotDeleted(id)
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND, "Product not found"));
+        
+        // Store old values for event publishing (service can access DTO to keep controller thin)
+        String oldName = product.getName();
+        String oldDescription = product.getDescription();
+        Double oldPrice = product.getPrice();
+        Integer oldStock = product.getStock();
+        Double oldDiscount = product.getDiscount();
+        
+        // Apply DTO changes via mapper
+        productMapper.apply(product, updateDTO);
+        
+        // Publish events if values changed (service can access DTO for event logic)
         //TODO:ADD MORE EVENT TYPES
-        if (updateDTO.name() != null) {
-            if (!product.getName().equals(updateDTO.name())){
-                applicationEventPublisher.publishEvent(new ProductNameUpdateEvent(
-                        product, product.getName(), updateDTO.name()));
-            }
-            product.setName(updateDTO.name());
+        if (updateDTO.name() != null && !oldName.equals(updateDTO.name())) {
+            applicationEventPublisher.publishEvent(new ProductNameUpdateEvent(
+                    product, oldName, updateDTO.name()));
         }
-        if (updateDTO.description() != null) {
-            if (!product.getDescription().equals(updateDTO.description())){
-                applicationEventPublisher.publishEvent(new ProductDescriptionUpdateEvent(
-                        product, product.getDescription(), updateDTO.description()));
-            }
-            product.setDescription(updateDTO.description());
+        if (updateDTO.description() != null && !oldDescription.equals(updateDTO.description())) {
+            applicationEventPublisher.publishEvent(new ProductDescriptionUpdateEvent(
+                    product, oldDescription, updateDTO.description()));
         }
-        if (updateDTO.price() != null) {
-
-            if(!product.getPrice().equals(updateDTO.price())){
-                applicationEventPublisher.publishEvent(new ProductPriceUpdateEvent(
-                        product, product.getPrice(), updateDTO.price()));
-            }
-            product.setPrice(updateDTO.price());
+        if (updateDTO.price() != null && !oldPrice.equals(updateDTO.price())) {
+            applicationEventPublisher.publishEvent(new ProductPriceUpdateEvent(
+                    product, oldPrice, updateDTO.price()));
         }
-        if (updateDTO.stock() != null) {
-            if (product.getStock() < updateDTO.stock()) {
-                applicationEventPublisher.publishEvent(new ProductRestockEvent(product,
-                        product.getStock(), updateDTO.stock()));
-            }
-            product.setStock(updateDTO.stock());
+        if (updateDTO.stock() != null && oldStock < updateDTO.stock()) {
+            applicationEventPublisher.publishEvent(new ProductRestockEvent(product,
+                    oldStock, updateDTO.stock()));
         }
         if (updateDTO.discount() != null) {
-            Double oldDiscount = product.getDiscount();
             Double newDiscount = updateDTO.discount();
-
             if (!newDiscount.equals(oldDiscount) && newDiscount > 0) {
                 applicationEventPublisher.publishEvent(new ProductDiscountUpdateEvent(
                         product, oldDiscount, newDiscount));
             }
-
-            product.setDiscount(newDiscount);
         }
 
         Userx currentUser = authenticatedUserService.getAuthenticatedUser();
@@ -210,6 +201,11 @@ public class ProductServiceImpl implements ProductService {
             return Sort.by(Sort.Direction.ASC, "id");
         }
 
+
+        if (field.equals("price")){
+            field = "effectivePrice";
+        }
+
         return Sort.by(sortDirection, field);
     }
 
@@ -218,7 +214,7 @@ public class ProductServiceImpl implements ProductService {
      */
     private boolean isValidSortField(String field) {
         return field.matches("^[a-zA-Z]+$") &&
-                (field.equals("id") || field.equals("name") || field.equals("price") ||
+                (field.equals("id") || field.equals("name") || field.equals("price") || field.equals("effectivePrice")||
                         field.equals("stock") || field.equals("discount") || field.equals("avgScore") ||
                         field.equals("createDate") || field.equals("updateDate"));
     }

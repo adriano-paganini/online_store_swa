@@ -1,6 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import type { TProductDTO } from '@/DTO/product.types';
+import { Trash2, X } from 'lucide-react';
 
 type TProductDeleteDialogProps = {
   open: boolean;
@@ -31,12 +32,14 @@ export const ProductDeleteDialog = ({ open, product, onClose, onConfirm }: TProd
             variant="outline"
             onClick={onClose}
           >
+            <X />
             Cancel
           </Button>
           <Button
             variant="destructive"
             onClick={onConfirm}
           >
+            <Trash2 />
             Delete
           </Button>
         </DialogFooter>

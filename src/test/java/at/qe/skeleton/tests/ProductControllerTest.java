@@ -7,6 +7,7 @@ import at.qe.skeleton.controllers.ProductController;
 import at.qe.skeleton.dtos.ProductCreateDTO;
 import at.qe.skeleton.dtos.ProductDTO;
 import at.qe.skeleton.dtos.ProductUpdateDTO;
+import at.qe.skeleton.mappers.ProductCreateMapper;
 import at.qe.skeleton.mappers.ProductMapper;
 import at.qe.skeleton.model.Product;
 import at.qe.skeleton.services.ProductService;
@@ -67,6 +68,9 @@ public class ProductControllerTest {
 
     @MockitoBean
     private ProductMapper productMapper;
+
+    @MockitoBean
+    private ProductCreateMapper productCreateMapper;
 
     private Product testProduct;
     private ProductDTO testProductDTO;
@@ -286,11 +290,19 @@ public class ProductControllerTest {
     void createProduct() throws Exception {
         ProductCreateDTO createDTO = new ProductCreateDTO(
                 "New Product",
+                new ArrayList<>(),
                 "New Description",
                 149.99,
                 20,
                 0.15
         );
+
+        Product productEntity = new Product();
+        productEntity.setName(createDTO.name());
+        productEntity.setDescription(createDTO.description());
+        productEntity.setPrice(createDTO.price());
+        productEntity.setStock(createDTO.stock());
+        productEntity.setDiscount(createDTO.discount());
 
         Product newProduct = new Product();
         newProduct.setId(2L);
@@ -313,7 +325,8 @@ public class ProductControllerTest {
                 null, null, null, null
         );
 
-        Mockito.when(productService.createProduct(createDTO)).thenReturn(newProduct);
+        Mockito.when(productCreateMapper.mapFrom(createDTO)).thenReturn(productEntity);
+        Mockito.when(productService.createProduct(productEntity)).thenReturn(newProduct);
         Mockito.when(productMapper.mapTo(Mockito.eq(newProduct), Mockito.any()))
                 .thenReturn(newProductDTO);
 
@@ -333,6 +346,7 @@ public class ProductControllerTest {
     void createProductInvalidName() throws Exception {
         ProductCreateDTO createDTO = new ProductCreateDTO(
                 "", // Invalid: empty name
+                new ArrayList<>(),
                 "Description",
                 99.99,
                 10,
@@ -351,6 +365,7 @@ public class ProductControllerTest {
     void createProductInvalidPrice() throws Exception {
         ProductCreateDTO createDTO = new ProductCreateDTO(
                 "Product",
+                new ArrayList<>(),
                 "Description",
                 -10.0, // Invalid: negative price
                 10,
@@ -369,6 +384,7 @@ public class ProductControllerTest {
     void createProductInvalidStock() throws Exception {
         ProductCreateDTO createDTO = new ProductCreateDTO(
                 "Product",
+                new ArrayList<>(),
                 "Description",
                 99.99,
                 -5, // Invalid: negative stock
@@ -386,6 +402,7 @@ public class ProductControllerTest {
     void createProductUnauthenticated() throws Exception {
         ProductCreateDTO createDTO = new ProductCreateDTO(
                 "New Product",
+                new ArrayList<>(),
                 "Description",
                 99.99,
                 10,
@@ -404,6 +421,7 @@ public class ProductControllerTest {
     void updateProduct() throws Exception {
         ProductUpdateDTO updateDTO = new ProductUpdateDTO(
                 "Updated Product",
+                null,
                 "Updated Description",
                 199.99,
                 15,
@@ -453,6 +471,7 @@ public class ProductControllerTest {
                 null, // Only update name
                 null,
                 null,
+                null,
                 null
         );
 
@@ -498,6 +517,7 @@ public class ProductControllerTest {
                 null,
                 null,
                 null,
+                null,
                 null
         );
 
@@ -516,6 +536,7 @@ public class ProductControllerTest {
     void updateProductUnauthenticated() throws Exception {
         ProductUpdateDTO updateDTO = new ProductUpdateDTO(
                 "Updated Name",
+                null,
                 null,
                 null,
                 null,

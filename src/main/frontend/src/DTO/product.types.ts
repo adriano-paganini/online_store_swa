@@ -16,6 +16,7 @@ export type TProductDTO = {
 
 export type TProductCreateDTO = {
   name: string;
+  images: string[];
   description: string;
   price: number;
   stock: number;
@@ -24,6 +25,7 @@ export type TProductCreateDTO = {
 
 export type TProductUpdateDTO = {
   name?: string;
+  images?: string[];
   description?: string;
   price?: number;
   stock?: number;

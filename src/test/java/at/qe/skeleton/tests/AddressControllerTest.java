@@ -7,6 +7,7 @@ import at.qe.skeleton.controllers.AddressController;
 import at.qe.skeleton.dtos.AddressCreateDTO;
 import at.qe.skeleton.dtos.AddressDTO;
 import at.qe.skeleton.dtos.AddressUpdateDTO;
+import at.qe.skeleton.mappers.AddressCreateMapper;
 import at.qe.skeleton.mappers.AddressMapper;
 import at.qe.skeleton.model.Address;
 import at.qe.skeleton.services.UserxService;
@@ -64,6 +65,9 @@ class AddressControllerTest {
 
     @MockitoBean
     private AddressMapper addressMapper;
+
+    @MockitoBean
+    private AddressCreateMapper addressCreateMapper;
 
     private Address address;
     private AddressDTO addressDTO;
@@ -132,6 +136,8 @@ class AddressControllerTest {
                 COUNTRY, CITY, POSTAL_CODE, STREET, NUMBER, EXTRA
         );
 
+        Mockito.when(addressCreateMapper.mapFrom(Mockito.any()))
+                .thenReturn(address);
         Mockito.when(userxService.addAddress(Mockito.any()))
                 .thenReturn(address);
         Mockito.when(addressMapper.toDTO(address))

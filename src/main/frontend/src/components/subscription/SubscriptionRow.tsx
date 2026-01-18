@@ -20,6 +20,8 @@ import type { TPopulatedSubscriptionDTO, TSubscriptionUpdateDTO } from '@/DTO/su
 
 import { SubscriptionDeleteDialog } from '@/components/subscription/SubscriptionDeleteDialog';
 import { SubscriptionDialog } from '@/components/subscription/SubscriptionDialog';
+import { getInitials } from '@/lib/utils';
+import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 
 type TSubscriptionRowProps = {
   subscription: TPopulatedSubscriptionDTO;
@@ -63,12 +65,17 @@ export function SubscriptionRow({ subscription, onChanged }: TSubscriptionRowPro
 
   return (
     <>
-      <div className="flex items-center gap-4 px-4 py-4 transition-colors hover:bg-muted/60">
-        <img
-          src={product.images[0] || `/placeholder.svg?height=64&width=64`}
-          alt={product.name}
-          className="h-16 w-16 rounded-md object-cover"
-        />
+      <div className="flex items-center gap-3 border-b px-4 py-3 text-sm transition-opacity hover:bg-muted">
+        <Avatar className="h-16 w-16 rounded-md">
+          <AvatarImage
+            src={product.images?.[0]}
+            alt={product.name}
+            className="object-cover"
+          />
+          <AvatarFallback className="rounded-md bg-muted text-sm font-medium">
+            {getInitials(product.name)}
+          </AvatarFallback>
+        </Avatar>
 
         <div className="min-w-0 flex-1 space-y-1">
           <div className="truncate font-medium">{product.name}</div>

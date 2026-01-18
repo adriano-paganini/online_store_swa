@@ -1,7 +1,8 @@
 package at.qe.skeleton.tests;
 
+import at.qe.skeleton.dtos.UserxMeUpdateDTO;
 import at.qe.skeleton.dtos.UserxRegistrationDTO;
-import at.qe.skeleton.dtos.UserxUpdateDTO;
+import at.qe.skeleton.mappers.UserxRegistrationMapper;
 import at.qe.skeleton.model.NotificationType;
 import at.qe.skeleton.model.Userx;
 import at.qe.skeleton.model.UserxRole;
@@ -31,6 +32,8 @@ public class UserxServiceTest {
 
     @Autowired
     UserxService userService;
+    @Autowired
+    private UserxRegistrationMapper userxRegistrationMapper;
 
     @Test
     @WithMockUser(username = "admin", authorities = {"ADMIN"})
@@ -310,7 +313,9 @@ public class UserxServiceTest {
                 null
         );
 
-        Userx user = userService.registerCustomer(dto);
+        Userx newCustomer = userxRegistrationMapper.mapFrom(dto);
+
+        Userx user = userService.registerCustomer(newCustomer);
 
         Assertions.assertNotNull(user.getId());
         Assertions.assertEquals("newuser", user.getUsername());
@@ -324,7 +329,6 @@ public class UserxServiceTest {
                 "Encoded password does not match original");
 
         Assertions.assertTrue(user.getRoles().contains(UserxRole.CUSTOMER));
-        Assertions.assertTrue(user.getChannels().contains(NotificationType.EMAIL));
         Assertions.assertTrue(user.isEnabled());
         Assertions.assertFalse(user.isDeleted());
 
@@ -337,14 +341,12 @@ public class UserxServiceTest {
     @WithMockUser(username = "user2", authorities = {"CUSTOMER"})
     public void testUpdateCurrentUserSelfService() {
 
-        UserxUpdateDTO dto = new UserxUpdateDTO(
+        UserxMeUpdateDTO dto = new UserxMeUpdateDTO(
                 null,
                 "NewStrongPass1",
                 "UpdatedFirst",
                 "UpdatedLast",
                 "updated@mail.at",
-                null,
-                Sets.newSet(UserxRole.ADMIN), // must be ignored
                 null
         );
 

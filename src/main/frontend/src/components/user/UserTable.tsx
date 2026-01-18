@@ -270,20 +270,9 @@ const UserTable = () => {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-row items-center justify-between">
-        <Button
-          className="w-fit"
-          onClick={openNewUserDialog}
-        >
-          <Plus />
-          Add New User
-        </Button>
-
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button
-              variant="outline"
-              className="ml-auto"
-            >
+            <Button variant="outline">
               Roles to show <ChevronDown className="ml-2 h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
@@ -300,6 +289,14 @@ const UserTable = () => {
             ))}
           </DropdownMenuContent>
         </DropdownMenu>
+
+        <Button
+          className="w-fit"
+          onClick={openNewUserDialog}
+        >
+          <Plus />
+          Add New User
+        </Button>
       </div>
 
       <UserList

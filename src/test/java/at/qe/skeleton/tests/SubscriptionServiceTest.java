@@ -1,6 +1,5 @@
 package at.qe.skeleton.tests;
 
-import at.qe.skeleton.dtos.SubscriptionCreateDTO;
 import at.qe.skeleton.dtos.SubscriptionUpdateDTO;
 import at.qe.skeleton.mappers.SubscriptionCreateMapper;
 import at.qe.skeleton.model.*;
@@ -55,16 +54,7 @@ public class SubscriptionServiceTest {
 
     @Test
     void testCreateSubscriptionLogicAndPersistence() {
-        SubscriptionCreateDTO createDTO = new SubscriptionCreateDTO(
-                10L,
-                Set.of(SubscriptionType.RESTOCK),
-                Set.of(NotificationType.EMAIL)
-        );
-
-        Subscription mappedSub = new Subscription();
-        when(subscriptionCreateMapper.mapFrom(createDTO)).thenReturn(mappedSub);
-
-        Subscription result = subscriptionService.createSubscription(testUser, createDTO);
+        Subscription result = subscriptionService.createSubscription(testUser, testSubscription);
 
         Assertions.assertNotNull(result);
         Assertions.assertEquals(testUser, result.getUser());
@@ -76,26 +66,30 @@ public class SubscriptionServiceTest {
 
     @Test
     void testCreateSubscriptionThrowsUnauthorizedIfUserNull() {
-        SubscriptionCreateDTO createDTO = new SubscriptionCreateDTO(10L, Set.of(), Set.of());
-
         ResponseStatusException ex = Assertions.assertThrows(ResponseStatusException.class,
-                () -> subscriptionService.createSubscription(null, createDTO));
+                () -> subscriptionService.createSubscription(null, testSubscription));
 
         Assertions.assertEquals(HttpStatus.UNAUTHORIZED, ex.getStatusCode());
     }
 
-//    @Test TODO:FIX
-//    void testUpdateSubscriptionLogic() {
-//        Set<SubscriptionType> newTypes = Set.of(SubscriptionType.DISCOUNTUPDATE, SubscriptionType.RESTOCK);
-//        SubscriptionUpdateDTO updateDTO = new SubscriptionUpdateDTO(newTypes, Set.of(NotificationType.SMS));
-//
-//        when(subscriptionRepository.findById(100L)).thenReturn(Optional.of(testSubscription));
-//
-//        Subscription updated = subscriptionService.updateSubscription(100L, updateDTO);
-//
-//        Assertions.assertEquals(newTypes, updated.getTypes());
-//        verify(subscriptionRepository).save(testSubscription);
-//    }
+    @Test
+    void testUpdateSubscriptionLogic() {
+        Set<SubscriptionType> newTypes = Set.of(SubscriptionType.DISCOUNTUPDATE, SubscriptionType.RESTOCK);
+        Set<NotificationType> newChannels = Set.of(NotificationType.SMS);
+        SubscriptionUpdateDTO updateDTO = new SubscriptionUpdateDTO(newTypes, newChannels);
+
+        when(subscriptionRepository.findById(100L)).thenReturn(Optional.of(testSubscription));
+
+        when(subscriptionRepository.save(org.mockito.ArgumentMatchers.any(Subscription.class)))
+                .thenReturn(testSubscription);
+
+        Subscription updated = subscriptionService.updateSubscription(100L, updateDTO);
+
+        Assertions.assertNotNull(updated);
+        Assertions.assertEquals(newTypes, updated.getTypes());
+        Assertions.assertEquals(newChannels, updated.getChannels()) ;
+        verify(subscriptionRepository).save(testSubscription);
+    }
 
     @Test
     void testDeleteSubscriptionSuccess() {

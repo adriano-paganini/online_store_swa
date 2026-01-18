@@ -86,7 +86,6 @@ export const MockProductApi = {
     const newProduct: TProductDTO = {
       id: Math.max(...products.map((p) => p.id)) + 1,
       avgScore: 0,
-      images: [],
       deleted: false,
       ...dto,
     };

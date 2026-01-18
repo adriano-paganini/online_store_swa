@@ -14,6 +14,9 @@ import { toast } from 'sonner';
 
 import { ReviewsList } from '@/components/review/ReviewsList';
 import { SubscriptionBlock } from '@/components/subscription/SubscriptionBlock';
+import { Avatar, AvatarImage } from '@/components/ui/avatar';
+import { getInitials } from '@/lib/utils';
+import { AvatarFallback } from '@radix-ui/react-avatar';
 import type { TProductDTO } from '../DTO/product.types';
 
 export default function ProductDetailsPage() {
@@ -73,11 +76,16 @@ export default function ProductDetailsPage() {
     <div className="mx-auto max-w-6xl space-y-10">
       <div className="grid gap-8 md:grid-cols-2">
         <div className="overflow-hidden rounded-lg bg-muted">
-          <img
-            src={product.images[0] || `/placeholder.svg?height=600&width=600&query=${encodeURIComponent(product.name)}`}
-            alt={product.name}
-            className="aspect-square w-full object-cover"
-          />
+          <Avatar className="h-full w-full rounded-none">
+            <AvatarImage
+              src={product.images?.[0]}
+              alt={product.name}
+              className="aspect-square w-full object-cover"
+            />
+            <AvatarFallback className="flex aspect-square w-full items-center justify-center bg-muted text-4xl font-semibold">
+              {getInitials(product.name)}
+            </AvatarFallback>
+          </Avatar>
         </div>
 
         <div className="flex flex-col gap-4">

@@ -1,7 +1,7 @@
 package at.qe.skeleton.services;
 
-import at.qe.skeleton.dtos.CartItemCreateDTO;
 import at.qe.skeleton.dtos.CartItemUpdateDTO;
+import at.qe.skeleton.mappers.CartMapper;
 import at.qe.skeleton.model.Cart;
 import at.qe.skeleton.model.CartItem;
 import at.qe.skeleton.model.Userx;
@@ -23,16 +23,19 @@ public class CartService {
     private final CartItemRepository cartItemRepository;
     private final AuthenticatedUserService authenticatedUserService;
     private final ProductService productService;
+    private final CartMapper cartMapper;
 
     public CartService(
             CartRepository cartRepository,
             CartItemRepository cartItemRepository,
             AuthenticatedUserService authenticatedUserService,
-            ProductService productService) {
+            ProductService productService,
+            CartMapper cartMapper) {
         this.cartRepository = cartRepository;
         this.cartItemRepository = cartItemRepository;
         this.authenticatedUserService = authenticatedUserService;
         this.productService = productService;
+        this.cartMapper = cartMapper;
     }
 
     @Transactional
@@ -69,41 +72,37 @@ public class CartService {
     }
 
     @Transactional
-    public Cart addItemToCart(CartItemCreateDTO createDTO) {
-        if (!productService.isProductAvailable(createDTO.productId(), createDTO.quantity())) {
+    public Cart addItemToCart(CartItem cartItem) {
+        if (!productService.isProductAvailable(cartItem.getProductId(), cartItem.getQuantity())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Product not available or insufficient stock");
         }
 
         Cart cart = getOrCreateCart();
+        cartItem.setCart(cart);
 
-        Optional<CartItem> existingItemOpt = cartItemRepository.findByCartAndProductId(cart, createDTO.productId());
+        Optional<CartItem> existingItemOpt = cartItemRepository.findByCartAndProductId(cart, cartItem.getProductId());
 
         if (existingItemOpt.isPresent()) {
             CartItem existingItem = existingItemOpt.get();
-            int newQuantity = existingItem.getQuantity() + createDTO.quantity();
+            int newQuantity = existingItem.getQuantity() + cartItem.getQuantity();
             
-            if (!productService.isProductAvailable(createDTO.productId(), newQuantity)) {
+            if (!productService.isProductAvailable(cartItem.getProductId(), newQuantity)) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Insufficient stock");
             }
             
             existingItem.setQuantity(newQuantity);
             cartItemRepository.save(existingItem);
         } else {
-            CartItem newItem = new CartItem();
-            newItem.setCart(cart);
-            newItem.setProductId(createDTO.productId());
-            newItem.setQuantity(createDTO.quantity());
-
-            Double productPrice = productService.getProductPrice(createDTO.productId())
+            Double productPrice = productService.getProductPrice(cartItem.getProductId())
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Product not found"));
-            Double productDiscount = productService.getProductDiscount(createDTO.productId())
+            Double productDiscount = productService.getProductDiscount(cartItem.getProductId())
                     .orElse(0.0);
 
-            newItem.setCurrentPrice(productPrice);
-            newItem.setAppliedDiscount(productDiscount > 0 ? productDiscount : null);
+            cartItem.setCurrentPrice(productPrice);
+            cartItem.setAppliedDiscount(productDiscount > 0 ? productDiscount : null);
 
-            cart.getItems().add(newItem);
-            cartItemRepository.save(newItem);
+            cart.getItems().add(cartItem);
+            cartItemRepository.save(cartItem);
         }
 
         return cartRepository.save(cart);
@@ -119,6 +118,7 @@ public class CartService {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Cart item does not belong to user");
         }
 
+        // Validate DTO before applying changes (service can access DTO to keep controller thin)
         if (updateDTO.quantity() != null) {
             if (updateDTO.quantity() < 1) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Quantity must be at least 1");
@@ -127,14 +127,10 @@ public class CartService {
             if (!productService.isProductAvailable(item.getProductId(), updateDTO.quantity())) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Insufficient stock");
             }
-            
-            item.setQuantity(updateDTO.quantity());
         }
 
-        if (updateDTO.appliedDiscount() != null) {
-            item.setAppliedDiscount(updateDTO.appliedDiscount());
-        }
-
+        // Apply DTO changes via mapper
+        cartMapper.apply(item, updateDTO);
         cartItemRepository.save(item);
         return cartRepository.save(cart);
     }

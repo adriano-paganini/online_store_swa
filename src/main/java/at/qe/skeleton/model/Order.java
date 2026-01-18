@@ -1,5 +1,6 @@
 package at.qe.skeleton.model;
 
+import at.qe.skeleton.events.PayloadInterface;
 import jakarta.persistence.*;
 import org.springframework.data.domain.Persistable;
 
@@ -10,9 +11,10 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
+
 @Entity
 @Table(name = "orders")
-public class Order implements Persistable<Long>, Serializable {
+public class Order implements Persistable<Long>, Serializable, PayloadInterface {
 
     @Serial
     private static final long serialVersionUID = 1L;
@@ -30,6 +32,10 @@ public class Order implements Persistable<Long>, Serializable {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 30)
     private OrderStatus status;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 50)
+    private ShippingMethod shippingMethod;
 
     @Column(nullable = false)
     private Double total;
@@ -72,12 +78,14 @@ public class Order implements Persistable<Long>, Serializable {
             List<OrderItem> items,
             OrderAddress billingAddress,
             OrderAddress shippingAddress,
+            ShippingMethod shippingMethod,
             Double total
     ) {
         this.user = user;
         this.items = items;
         this.billingAddress = billingAddress;
         this.shippingAddress = shippingAddress;
+        this.shippingMethod = shippingMethod;
         this.total = total;
         this.status = OrderStatus.PENDING;
     }
@@ -94,7 +102,6 @@ public class Order implements Persistable<Long>, Serializable {
             this.timestamp = LocalDateTime.now();
         }
     }
-
     @Override
     public Long getId() {
         return id;
@@ -165,6 +172,14 @@ public class Order implements Persistable<Long>, Serializable {
         this.shippingAddress = shippingAddress;
     }
 
+    public ShippingMethod getShippingMethod() {
+        return shippingMethod;
+    }
+
+    public void setShippingMethod(ShippingMethod shippingMethod) {
+        this.shippingMethod = shippingMethod;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -175,5 +190,10 @@ public class Order implements Persistable<Long>, Serializable {
     @Override
     public int hashCode() {
         return Objects.hashCode(id);
+    }
+
+    @Override
+    public String getPayloadSubjectLine() {
+        return "Order "+orderNumber+" has been confirmed and will be on it's way!";
     }
 }

@@ -2,6 +2,7 @@ package at.qe.skeleton.mappers;
 
 import at.qe.skeleton.dtos.CartDTO;
 import at.qe.skeleton.dtos.CartItemDTO;
+import at.qe.skeleton.dtos.CartItemUpdateDTO;
 import at.qe.skeleton.model.Cart;
 import at.qe.skeleton.model.CartItem;
 import org.springframework.stereotype.Service;
@@ -37,6 +38,15 @@ public class CartMapper {
                 item.getAppliedDiscount(),
                 item.getCurrentPrice()
         );
+    }
+
+    public void apply(CartItem cartItem, CartItemUpdateDTO dto) {
+        if (dto.quantity() != null) {
+            cartItem.setQuantity(dto.quantity());
+        }
+        if (dto.appliedDiscount() != null) {
+            cartItem.setAppliedDiscount(dto.appliedDiscount());
+        }
     }
 }
 

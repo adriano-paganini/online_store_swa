@@ -23,6 +23,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -257,22 +258,24 @@ public class ProductServiceTest {
     @Test
     @WithMockUser(username = "testuser")
     void testCreateProduct() {
-        ProductCreateDTO createDTO = new ProductCreateDTO(
-                "New Product",
-                "New Description",
-                149.99,
-                20,
-                0.15
-        );
+        Product product = new Product();
+        product.setName("New Product");
+        product.setDescription("New Description");
+        product.setPrice(149.99);
+        product.setStock(20);
+        product.setDiscount(0.15);
+        product.setImages(new ArrayList<>());
+        product.setAvgScore(0.0);
+        product.setDeleted(false);
 
         Mockito.when(productRepository.save(Mockito.any(Product.class)))
                 .thenAnswer(invocation -> {
-                    Product product = invocation.getArgument(0);
-                    product.setId(2L);
-                    return product;
+                    Product savedProduct = invocation.getArgument(0);
+                    savedProduct.setId(2L);
+                    return savedProduct;
                 });
 
-        Product result = productService.createProduct(createDTO);
+        Product result = productService.createProduct(product);
 
         Assertions.assertNotNull(result, "Product should not be null");
         Assertions.assertEquals("New Product", result.getName(), "Name should match");
@@ -282,6 +285,8 @@ public class ProductServiceTest {
         Assertions.assertEquals(0.15, result.getDiscount(), "Discount should match");
         Assertions.assertEquals(0.0, result.getAvgScore(), "AvgScore should be 0.0");
         Assertions.assertFalse(result.getDeleted(), "Product should not be deleted");
+        Assertions.assertNotNull(result.getImages(), "Images should not be null");
+        Assertions.assertTrue(result.getImages().isEmpty(), "Images should be empty list");
 
         ArgumentCaptor<Product> productCaptor = ArgumentCaptor.forClass(Product.class);
         Mockito.verify(productRepository).save(productCaptor.capture());
@@ -292,45 +297,76 @@ public class ProductServiceTest {
     @Test
     @WithMockUser(username = "testuser")
     void testCreateProductWithDefaultDiscount() {
-        ProductCreateDTO createDTO = new ProductCreateDTO(
-                "New Product",
-                "Description",
-                99.99,
-                10,
-                null // Discount not provided
-        );
+        Product product = new Product();
+        product.setName("New Product");
+        product.setDescription("Description");
+        product.setPrice(99.99);
+        product.setStock(10);
+        product.setDiscount(0.0); // Default discount
+        product.setImages(new ArrayList<>());
+        product.setAvgScore(0.0);
+        product.setDeleted(false);
 
         Mockito.when(productRepository.save(Mockito.any(Product.class)))
                 .thenAnswer(invocation -> {
-                    Product product = invocation.getArgument(0);
-                    product.setId(2L);
-                    return product;
+                    Product savedProduct = invocation.getArgument(0);
+                    savedProduct.setId(2L);
+                    return savedProduct;
                 });
 
-        Product result = productService.createProduct(createDTO);
+        Product result = productService.createProduct(product);
 
         Assertions.assertEquals(0.0, result.getDiscount(), "Discount should default to 0.0");
     }
 
     @Test
+    @WithMockUser(username = "testuser")
+    void testCreateProductWithImages() {
+        List<String> images = List.of("https://example.com/image1.jpg", "https://example.com/image2.jpg");
+        Product product = new Product();
+        product.setName("New Product");
+        product.setDescription("Description");
+        product.setPrice(99.99);
+        product.setStock(10);
+        product.setDiscount(0.0);
+        product.setImages(images);
+        product.setAvgScore(0.0);
+        product.setDeleted(false);
+
+        Mockito.when(productRepository.save(Mockito.any(Product.class)))
+                .thenAnswer(invocation -> {
+                    Product savedProduct = invocation.getArgument(0);
+                    savedProduct.setId(2L);
+                    return savedProduct;
+                });
+
+        Product result = productService.createProduct(product);
+
+        Assertions.assertNotNull(result, "Product should not be null");
+        Assertions.assertEquals(images, result.getImages(), "Images should match");
+    }
+
+    @Test
     void testCreateProductUnauthenticated() {
-        ProductCreateDTO createDTO = new ProductCreateDTO(
-                "New Product",
-                "Description",
-                99.99,
-                10,
-                0.0
-        );
+        Product product = new Product();
+        product.setName("New Product");
+        product.setDescription("Description");
+        product.setPrice(99.99);
+        product.setStock(10);
+        product.setDiscount(0.0);
+        product.setImages(new ArrayList<>());
+        product.setAvgScore(0.0);
+        product.setDeleted(false);
 
         Mockito.when(authenticatedUserService.getAuthenticatedUser()).thenReturn(null);
         Mockito.when(productRepository.save(Mockito.any(Product.class)))
                 .thenAnswer(invocation -> {
-                    Product product = invocation.getArgument(0);
-                    product.setId(2L);
-                    return product;
+                    Product savedProduct = invocation.getArgument(0);
+                    savedProduct.setId(2L);
+                    return savedProduct;
                 });
 
-        Product result = productService.createProduct(createDTO);
+        Product result = productService.createProduct(product);
 
         Assertions.assertNotNull(result, "Product should still be created");
         Assertions.assertEquals("New Product", result.getName(), "Name should match");
@@ -340,8 +376,10 @@ public class ProductServiceTest {
     @Test
     @WithMockUser(username = "testuser")
     void testUpdateProduct() {
+        List<String> newImages = List.of("https://example.com/image1.jpg", "https://example.com/image2.jpg");
         ProductUpdateDTO updateDTO = new ProductUpdateDTO(
                 "Updated Product",
+                newImages,
                 "Updated Description",
                 199.99,
                 15,
@@ -364,6 +402,7 @@ public class ProductServiceTest {
         Assertions.assertEquals(199.99, updatedProduct.getPrice(), "Price should be updated");
         Assertions.assertEquals(15, updatedProduct.getStock(), "Stock should be updated");
         Assertions.assertEquals(0.2, updatedProduct.getDiscount(), "Discount should be updated");
+        Assertions.assertEquals(newImages, updatedProduct.getImages(), "Images should be updated");
         Assertions.assertEquals(testUser, updatedProduct.getUpdateUser(), "Update user should be set");
     }
 
@@ -373,6 +412,7 @@ public class ProductServiceTest {
         ProductUpdateDTO updateDTO = new ProductUpdateDTO(
                 "Updated Name",
                 null, // Only update name
+                null,
                 null,
                 null,
                 null
@@ -400,6 +440,7 @@ public class ProductServiceTest {
         Long nonExistentId = 999L;
         ProductUpdateDTO updateDTO = new ProductUpdateDTO(
                 "Updated Name",
+                null,
                 null,
                 null,
                 null,
@@ -535,6 +576,120 @@ public class ProductServiceTest {
         Assertions.assertThrows(ResponseStatusException.class, () -> {
             productService.updateProductAverageScore(nonExistentId, newAverageScore);
         }, "Should throw exception when product not found");
+    }
+
+    @Test
+    @WithMockUser(username = "testuser")
+    void testDiscountCalculationWithHighDiscount() {
+        Product product = createTestProduct(testProductId, "Test Product", "Description", 100.0, 10, 0.9, 4.0, false);
+        Mockito.when(productRepository.findById(testProductId)).thenReturn(Optional.of(product));
+
+        Optional<Double> discount = productService.getProductDiscount(testProductId);
+
+        Assertions.assertTrue(discount.isPresent());
+        Assertions.assertEquals(0.9, discount.get(), 0.001);
+    }
+
+    @Test
+    @WithMockUser(username = "testuser")
+    void testDiscountCalculationWithZeroDiscount() {
+        Product product = createTestProduct(testProductId, "Test Product", "Description", 100.0, 10, 0.0, 4.0, false);
+        Mockito.when(productRepository.findById(testProductId)).thenReturn(Optional.of(product));
+
+        Optional<Double> discount = productService.getProductDiscount(testProductId);
+
+        Assertions.assertTrue(discount.isPresent());
+        Assertions.assertEquals(0.0, discount.get(), 0.001);
+    }
+
+    @Test
+    @WithMockUser(username = "testuser")
+    void testDiscountCalculationWithNullDiscount() {
+        Product product = createTestProduct(testProductId, "Test Product", "Description", 100.0, 10, null, 4.0, false);
+        Mockito.when(productRepository.findById(testProductId)).thenReturn(Optional.of(product));
+
+        Optional<Double> discount = productService.getProductDiscount(testProductId);
+
+        // When discount is null, Optional.map() filters it out, so Optional is empty
+        // This is correct behavior since Optional cannot contain null values
+        Assertions.assertTrue(discount.isEmpty());
+    }
+
+    @Test
+    @WithMockUser(username = "testuser")
+    void testStockManagementWithExactStock() {
+        Product product = createTestProduct(testProductId, "Test Product", "Description", 100.0, 5, 0.1, 4.0, false);
+        Mockito.when(productRepository.findById(testProductId)).thenReturn(Optional.of(product));
+
+        boolean available = productService.isProductAvailable(testProductId, 5);
+
+        Assertions.assertTrue(available, "Product should be available when quantity equals stock");
+    }
+
+    @Test
+    @WithMockUser(username = "testuser")
+    void testStockManagementWithInsufficientStock() {
+        Product product = createTestProduct(testProductId, "Test Product", "Description", 100.0, 5, 0.1, 4.0, false);
+        Mockito.when(productRepository.findById(testProductId)).thenReturn(Optional.of(product));
+
+        boolean available = productService.isProductAvailable(testProductId, 6);
+
+        Assertions.assertFalse(available, "Product should not be available when quantity exceeds stock");
+    }
+
+    @Test
+    @WithMockUser(username = "testuser")
+    void testStockManagementWithZeroStock() {
+        Product product = createTestProduct(testProductId, "Test Product", "Description", 100.0, 0, 0.1, 4.0, false);
+        Mockito.when(productRepository.findById(testProductId)).thenReturn(Optional.of(product));
+
+        boolean available = productService.isProductAvailable(testProductId, 1);
+
+        Assertions.assertFalse(available, "Product should not be available when stock is zero");
+    }
+
+    @Test
+    @WithMockUser(username = "testuser")
+    void testStockManagementWithDeletedProduct() {
+        Product product = createTestProduct(testProductId, "Test Product", "Description", 100.0, 10, 0.1, 4.0, true);
+        Mockito.when(productRepository.findById(testProductId)).thenReturn(Optional.of(product));
+
+        boolean available = productService.isProductAvailable(testProductId, 1);
+
+        Assertions.assertFalse(available, "Deleted product should not be available");
+    }
+
+    @Test
+    @WithMockUser(username = "testuser")
+    void testStockManagementWithNullQuantity() {
+        Product product = createTestProduct(testProductId, "Test Product", "Description", 100.0, 10, 0.1, 4.0, false);
+        Mockito.when(productRepository.findById(testProductId)).thenReturn(Optional.of(product));
+
+        // Null quantity should be handled gracefully
+        boolean available = productService.isProductAvailable(testProductId, null);
+
+        Assertions.assertFalse(available, "Null quantity should result in unavailable");
+    }
+
+    @Test
+    @WithMockUser(username = "testuser")
+    void testStockManagementWithNegativeQuantity() {
+        Product product = createTestProduct(testProductId, "Test Product", "Description", 100.0, 10, 0.1, 4.0, false);
+        Mockito.when(productRepository.findById(testProductId)).thenReturn(Optional.of(product));
+
+        boolean available = productService.isProductAvailable(testProductId, -1);
+
+        Assertions.assertFalse(available, "Negative quantity should result in unavailable");
+    }
+
+    @Test
+    @WithMockUser(username = "testuser")
+    void testStockManagementWithNonExistentProduct() {
+        Mockito.when(productRepository.findById(999L)).thenReturn(Optional.empty());
+
+        boolean available = productService.isProductAvailable(999L, 1);
+
+        Assertions.assertFalse(available, "Non-existent product should not be available");
     }
 
     private Product createTestProduct(Long id, String name, String description, Double price,

@@ -13,7 +13,7 @@ public interface SubscriptionRepository extends AbstractRepository<Subscription,
 
     List<Subscription> findByUser(Userx user);
 
-    @Query("SELECT s " +
+    @Query("SELECT DISTINCT s " +
             "FROM Subscription s " +
             "WHERE s.product.id = :productId " +
             "AND :subscriptionType MEMBER OF  s.types")

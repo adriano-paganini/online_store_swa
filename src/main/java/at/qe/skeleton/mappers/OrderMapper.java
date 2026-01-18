@@ -19,7 +19,8 @@ public class OrderMapper {
                 order.getTimestamp(),
                 mapItems(order.getItems()),
                 mapAddress(order.getShippingAddress()),
-                mapAddress(order.getBillingAddress())
+                mapAddress(order.getBillingAddress()),
+                order.getShippingMethod()
         );
     }
 
@@ -32,6 +33,7 @@ public class OrderMapper {
     private OrderItemDTO toItemDto(OrderItem item) {
         return new OrderItemDTO(
                 item.getProductId(),
+                item.getProductName(),
                 item.getQuantity(),
                 item.getPriceAtPurchase(),
                 item.getAppliedDiscount()

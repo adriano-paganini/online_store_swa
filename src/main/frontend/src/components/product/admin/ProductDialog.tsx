@@ -1,6 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import type { TProductCreateDTO, TProductDTO } from '@/DTO/product.types';
+import { Check, X } from 'lucide-react';
 import { ProductForm } from './ProductForm';
 
 type TProductDialogProps = {
@@ -34,7 +35,16 @@ export const ProductDialog = ({ open, product, isNew, onClose, onSubmit }: TProd
             variant="outline"
             onClick={onClose}
           >
+            <X className="h-4 w-4" />
             Cancel
+          </Button>
+
+          <Button
+            type="submit"
+            form="product-form"
+          >
+            <Check className="h-4 w-4" />
+            {isNew ? 'Add' : 'Save'} product
           </Button>
         </DialogFooter>
       </DialogContent>

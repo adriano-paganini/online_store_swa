@@ -1,9 +1,11 @@
 package at.qe.skeleton.services;
 
 import at.qe.skeleton.dtos.OrderCreateDTO;
+import at.qe.skeleton.events.OrderCompletionEvent;
 import at.qe.skeleton.model.*;
 import at.qe.skeleton.repositories.OrderRepository;
 import jakarta.transaction.Transactional;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -12,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -19,20 +22,26 @@ import java.util.stream.Collectors;
 public class OrderService {
 
     private final OrderRepository orderRepository;
+    private final OrderLifecycleService orderLifecycleService;
     private final CartService cartService;
     private final ProductService productService;
     private final AuthenticatedUserService authenticatedUserService;
+    private final ApplicationEventPublisher applicationEventPublisher;
 
     public OrderService(
             OrderRepository orderRepository,
+            OrderLifecycleService orderLifecycleService,
             CartService cartService,
             ProductService productService,
-            AuthenticatedUserService authenticatedUserService
+            AuthenticatedUserService authenticatedUserService,
+            ApplicationEventPublisher applicationEventPublisher
     ) {
         this.orderRepository = orderRepository;
+        this.orderLifecycleService = orderLifecycleService;
         this.cartService = cartService;
         this.productService = productService;
         this.authenticatedUserService = authenticatedUserService;
+        this.applicationEventPublisher = applicationEventPublisher;
     }
 
     public Page<Order> getCurrentUserOrders(
@@ -46,31 +55,38 @@ public class OrderService {
         if (status != null) {
             return orderRepository.findByUserAndStatus(user, status, pageable);
         }
-        return orderRepository.findByUser(user, pageable);
+
+        Page<Order> pageResult = orderRepository.findByUser(user, pageable);
+
+        pageResult.forEach(order -> {
+            if (orderLifecycleService.applyResolvedStatus(order, LocalDateTime.now())) {
+                orderRepository.save(order);
+            }
+        });
+
+        return pageResult;
     }
+
 
 
     public Order getOrderByNumber(String orderNumber) {
         Userx user = authenticatedUserService.requireAuthenticatedUser();
 
         Order order = orderRepository.findByOrderNumber(orderNumber)
-                .orElseThrow(() ->
-                        new ResponseStatusException(
-                                HttpStatus.NOT_FOUND,
-                                "Order not found"
-                        )
-                );
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "Order not found"));
 
         if (!order.getUser().getId().equals(user.getId())) {
-            // 404 instead of 403 (no leak of existence)
-            throw new ResponseStatusException(
-                    HttpStatus.NOT_FOUND,
-                    "Order not found"
-            );
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Order not found");
+        }
+
+        if (orderLifecycleService.applyResolvedStatus(order, LocalDateTime.now())) {
+            orderRepository.save(order);
         }
 
         return order;
     }
+
 
     @Transactional
     public Order createOrder(OrderCreateDTO orderCreateDTO) {
@@ -80,6 +96,17 @@ public class OrderService {
         Cart cart = cartService.getCart();
         if (cart.getItems().isEmpty()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cart is empty");
+        }
+        // orderCreateDTO is deliberately not mapped via a mapper
+        // because it would require to inject services into the mapper
+        if (orderCreateDTO.billingAddressId() == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Billing Address is required.");
+        }
+        if (orderCreateDTO.shippingAddressId() == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Shipping Address is required.");
+        }
+        if (orderCreateDTO.shippingMethod() == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Shipping Method is required.");
         }
 
         OrderAddress billingAddress = snapshotAddress(user, orderCreateDTO.billingAddressId());
@@ -93,12 +120,12 @@ public class OrderService {
                 orderItems,
                 billingAddress,
                 shippingAddress,
+                orderCreateDTO.shippingMethod(),
                 total
         );
 
         Order savedOrder = orderRepository.save(order);
         cartService.clearCart();
-
         return savedOrder;
     }
 
@@ -117,6 +144,42 @@ public class OrderService {
                 address.getNumber(),
                 address.getExtra()
         );
+    }
+
+    @Transactional
+    public Order confirmPayment(String orderNumber){
+        Order updated = updateOrderStatus(OrderStatus.PAID,orderNumber);
+        applicationEventPublisher.publishEvent(new OrderCompletionEvent(updated));
+
+        return updated;
+    };
+
+    @Transactional
+    public Order updateOrderStatus(OrderStatus status, String orderNumber){
+        Order order = getOrderByNumber(orderNumber);
+        order.setStatus(status);
+        orderRepository.save(order);
+        return order;
+    }
+
+    @Transactional
+    public Order cancelOrder(String orderNumber) {
+        Order order = getOrderByNumber(orderNumber);
+
+        if (order.getStatus() == OrderStatus.SHIPPING ||
+                order.getStatus() == OrderStatus.DELIVERED) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Order can no longer be canceled"
+            );
+        }
+
+        if (order.getStatus() == OrderStatus.CANCELED) {
+            return order;
+        }
+
+        order.setStatus(OrderStatus.CANCELED);
+        return orderRepository.save(order);
     }
 
     private List<OrderItem> createOrderItemsFromCart(Cart cart) {

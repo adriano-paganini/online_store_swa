@@ -3,6 +3,7 @@ package at.qe.skeleton.controllers;
 import at.qe.skeleton.dtos.CartDTO;
 import at.qe.skeleton.dtos.CartItemCreateDTO;
 import at.qe.skeleton.dtos.CartItemUpdateDTO;
+import at.qe.skeleton.mappers.CartItemCreateMapper;
 import at.qe.skeleton.mappers.CartMapper;
 import at.qe.skeleton.model.Cart;
 import at.qe.skeleton.services.CartService;
@@ -24,13 +25,17 @@ public class CartController {
 
     private final CartService cartService;
     private final CartMapper cartMapper;
+    private final CartItemCreateMapper cartItemCreateMapper;
 
-    public CartController(CartService cartService, CartMapper cartMapper) {
+    public CartController(CartService cartService, CartMapper cartMapper, CartItemCreateMapper cartItemCreateMapper) {
         this.cartService = cartService;
         this.cartMapper = cartMapper;
+        this.cartItemCreateMapper = cartItemCreateMapper;
     }
 
- 
+    /**
+     * Get the current user's cart
+     */
     @GetMapping("")
     public ResponseEntity<CartDTO> getCart() {
         Cart cart = cartService.getCart();
@@ -38,13 +43,20 @@ public class CartController {
         return ResponseEntity.ok(cartDTO);
     }
 
+    /**
+     * Add item to cart
+     */
     @PostMapping("/items")
     public ResponseEntity<CartDTO> addItemToCart(@Valid @RequestBody CartItemCreateDTO createDTO) {
-        Cart cart = cartService.addItemToCart(createDTO);
+        var cartItem = cartItemCreateMapper.mapFrom(createDTO);
+        Cart cart = cartService.addItemToCart(cartItem);
         CartDTO cartDTO = cartMapper.mapTo(cart);
         return ResponseEntity.ok(cartDTO);
     }
 
+    /**
+     * Update cart item
+     */
     @PatchMapping("/items/{id}")
     public ResponseEntity<CartDTO> updateCartItem(
             @PathVariable Long id,
@@ -54,12 +66,18 @@ public class CartController {
         return ResponseEntity.ok(cartDTO);
     }
 
+    /**
+     * Remove item from cart
+     */
     @DeleteMapping("/items/{id}")
     public ResponseEntity<Void> removeCartItem(@PathVariable Long id) {
         cartService.removeCartItem(id);
         return ResponseEntity.noContent().build();
     }
 
+    /**
+     * Clear all items from cart
+     */
     @DeleteMapping("/items")
     public ResponseEntity<Void> clearCart() {
         cartService.clearCart();

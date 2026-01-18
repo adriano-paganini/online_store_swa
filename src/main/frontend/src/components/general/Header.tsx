@@ -1,10 +1,9 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { useUser } from '@/Contexts/authenticatedUserContext';
 import { useCart } from '@/Contexts/cartContext';
-import { LogOut, Menu, Search, ShoppingCart } from 'lucide-react';
+import { LogOut, Menu, ShoppingCart } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { ROUTES } from '../../utilities/routes.paths';
 import { CartSidebar } from '../cart/CartSidebar';
@@ -69,7 +68,7 @@ export function Header() {
             </Link>
 
             <Link
-              to={ROUTES.HOME}
+              to={ROUTES.REGISTER}
               className="w-full"
             >
               <Button
@@ -117,15 +116,6 @@ export function Header() {
           </div>
         </SheetHeader>
 
-        <div className="relative mx-4 mt-4">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          <Input
-            type="search"
-            placeholder="Search products..."
-            className="pl-10"
-          />
-        </div>
-
         <nav className="mb-auto mt-6 flex flex-1 flex-col gap-1 px-4">
           <Link to={ROUTES.HOME}>
             <Button
@@ -136,12 +126,21 @@ export function Header() {
             </Button>
           </Link>
 
-          <Link to={ROUTES.NOTIFICATIONS}>
+          <Link to={ROUTES.PROFILE}>
             <Button
               variant="ghost"
               className="w-full justify-start"
             >
-              My Notifications
+              My Profile
+            </Button>
+          </Link>
+
+          <Link to={ROUTES.ADDRESSES}>
+            <Button
+              variant="ghost"
+              className="w-full justify-start"
+            >
+              Addresses
             </Button>
           </Link>
 
@@ -150,7 +149,25 @@ export function Header() {
               variant="ghost"
               className="w-full justify-start"
             >
-              My Product Subscriptions
+              Subscriptions
+            </Button>
+          </Link>
+
+          <Link to={ROUTES.NOTIFICATIONS}>
+            <Button
+              variant="ghost"
+              className="w-full justify-start"
+            >
+              Notifications
+            </Button>
+          </Link>
+
+          <Link to={ROUTES.ORDERS}>
+            <Button
+              variant="ghost"
+              className="w-full justify-start"
+            >
+              Orders
             </Button>
           </Link>
 
@@ -182,7 +199,7 @@ export function Header() {
             <Link to={ROUTES.LOGOUT}>
               <Button
                 variant="ghost"
-                className="w-full justify-start"
+                className="w-full justify-start text-destructive"
               >
                 <LogOut className="mr-2 h-4 w-4" />
                 Logout
@@ -194,7 +211,7 @@ export function Header() {
                 <Button className="mb-2 w-full">Log in</Button>
               </Link>
 
-              <Link to={ROUTES.HOME}>
+              <Link to={ROUTES.REGISTER}>
                 <Button
                   variant="outline"
                   className="w-full"
@@ -221,17 +238,6 @@ export function Header() {
           </div>
           <span className="text-lg font-semibold">Shop</span>
         </Link>
-
-        <div className="hidden max-w-lg flex-1 px-8 md:flex">
-          <div className="relative w-full">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <Input
-              type="search"
-              placeholder="Search products..."
-              className="pl-10"
-            />
-          </div>
-        </div>
 
         <div className="flex items-center gap-2">
           <div className="hidden md:block">{CartSheet}</div>
@@ -260,10 +266,19 @@ export function Header() {
                 <DropdownMenuSeparator />
 
                 <DropdownMenuItem asChild>
-                  <Link to={ROUTES.NOTIFICATIONS}>My Notifications</Link>
+                  <Link to={ROUTES.PROFILE}>My Profile</Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
-                  <Link to={ROUTES.SUBSCRIPTIONS}>My Product Subscriptions</Link>
+                  <Link to={ROUTES.ADDRESSES}>Addresses</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link to={ROUTES.SUBSCRIPTIONS}>Subscriptions</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link to={ROUTES.NOTIFICATIONS}>Notifications</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link to={ROUTES.ORDERS}>Orders</Link>
                 </DropdownMenuItem>
 
                 {isManager && (
@@ -281,7 +296,10 @@ export function Header() {
                 )}
                 <DropdownMenuSeparator />
                 <DropdownMenuItem asChild>
-                  <Link to="/logout">
+                  <Link
+                    to="/logout"
+                    className="text-destructive"
+                  >
                     <LogOut className="mr-2 h-4 w-4" />
                     Logout
                   </Link>
@@ -293,7 +311,7 @@ export function Header() {
               <Link to={ROUTES.LOGIN}>
                 <Button className="px-3">Log in</Button>
               </Link>
-              <Link to={ROUTES.HOME}>
+              <Link to={ROUTES.REGISTER}>
                 <Button variant="outline">Sign up</Button>
               </Link>
             </div>

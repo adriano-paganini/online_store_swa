@@ -1,11 +1,15 @@
 package at.qe.skeleton.dtos;
 
+import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Size;
+import java.util.List;
 
 public record ProductUpdateDTO(
     @Size(max = 255, message = "Name must not exceed 255 characters")
     String name,
+
+    List<String> images,
 
     @Size(max = 2000, message = "Description must not exceed 2000 characters")
     String description,
@@ -17,6 +21,7 @@ public record ProductUpdateDTO(
     Integer stock,
 
     @Min(value = 0, message = "Discount must be non-negative")
+    @Max(value = 1, message = "Discount must not exceed 1.0")
     Double discount
 ) {}
 

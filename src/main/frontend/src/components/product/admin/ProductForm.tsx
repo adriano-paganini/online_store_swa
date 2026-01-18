@@ -1,5 +1,4 @@
 import type { TProductCreateDTO, TProductDTO } from '@/DTO/product.types';
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useState } from 'react';
@@ -12,6 +11,7 @@ type TProductFormProps = {
 export const ProductForm = ({ product, onSubmit }: TProductFormProps) => {
   const [values, setValues] = useState<TProductCreateDTO>({
     name: product.name,
+    images: product.images,
     description: product.description,
     price: product.price,
     stock: product.stock,
@@ -25,6 +25,7 @@ export const ProductForm = ({ product, onSubmit }: TProductFormProps) => {
 
   return (
     <form
+      id="product-form"
       className="space-y-4"
       onSubmit={(e) => {
         e.preventDefault();
@@ -37,6 +38,15 @@ export const ProductForm = ({ product, onSubmit }: TProductFormProps) => {
           name="name"
           value={values.name}
           onChange={handleChange}
+        />
+      </div>
+
+      <div>
+        <Label>Image URLs (comma separated)</Label>
+        <Input
+          name="imageUrls"
+          value={values.images.join(', ')}
+          onChange={(e) => setValues({ ...values, images: e.target.value.split(',').map((url) => url.trim()) })}
         />
       </div>
 
@@ -79,13 +89,6 @@ export const ProductForm = ({ product, onSubmit }: TProductFormProps) => {
           onChange={handleChange}
         />
       </div>
-
-      <Button
-        type="submit"
-        className="w-full"
-      >
-        Save
-      </Button>
     </form>
   );
 };

@@ -6,6 +6,7 @@ import at.qe.skeleton.configs.TokenAuthenticationFilter;
 import at.qe.skeleton.controllers.ReviewController;
 import at.qe.skeleton.dtos.ReviewCreateDTO;
 import at.qe.skeleton.dtos.ReviewDTO;
+import at.qe.skeleton.mappers.ReviewCreateMapper;
 import at.qe.skeleton.mappers.ReviewMapper;
 import at.qe.skeleton.model.Review;
 import at.qe.skeleton.model.Userx;
@@ -63,6 +64,9 @@ public class ReviewControllerTest {
 
     @MockitoBean
     private ReviewMapper reviewMapper;
+
+    @MockitoBean
+    private ReviewCreateMapper reviewCreateMapper;
 
     private Long testProductId;
     private Userx testUser;
@@ -253,7 +257,12 @@ public class ReviewControllerTest {
                 testReview.getTimestamp()
         );
 
-        Mockito.when(reviewService.createReview(testProductId, createDTO)).thenReturn(testReview);
+        Review reviewEntity = new Review();
+        reviewEntity.setScore(createDTO.score());
+        reviewEntity.setContent(createDTO.content());
+
+        Mockito.when(reviewCreateMapper.mapFrom(createDTO)).thenReturn(reviewEntity);
+        Mockito.when(reviewService.createReview(testProductId, reviewEntity)).thenReturn(testReview);
         Mockito.when(reviewMapper.mapTo(testReview)).thenReturn(reviewDTO);
 
         mockMvc.perform(MockMvcRequestBuilders.post("/products/{productId}/reviews", testProductId)
@@ -288,7 +297,12 @@ public class ReviewControllerTest {
                 review.getTimestamp()
         );
 
-        Mockito.when(reviewService.createReview(testProductId, createDTO)).thenReturn(review);
+        Review reviewEntity = new Review();
+        reviewEntity.setScore(createDTO.score());
+        reviewEntity.setContent(createDTO.content());
+
+        Mockito.when(reviewCreateMapper.mapFrom(createDTO)).thenReturn(reviewEntity);
+        Mockito.when(reviewService.createReview(testProductId, reviewEntity)).thenReturn(review);
         Mockito.when(reviewMapper.mapTo(review)).thenReturn(reviewDTO);
 
         mockMvc.perform(MockMvcRequestBuilders.post("/products/{productId}/reviews", testProductId)
@@ -312,7 +326,12 @@ public class ReviewControllerTest {
                 testReview.getTimestamp()
         );
 
-        Mockito.when(reviewService.createReview(testProductId, createDTO)).thenReturn(testReview);
+        Review reviewEntity = new Review();
+        reviewEntity.setScore(createDTO.score());
+        reviewEntity.setContent(createDTO.content());
+
+        Mockito.when(reviewCreateMapper.mapFrom(createDTO)).thenReturn(reviewEntity);
+        Mockito.when(reviewService.createReview(testProductId, reviewEntity)).thenReturn(testReview);
         Mockito.when(reviewMapper.mapTo(testReview)).thenReturn(reviewDTO);
 
         mockMvc.perform(MockMvcRequestBuilders.post("/products/{productId}/reviews", testProductId)
