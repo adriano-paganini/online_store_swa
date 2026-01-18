@@ -21,7 +21,7 @@ public record ProductUpdateDTO(
     Integer stock,
 
     @Min(value = 0, message = "Discount must be non-negative")
-    @Max(value = 1, message = "Price must be non-negative")
+    @Max(value = 1, message = "Discount must not exceed 1.0")
     Double discount
 ) {}
 

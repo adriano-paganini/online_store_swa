@@ -610,8 +610,9 @@ public class ProductServiceTest {
 
         Optional<Double> discount = productService.getProductDiscount(testProductId);
 
-        Assertions.assertTrue(discount.isPresent());
-        Assertions.assertNull(discount.get());
+        // When discount is null, Optional.map() filters it out, so Optional is empty
+        // This is correct behavior since Optional cannot contain null values
+        Assertions.assertTrue(discount.isEmpty());
     }
 
     @Test

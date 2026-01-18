@@ -73,6 +73,7 @@ public class OrderCompletionEventListenerTest {
                 List.of(item),
                 billingAddress,
                 shippingAddress,
+                ShippingMethod.FAIRY_DUST_DISPATCH,
                 100.0
         );
         testOrder.setOrderNumber("ORD-12345");

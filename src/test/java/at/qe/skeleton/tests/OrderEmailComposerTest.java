@@ -428,6 +428,7 @@ public class OrderEmailComposerTest {
                 List.of(item),
                 billingAddress,
                 shippingAddress,
+                ShippingMethod.FAIRY_DUST_DISPATCH,
                 150.0
         );
         order.setOrderNumber("ORD-12345");

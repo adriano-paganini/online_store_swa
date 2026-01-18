@@ -58,6 +58,9 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public boolean isProductAvailable(Long productId, Integer quantity) {
+        if (quantity == null || quantity <= 0) {
+            return false;
+        }
         return productRepository.findById(productId)
                 .map(product -> product.getStock() >= quantity && !product.getDeleted())
                 .orElse(false);

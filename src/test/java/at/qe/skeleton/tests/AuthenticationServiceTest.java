@@ -16,6 +16,7 @@ import org.springframework.security.core.Authentication;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.lenient;
 
 @ExtendWith(MockitoExtension.class)
 public class AuthenticationServiceTest {
@@ -40,7 +41,7 @@ public class AuthenticationServiceTest {
     @BeforeEach
     void setUp() {
         mockAuthentication = mock(Authentication.class);
-        when(mockAuthentication.getName()).thenReturn(VALID_USERNAME);
+        lenient().when(mockAuthentication.getName()).thenReturn(VALID_USERNAME);
     }
 
     @Test
