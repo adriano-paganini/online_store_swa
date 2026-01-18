@@ -136,6 +136,15 @@ export function Header() {
             </Button>
           </Link>
 
+          <Link to={ROUTES.PROFILE}>
+            <Button
+              variant="ghost"
+              className="w-full justify-start"
+            >
+              My Profile
+            </Button>
+          </Link>
+
           <Link to={ROUTES.ADDRESSES}>
             <Button
               variant="ghost"
@@ -277,6 +286,9 @@ export function Header() {
 
                 <DropdownMenuSeparator />
 
+                <DropdownMenuItem asChild>
+                  <Link to={ROUTES.PROFILE}>My Profile</Link>
+                </DropdownMenuItem>
                 <DropdownMenuItem asChild>
                   <Link to={ROUTES.ADDRESSES}>Addresses</Link>
                 </DropdownMenuItem>

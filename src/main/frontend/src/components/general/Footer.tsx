@@ -48,7 +48,7 @@ export function Footer() {
             <ul className="flex flex-col items-start space-y-2 text-sm md:items-center">
               <li>
                 <Link
-                  to={ROUTES.HOME}
+                  to={ROUTES.PROFILE}
                   className="text-muted-foreground hover:text-foreground"
                 >
                   My Profile

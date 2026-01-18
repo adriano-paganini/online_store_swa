@@ -4,6 +4,7 @@ export const ROUTES = {
   PRODUCT_DETAIL: '/products/:id',
   SUBSCRIPTIONS: '/subscriptions',
   NOTIFICATIONS: '/notifications',
+  PROFILE: '/profile',
   ADDRESSES: '/addresses',
   ORDERS: '/orders',
   CHECKOUT: '/checkout',
@@ -17,7 +18,6 @@ export const ROUTES = {
   LOGOUT: '/logout',
 
   // future routes
-  // PROFILE: '/profile',
 } as const;
 
 export type TRoutesType = typeof ROUTES;
