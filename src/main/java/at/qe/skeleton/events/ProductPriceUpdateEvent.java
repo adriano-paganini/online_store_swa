@@ -15,7 +15,7 @@ public class ProductPriceUpdateEvent extends ProductEvent<Double> {
         DateTimeFormatter dateId = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
         String formattedDate = super.getTimestamp().format(dateId);
 
-        return String.format("%s - The price of \"%s\" has been updated from %.2f to %.2f.",
+        return String.format(java.util.Locale.US, "%s - The price of \"%s\" has been updated from %.2f to %.2f.",
                 formattedDate,
                 super.getProduct().getName(),
                 super.getOldValue(),

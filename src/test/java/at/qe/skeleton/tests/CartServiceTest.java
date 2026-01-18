@@ -379,7 +379,7 @@ public class CartServiceTest {
         Mockito.when(productService.getProductById(1L)).thenReturn(Optional.of(product));
         Mockito.when(productService.getProductPrice(1L)).thenReturn(Optional.of(100.0));
         Mockito.when(productService.getProductDiscount(1L)).thenReturn(Optional.of(0.1));
-        Mockito.when(productService.isProductAvailable(1L, Mockito.anyInt())).thenReturn(true);
+        Mockito.when(productService.isProductAvailable(Mockito.eq(1L), Mockito.anyInt())).thenReturn(true);
 
         CartItem item1 = new CartItem();
         item1.setProductId(1L);
@@ -417,7 +417,7 @@ public class CartServiceTest {
         Mockito.when(productService.getProductById(1L)).thenReturn(Optional.of(product));
         Mockito.when(productService.getProductPrice(1L)).thenReturn(Optional.of(100.0));
         Mockito.when(productService.getProductDiscount(1L)).thenReturn(Optional.of(0.1));
-        Mockito.when(productService.isProductAvailable(1L, Mockito.anyInt())).thenReturn(true);
+        Mockito.when(productService.isProductAvailable(Mockito.eq(1L), Mockito.anyInt())).thenReturn(true);
 
         CartItem item1 = new CartItem();
         item1.setProductId(1L);
@@ -457,7 +457,7 @@ public class CartServiceTest {
         Mockito.when(productService.getProductById(1L)).thenReturn(Optional.of(product));
         Mockito.when(productService.getProductPrice(1L)).thenReturn(Optional.of(100.0));
         Mockito.when(productService.getProductDiscount(1L)).thenReturn(Optional.of(0.1));
-        Mockito.when(productService.isProductAvailable(1L, Mockito.anyInt())).thenReturn(true);
+        Mockito.when(productService.isProductAvailable(Mockito.eq(1L), Mockito.anyInt())).thenReturn(true);
 
         CartItem item1 = new CartItem();
         item1.setId(1L);

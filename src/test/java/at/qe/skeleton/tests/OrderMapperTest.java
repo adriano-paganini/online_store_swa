@@ -65,6 +65,7 @@ public class OrderMapperTest {
                 List.of(item1, item2),
                 billingAddress,
                 shippingAddress,
+                ShippingMethod.FAIRY_DUST_DISPATCH,
                 240.0
         );
         testOrder.setOrderNumber("ORD-12345");

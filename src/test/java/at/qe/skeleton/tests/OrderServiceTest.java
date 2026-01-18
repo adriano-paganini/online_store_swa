@@ -569,6 +569,7 @@ class OrderServiceTest {
                 List.of(),
                 new OrderAddress(COUNTRY, CITY_INNSBRUCK, POSTAL, STREET, NUMBER, EXTRA),
                 new OrderAddress(COUNTRY, CITY_GRAZ, POSTAL, STREET, NUMBER, null),
+                ShippingMethod.FAIRY_DUST_DISPATCH,
                 0.0
         );
         order.setOrderNumber(ORDER_NUMBER);
@@ -611,10 +612,13 @@ class OrderServiceTest {
         Mockito.when(cartService.getCart()).thenReturn(cart);
         Mockito.when(productService.getProductById(PRODUCT_ID))
                 .thenReturn(Optional.of(product));
+        Mockito.when(orderRepository.save(Mockito.any(Order.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
 
         OrderCreateDTO dto = new OrderCreateDTO(
                 SHIPPING_ADDRESS_ID,
-                BILLING_ADDRESS_ID
+                BILLING_ADDRESS_ID,
+                ShippingMethod.FAIRY_DUST_DISPATCH
         );
 
         Order order = orderService.createOrder(dto);
@@ -635,10 +639,13 @@ class OrderServiceTest {
         Mockito.when(cartService.getCart()).thenReturn(cart);
         Mockito.when(productService.getProductById(PRODUCT_ID))
                 .thenReturn(Optional.of(product));
+        Mockito.when(orderRepository.save(Mockito.any(Order.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
 
         OrderCreateDTO dto = new OrderCreateDTO(
                 SHIPPING_ADDRESS_ID,
-                BILLING_ADDRESS_ID
+                BILLING_ADDRESS_ID,
+                ShippingMethod.FAIRY_DUST_DISPATCH
         );
 
         Order order = orderService.createOrder(dto);
@@ -660,10 +667,13 @@ class OrderServiceTest {
         Mockito.when(cartService.getCart()).thenReturn(cart);
         Mockito.when(productService.getProductById(PRODUCT_ID))
                 .thenReturn(Optional.of(product));
+        Mockito.when(orderRepository.save(Mockito.any(Order.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
 
         OrderCreateDTO dto = new OrderCreateDTO(
                 SHIPPING_ADDRESS_ID,
-                BILLING_ADDRESS_ID
+                BILLING_ADDRESS_ID,
+                ShippingMethod.FAIRY_DUST_DISPATCH
         );
 
         Order order = orderService.createOrder(dto);
@@ -691,10 +701,13 @@ class OrderServiceTest {
         Mockito.when(cartService.getCart()).thenReturn(cart);
         Mockito.when(productService.getProductById(PRODUCT_ID))
                 .thenReturn(Optional.of(product));
+        Mockito.when(orderRepository.save(Mockito.any(Order.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
 
         OrderCreateDTO dto = new OrderCreateDTO(
                 SHIPPING_ADDRESS_ID,
-                BILLING_ADDRESS_ID
+                BILLING_ADDRESS_ID,
+                ShippingMethod.FAIRY_DUST_DISPATCH
         );
 
         Order order = orderService.createOrder(dto);
@@ -716,10 +729,13 @@ class OrderServiceTest {
         Mockito.when(cartService.getCart()).thenReturn(cart);
         Mockito.when(productService.getProductById(PRODUCT_ID))
                 .thenReturn(Optional.of(product));
+        Mockito.when(orderRepository.save(Mockito.any(Order.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
 
         OrderCreateDTO dto = new OrderCreateDTO(
                 SHIPPING_ADDRESS_ID,
-                BILLING_ADDRESS_ID
+                BILLING_ADDRESS_ID,
+                ShippingMethod.FAIRY_DUST_DISPATCH
         );
 
         Order order = orderService.createOrder(dto);
@@ -735,6 +751,7 @@ class OrderServiceTest {
                 List.of(),
                 new OrderAddress(COUNTRY, CITY_INNSBRUCK, POSTAL, STREET, NUMBER, EXTRA),
                 new OrderAddress(COUNTRY, CITY_GRAZ, POSTAL, STREET, NUMBER, null),
+                ShippingMethod.FAIRY_DUST_DISPATCH,
                 0.0
         );
         order.setOrderNumber(ORDER_NUMBER);

@@ -32,6 +32,9 @@ public class AuthenticationService {
      * @return the authentication object
      */
     public Authentication authenticateLoginRequest(String username, String password) {
+        if (username == null || password == null) {
+            throw new IllegalArgumentException("Username and password cannot be null");
+        }
         return authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
     }
 
@@ -41,6 +44,9 @@ public class AuthenticationService {
      * @return the generated JWT token
      */
     public String generateToken(Authentication authentication) {
+        if (authentication == null) {
+            throw new IllegalArgumentException("Authentication cannot be null");
+        }
         return tokenProvider.generate(authentication);
     }
 
