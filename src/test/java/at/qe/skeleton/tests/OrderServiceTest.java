@@ -19,6 +19,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -767,4 +768,41 @@ class OrderServiceTest {
         Assertions.assertEquals(OrderStatus.PAID, result.getStatus());
         // Verify event was published (would need to inject ApplicationEventPublisher mock)
     }
+
+    @Test
+    void getOrderByNumberAppliesLifecycleAndPersistsStatus() throws Exception {
+        Order order = new Order(
+                user,
+                List.of(),
+                new OrderAddress(COUNTRY, CITY_INNSBRUCK, POSTAL, STREET, NUMBER, EXTRA),
+                new OrderAddress(COUNTRY, CITY_GRAZ, POSTAL, STREET, NUMBER, null),
+                ShippingMethod.FAIRY_DUST_DISPATCH,
+                0.0
+        );
+        order.setOrderNumber(ORDER_NUMBER);
+        order.setStatus(OrderStatus.PAID);
+
+        // set timestamp via reflection (same technique as before)
+        var field = Order.class.getDeclaredField("timestamp");
+        field.setAccessible(true);
+        field.set(order, LocalDateTime.now().minusHours(13));
+
+        Mockito.when(orderRepository.findByOrderNumber(ORDER_NUMBER))
+                .thenReturn(Optional.of(order));
+
+        Mockito.when(orderRepository.save(Mockito.any(Order.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
+
+        // when
+        Order result = orderService.getOrderByNumber(ORDER_NUMBER);
+
+        // then
+        Assertions.assertEquals(OrderStatus.SHIPPING, result.getStatus());
+
+        // verify persistence
+        Mockito.verify(orderRepository).save(
+                Mockito.argThat(o -> o.getStatus() == OrderStatus.SHIPPING)
+        );
+    }
+
 }
