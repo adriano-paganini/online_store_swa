@@ -237,4 +237,28 @@ class OrderControllerTest {
                         .content(objectMapper.writeValueAsString(createDTO)))
                 .andExpect(MockMvcResultMatchers.status().isUnauthorized());
     }
+
+    @Test
+    @WithMockUser
+    void createOrderSuccess_returnsExactDtoJson() throws Exception {
+        OrderCreateDTO createDTO = new OrderCreateDTO(
+                ADDRESS_SHIPPING,
+                ADDRESS_BILLING
+        );
+
+        Mockito.when(orderService.createOrder(Mockito.any()))
+                .thenReturn(order);
+
+        Mockito.when(orderMapper.toDto(order))
+                .thenReturn(orderDTO);
+
+        String expectedJson = objectMapper.writeValueAsString(orderDTO);
+
+        mockMvc.perform(MockMvcRequestBuilders.post(ENDPOINT)
+                        .with(SecurityMockMvcRequestPostProcessors.csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(createDTO)))
+                .andExpect(MockMvcResultMatchers.status().isCreated())
+                .andExpect(MockMvcResultMatchers.content().json(expectedJson));
+    }
 }
