@@ -32,8 +32,17 @@ const createOrder = async (order: TOrderCreateDTO): Promise<TOrderDTO> => {
   }
 };
 
+const cancelOrder = async (num: string): Promise<void> => {
+  try {
+    await axios.post<void>(`/orders/${num}/cancel`);
+  } catch (err: unknown) {
+    throw new Error(`Error creating order: ${getErrorMessage(err)}`);
+  }
+};
+
 export const OrderApi = {
   fetchOrders,
   fetchOrderByNumber,
   createOrder,
+  cancelOrder,
 };

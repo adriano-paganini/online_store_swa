@@ -5,7 +5,7 @@ export enum OrderStatus {
   PAID = 'PAID',
   SHIPPING = 'SHIPPING',
   DELIVERED = 'DELIVERED',
-  CANCELLED = 'CANCELLED',
+  CANCELED = 'CANCELED',
 }
 
 export enum ShippingMethod {
