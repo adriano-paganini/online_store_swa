@@ -805,4 +805,72 @@ class OrderServiceTest {
         );
     }
 
+    @Test
+    void cancelPendingOrderSucceeds() {
+        Order order = new Order(
+                user,
+                List.of(),
+                new OrderAddress(COUNTRY, CITY_INNSBRUCK, POSTAL, STREET, NUMBER, EXTRA),
+                new OrderAddress(COUNTRY, CITY_GRAZ, POSTAL, STREET, NUMBER, null),
+                ShippingMethod.FAIRY_DUST_DISPATCH,
+                0.0
+        );
+        order.setOrderNumber(ORDER_NUMBER);
+        order.setStatus(OrderStatus.PENDING);
+
+        Mockito.when(orderRepository.findByOrderNumber(ORDER_NUMBER))
+                .thenReturn(Optional.of(order));
+        Mockito.when(orderRepository.save(Mockito.any()))
+                .thenAnswer(invocation -> invocation.getArgument(0));
+
+        Order canceled = orderService.cancelOrder(ORDER_NUMBER);
+
+        Assertions.assertEquals(OrderStatus.CANCELED, canceled.getStatus());
+    }
+
+    @Test
+    void cancelShippingOrderFails() {
+        Order order = new Order(
+                user,
+                List.of(),
+                new OrderAddress(COUNTRY, CITY_INNSBRUCK, POSTAL, STREET, NUMBER, EXTRA),
+                new OrderAddress(COUNTRY, CITY_GRAZ, POSTAL, STREET, NUMBER, null),
+                ShippingMethod.FAIRY_DUST_DISPATCH,
+                0.0
+        );
+        order.setOrderNumber(ORDER_NUMBER);
+        order.setStatus(OrderStatus.SHIPPING);
+
+        Mockito.when(orderRepository.findByOrderNumber(ORDER_NUMBER))
+                .thenReturn(Optional.of(order));
+
+        ResponseStatusException ex = Assertions.assertThrows(
+                ResponseStatusException.class,
+                () -> orderService.cancelOrder(ORDER_NUMBER)
+        );
+
+        Assertions.assertEquals(HttpStatus.BAD_REQUEST, ex.getStatusCode());
+    }
+
+    @Test
+    void cancelAlreadyCanceledOrderIsIdempotent() {
+        Order order = new Order(
+                user,
+                List.of(),
+                new OrderAddress(COUNTRY, CITY_INNSBRUCK, POSTAL, STREET, NUMBER, EXTRA),
+                new OrderAddress(COUNTRY, CITY_GRAZ, POSTAL, STREET, NUMBER, null),
+                ShippingMethod.FAIRY_DUST_DISPATCH,
+                0.0
+        );
+        order.setOrderNumber(ORDER_NUMBER);
+        order.setStatus(OrderStatus.CANCELED);
+
+        Mockito.when(orderRepository.findByOrderNumber(ORDER_NUMBER))
+                .thenReturn(Optional.of(order));
+
+        Order result = orderService.cancelOrder(ORDER_NUMBER);
+
+        Assertions.assertEquals(OrderStatus.CANCELED, result.getStatus());
+        Mockito.verify(orderRepository, Mockito.never()).save(Mockito.any());
+    }
 }

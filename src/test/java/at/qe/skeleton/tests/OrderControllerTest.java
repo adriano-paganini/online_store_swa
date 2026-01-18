@@ -237,4 +237,29 @@ class OrderControllerTest {
                         .content(objectMapper.writeValueAsString(createDTO)))
                 .andExpect(MockMvcResultMatchers.status().isUnauthorized());
     }
+
+    @Test
+    @WithMockUser
+    void cancelOrderSuccess() throws Exception {
+        Mockito.when(orderService.cancelOrder(ORDER_NUMBER))
+                .thenReturn(order);
+
+        Mockito.when(orderMapper.toDto(order))
+                .thenReturn(orderDTO);
+
+        mockMvc.perform(MockMvcRequestBuilders
+                        .post(ENDPOINT + "/{orderNumber}/cancel", ORDER_NUMBER)
+                        .with(SecurityMockMvcRequestPostProcessors.csrf()))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.orderNumber")
+                        .value(ORDER_NUMBER));
+    }
+
+    @Test
+    void cancelOrderUnauthenticatedFails() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders
+                        .post(ENDPOINT + "/{orderNumber}/cancel", ORDER_NUMBER)
+                        .with(SecurityMockMvcRequestPostProcessors.csrf()))
+                .andExpect(MockMvcResultMatchers.status().isUnauthorized());
+    }
 }
