@@ -2,6 +2,7 @@ package at.qe.skeleton.controllers;
 
 import at.qe.skeleton.dtos.PaymentRequestDTO;
 import at.qe.skeleton.dtos.PaymentResponseDTO;
+import at.qe.skeleton.services.OrderService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -17,10 +19,16 @@ import java.util.UUID;
 @RequestMapping("/cart/payment")
 public class PaymentController {
 
- 
+
+    private final OrderService orderService;
+
+    public PaymentController(OrderService orderService) {
+        this.orderService = orderService;
+    }
+
     @PostMapping
     public ResponseEntity<PaymentResponseDTO> processPayment(@Valid @RequestBody PaymentRequestDTO paymentRequest) {
-        
+
         
         if (paymentRequest.amount() <= 0) {
             PaymentResponseDTO response = new PaymentResponseDTO(
@@ -73,7 +81,9 @@ public class PaymentController {
                 "Payment processed successfully",
                 LocalDateTime.now()
         );
-        
+
+        // TODO: accept orderId
+        // Order confirmedOrder = orderService.confirmPayment(orderId);
         return ResponseEntity.ok(response);
     }
     
