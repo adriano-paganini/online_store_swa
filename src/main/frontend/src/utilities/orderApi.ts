@@ -4,7 +4,7 @@ import type { OrderStatus, TOrderCreateDTO, TOrderDTO } from '../DTO/order.types
 import type { TPageResponseDTO, TPaginationParams } from '../DTO/pagination.types';
 
 const fetchOrders = async (
-  params?: TPaginationParams & { status?: OrderStatus }
+  params?: TPaginationParams & { status?: OrderStatus[] }
 ): Promise<TPageResponseDTO<TOrderDTO>> => {
   try {
     const response = await axios.get<TPageResponseDTO<TOrderDTO>>('/orders', { params });

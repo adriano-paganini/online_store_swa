@@ -35,7 +35,8 @@ export default function OrdersPage() {
     try {
       setLoading(true);
 
-      const statusParam = selectedStatuses.length === 1 ? selectedStatuses[0] : undefined;
+      const statusParam =
+        selectedStatuses.length > 0 && selectedStatuses.length <= ALL_STATUSES.length ? selectedStatuses : undefined;
 
       const res = await OrderApi.fetchOrders({
         page,
