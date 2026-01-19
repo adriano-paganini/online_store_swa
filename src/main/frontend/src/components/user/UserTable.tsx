@@ -4,6 +4,7 @@
  */
 import React, { useEffect, useState } from 'react';
 
+import { toastApiError } from '@/lib/utils';
 import { CheckedState } from '@radix-ui/react-checkbox';
 import { ChevronDown, Plus } from 'lucide-react';
 import { toast } from 'sonner';
@@ -49,8 +50,7 @@ const UserTable = () => {
         const userxInstances = userxData.data.map((user: TUserDTO) => createUserxFromInterfaces(user));
         setUsers(userxInstances);
       } catch (err: unknown) {
-        console.error('Error fetching users:', err);
-        toast.error('Error fetching users');
+        toastApiError(err);
       } finally {
         setLoading(false); // Set loading to false regardless of success or failure
       }
@@ -101,7 +101,6 @@ const UserTable = () => {
     if (!validationResult.valid) {
       // Display an error eventMessage or handle the validation error
       setValidation(validationResult);
-      console.error('Please fill in all required fields.');
       toast.error('Please fill in all required fields.');
       return;
     }
@@ -128,8 +127,7 @@ const UserTable = () => {
 
       toast.success('User created successfully');
     } catch (err: unknown) {
-      console.error('Error saving user:', err);
-      toast.error('Error saving user');
+      toastApiError(err);
     }
   };
 
@@ -145,8 +143,7 @@ const UserTable = () => {
 
       toast.success('User updated successfully');
     } catch (err: unknown) {
-      console.error('Error updating user:', err);
-      toast.error('Error updating user');
+      toastApiError(err);
     }
   };
 
@@ -163,8 +160,7 @@ const UserTable = () => {
       hideDialog();
       toast.success('User deleted successfully');
     } catch (err: unknown) {
-      console.error('Error deleting user:', err);
-      toast.error('Error deleting user');
+      toastApiError(err);
     } finally {
       setDeleteDialogVisible(false);
     }

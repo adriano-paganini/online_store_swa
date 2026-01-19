@@ -73,8 +73,6 @@ const clearCart = async (): Promise<void> => {
   }
 };
 
-// Temporarily using real API for testing backend endpoints
-// Change back to: import.meta.env.DEV ? MockCartApi : {...}
 export const CartApi = {
   getCart,
   addItemToCart,

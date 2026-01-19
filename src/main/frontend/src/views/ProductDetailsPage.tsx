@@ -15,7 +15,7 @@ import { toast } from 'sonner';
 import { ReviewsList } from '@/components/review/ReviewsList';
 import { SubscriptionBlock } from '@/components/subscription/SubscriptionBlock';
 import { Avatar, AvatarImage } from '@/components/ui/avatar';
-import { getInitials } from '@/lib/utils';
+import { getInitials, toastApiError } from '@/lib/utils';
 import { AvatarFallback } from '@radix-ui/react-avatar';
 import type { TProductDTO } from '../DTO/product.types';
 
@@ -34,9 +34,8 @@ export default function ProductDetailsPage() {
         setLoading(true);
         const data = await ProductApi.fetchProductById(productId);
         setProduct(data);
-      } catch (error) {
-        console.error('Failed to load product', error);
-        toast.error('Failed to load product');
+      } catch (err) {
+        toastApiError(err);
       } finally {
         setLoading(false);
       }

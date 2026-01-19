@@ -1,13 +1,13 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
-import { toast } from 'sonner';
 
 import { AddressDialog } from '@/components/address/AddressDialog';
 import { AddressTable } from '@/components/address/AddressTable';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import type { TAddressDTO } from '@/DTO/address.types';
+import { toastApiError } from '@/lib/utils';
 import { AddressApi } from '@/utilities/addressApi';
 import { Plus, Search } from 'lucide-react';
 
@@ -22,8 +22,8 @@ export default function AddressesPage() {
       setLoading(true);
       const data = await AddressApi.fetchAddresses();
       setAddresses(data);
-    } catch {
-      toast.error('Failed to load addresses');
+    } catch (err) {
+      toastApiError(err);
     } finally {
       setLoading(false);
     }

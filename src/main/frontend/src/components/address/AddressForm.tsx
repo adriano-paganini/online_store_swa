@@ -8,6 +8,7 @@ import { AddressApi } from '@/utilities/addressApi';
 
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { toastApiError } from '@/lib/utils';
 
 type TAddressFormProps = {
   address: TAddressDTO | null;
@@ -39,8 +40,8 @@ export function AddressForm({ address, onSuccess, setLoading }: TAddressFormProp
       }
 
       onSuccess();
-    } catch {
-      toast.error('Failed to save address');
+    } catch (err) {
+      toastApiError(err);
     } finally {
       setLoading(false);
     }

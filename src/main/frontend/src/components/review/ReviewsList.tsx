@@ -4,6 +4,7 @@ import { Pagination } from '@/components/general/Pagination';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import type { TReviewCreateDTO, TReviewDTO } from '@/DTO/review.types';
+import { toastApiError } from '@/lib/utils';
 import { ReviewApi } from '@/utilities/reviewApi';
 import { Star } from 'lucide-react';
 import { useEffect, useState } from 'react';
@@ -59,8 +60,7 @@ export function ReviewsList({ productId }: TProductReviewsProps) {
         setReviews(response.data);
         setTotalPages(response.totalPages);
       } catch (err) {
-        console.error(err instanceof Error ? err.message : 'Failed to load reviews');
-        toast.error('Error loading reviews. Please try again later.');
+        toastApiError(err);
       } finally {
         setLoading(false);
       }
@@ -90,8 +90,7 @@ export function ReviewsList({ productId }: TProductReviewsProps) {
       setNewReview({ score: 5, content: '' });
       toast.success('Review submitted successfully!');
     } catch (err) {
-      console.error(err instanceof Error ? err.message : 'Failed to create review');
-      toast.error('Error submitting review. Please try again later.');
+      toastApiError(err);
     } finally {
       setCreating(false);
     }

@@ -12,6 +12,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
+import { toastApiError } from '@/lib/utils';
 import { ProductDeleteDialog } from './ProductDeleteDialog';
 import { ProductDialog } from './ProductDialog';
 import { ProductList } from './ProductList';
@@ -61,8 +62,8 @@ export const ProductTable = () => {
 
       setProducts(filtered);
       setTotalPages(res.totalPages);
-    } catch {
-      toast.error('Failed to load products');
+    } catch (err) {
+      toastApiError(err);
     } finally {
       setLoading(false);
     }
@@ -104,8 +105,8 @@ export const ProductTable = () => {
       }
       setDialogOpen(false);
       await loadProducts();
-    } catch {
-      toast.error('Failed to save product');
+    } catch (err) {
+      toastApiError(err);
     }
   };
 
@@ -115,8 +116,8 @@ export const ProductTable = () => {
       await ProductApi.deleteProduct(selectedProduct.id);
       toast.success('Product deleted');
       await loadProducts();
-    } catch {
-      toast.error('Failed to delete product');
+    } catch (err) {
+      toastApiError(err);
     } finally {
       setDeleteOpen(false);
     }

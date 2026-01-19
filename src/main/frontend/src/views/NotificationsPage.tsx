@@ -1,7 +1,6 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
-import { toast } from 'sonner';
 
 import { Pagination } from '@/components/general/Pagination';
 import { NotificationFilters } from '@/components/notification/NotificationFilters';
@@ -9,6 +8,7 @@ import { NotificationTable } from '@/components/notification/NotificationTable';
 
 import type { TNotificationResponseDTO } from '@/DTO/notification.types';
 import { NotificationStatus, NotificationType } from '@/DTO/notification.types';
+import { toastApiError } from '@/lib/utils';
 import { NotificationApi } from '@/utilities/notificationApi';
 
 export default function NotificationsPage() {
@@ -43,7 +43,7 @@ export default function NotificationsPage() {
       setTotalPages(response.totalPages);
     } catch (err) {
       console.error(err);
-      toast.error('Failed to load notifications');
+      toastApiError(err);
     } finally {
       setLoading(false);
     }

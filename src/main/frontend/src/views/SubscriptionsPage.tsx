@@ -1,7 +1,6 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
-import { toast } from 'sonner';
 
 import { Pagination } from '@/components/general/Pagination';
 
@@ -9,6 +8,7 @@ import { SubscriptionFilters } from '@/components/subscription/SubscriptionsFilt
 import { SubscriptionTable } from '@/components/subscription/SubscriptionsTable';
 import type { NotificationType } from '@/DTO/notification.types';
 import type { SubscriptionType, TPopulatedSubscriptionDTO } from '@/DTO/subscription.types';
+import { toastApiError } from '@/lib/utils';
 import { SubscriptionApi } from '@/utilities/subscriptionApi';
 
 export default function SubscriptionsPage() {
@@ -43,7 +43,7 @@ export default function SubscriptionsPage() {
       setTotalPages(response.totalPages);
     } catch (err) {
       console.error(err);
-      toast.error('Failed to load subscriptions');
+      toastApiError(err);
     } finally {
       setLoading(false);
     }

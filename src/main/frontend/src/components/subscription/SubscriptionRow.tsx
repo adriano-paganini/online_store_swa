@@ -20,7 +20,7 @@ import type { TPopulatedSubscriptionDTO, TSubscriptionUpdateDTO } from '@/DTO/su
 
 import { SubscriptionDeleteDialog } from '@/components/subscription/SubscriptionDeleteDialog';
 import { SubscriptionDialog } from '@/components/subscription/SubscriptionDialog';
-import { getInitials } from '@/lib/utils';
+import { getInitials, toastApiError } from '@/lib/utils';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 
 type TSubscriptionRowProps = {
@@ -42,8 +42,8 @@ export function SubscriptionRow({ subscription, onChanged }: TSubscriptionRowPro
       toast.success('Subscription updated');
       setEditOpen(false);
       onChanged();
-    } catch {
-      toast.error('Failed to update subscription');
+    } catch (err) {
+      toastApiError(err);
     } finally {
       setLoading(false);
     }
@@ -56,8 +56,8 @@ export function SubscriptionRow({ subscription, onChanged }: TSubscriptionRowPro
       toast.success('Unsubscribed successfully');
       setDeleteOpen(false);
       onChanged();
-    } catch {
-      toast.error('Failed to unsubscribe');
+    } catch (err) {
+      toastApiError(err);
     } finally {
       setLoading(false);
     }

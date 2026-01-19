@@ -2,6 +2,7 @@
 
 import { ProductCard } from '@/components/product/ProductCard';
 import { Button } from '@/components/ui/button';
+import { toastApiError } from '@/lib/utils';
 import { ArrowRight, Package, Shield, TrendingUp } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
@@ -18,8 +19,8 @@ export default function HomePage() {
       try {
         const response = await ProductApi.fetchProducts({ limit: 4 });
         setFeaturedProducts(response.data);
-      } catch (error) {
-        console.error('Failed to load products:', error);
+      } catch (err) {
+        toastApiError(err);
       } finally {
         setLoading(false);
       }

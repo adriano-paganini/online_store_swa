@@ -18,6 +18,7 @@ import { CreditCardMethod } from '@/components/payment/CreditCardMethod';
 import { DadJokeMethod } from '@/components/payment/DadJokeMethod';
 import { NetflixPasswordMethod } from '@/components/payment/NetflixPasswordMethod';
 import { PaymentMethodSelector } from '@/components/payment/PaymentMethodSelector';
+import { toastApiError } from '@/lib/utils';
 
 export default function PaymentPage() {
   const { orderNumber } = useParams<{ orderNumber: string }>();
@@ -40,7 +41,7 @@ export default function PaymentPage() {
 
     OrderApi.fetchOrderByNumber(orderNumber)
       .then(setOrder)
-      .catch(() => toast.error('Failed to load order'))
+      .catch((err) => toastApiError(err))
       .finally(() => setLoading(false));
   }, [orderNumber]);
 

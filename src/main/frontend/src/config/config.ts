@@ -30,6 +30,16 @@ globalAxios.interceptors.request.use(
   }
 );
 
+/**
+ * Returns a readable error message from an unknown error.
+ *
+ * - Axios error: `response.data.message` or fallback to `err.message`
+ * - Error instance: `err.message`
+ * - Anything else: stringified value
+ *
+ * @param err - Unknown error caught in a try/catch
+ * @returns A user-friendly error message
+ */
 export const getErrorMessage = (err: unknown): string => {
   if (globalAxios.isAxiosError(err)) {
     const data = err.response?.data as { message?: unknown } | undefined;

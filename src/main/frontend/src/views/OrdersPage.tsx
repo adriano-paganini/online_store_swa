@@ -2,7 +2,6 @@
 
 import { ChevronDown } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
-import { toast } from 'sonner';
 
 import { Pagination } from '@/components/general/Pagination';
 import { OrdersTable } from '@/components/order/OrdersTable';
@@ -16,6 +15,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 
 import { OrderStatus, type TOrderDTO } from '@/DTO/order.types';
+import { toastApiError } from '@/lib/utils';
 import { OrderApi } from '@/utilities/orderApi';
 import { OrderStatusLabels } from '@/utilities/orderUtils';
 
@@ -45,8 +45,8 @@ export default function OrdersPage() {
 
       setOrders(res.data);
       setTotalPages(res.totalPages);
-    } catch {
-      toast.error('Failed to load orders');
+    } catch (err) {
+      toastApiError(err);
     } finally {
       setLoading(false);
     }

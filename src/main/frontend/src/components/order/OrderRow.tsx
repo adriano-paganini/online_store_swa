@@ -4,9 +4,8 @@ import { ChevronDown, Trash2, X } from 'lucide-react';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 
-import { getErrorMessage } from '@/config/config';
 import { OrderStatus, type TOrderDTO } from '@/DTO/order.types';
-import { cn } from '@/lib/utils';
+import { cn, toastApiError } from '@/lib/utils';
 import { OrderApi } from '@/utilities/orderApi';
 import { calculateOrderTotal, OrderStatusBgClasses, OrderStatusLabels } from '@/utilities/orderUtils';
 
@@ -35,7 +34,7 @@ export function OrderRow({ order }: TOrderRowProps) {
       setDialogOpen(false);
       window.location.reload();
     } catch (err: unknown) {
-      toast.error(getErrorMessage(err));
+      toastApiError(err);
     } finally {
       setCancelling(false);
     }

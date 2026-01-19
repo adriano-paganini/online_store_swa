@@ -6,6 +6,7 @@ import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 
 import type { TCartItemCreateDTO, TPopulatedCartDTO } from '../DTO/cart.types';
 
+import { toastApiError } from '@/lib/utils';
 import { toast } from 'sonner';
 import { CartApi } from '../utilities/cartApi';
 import { useUser } from './authenticatedUserContext';
@@ -60,9 +61,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       setLoading(true);
       const cartData = await CartApi.getCart();
       setCart(cartData);
-    } catch (error) {
-      console.error('Failed to fetch cart:', error);
-      toast.error('Failed to load cart');
+    } catch (err) {
+      toastApiError(err);
     } finally {
       setLoading(false);
     }
@@ -77,9 +77,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     try {
       const updatedCart = await CartApi.addItemToCart(item);
       setCart(updatedCart);
-    } catch (error) {
-      console.error('Failed to add item to cart:', error);
-      toast.error('Failed to add item to cart');
+    } catch (err) {
+      toastApiError(err);
     }
   };
 
@@ -95,8 +94,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         quantity: item.quantity + 1,
       });
       setCart(updatedCart);
-    } catch {
-      toast.error('Failed to update cart item');
+    } catch (err) {
+      toastApiError(err);
     } finally {
       unmarkItemLoading(id);
     }
@@ -120,8 +119,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         });
         setCart(updatedCart);
       }
-    } catch {
-      toast.error('Failed to update cart item');
+    } catch (err) {
+      toastApiError(err);
     } finally {
       unmarkItemLoading(id);
     }
@@ -134,9 +133,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       markItemLoading(id);
       await CartApi.removeCartItem(id);
       setCart((prev) => (prev ? { ...prev, items: prev.items.filter((i) => i.id !== id) } : prev));
-    } catch (error) {
-      console.error('Failed to remove cart item:', error);
-      toast.error('Failed to remove cart item');
+    } catch (err) {
+      toastApiError(err);
     } finally {
       unmarkItemLoading(id);
     }
@@ -150,9 +148,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       await CartApi.clearCart();
       setCart({ items: [] });
       toast.success('Cart cleared');
-    } catch (error) {
-      console.error('Failed to clear cart:', error);
-      toast.error('Failed to clear cart');
+    } catch (err) {
+      toastApiError(err);
     } finally {
       setClearingCart(false);
     }

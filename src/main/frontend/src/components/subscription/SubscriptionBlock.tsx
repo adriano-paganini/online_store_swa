@@ -11,6 +11,7 @@ import type { TPopulatedSubscriptionDTO, TSubscriptionCreateDTO } from '@/DTO/su
 
 import { SubscriptionApi } from '@/utilities/subscriptionApi';
 
+import { toastApiError } from '@/lib/utils';
 import { NotificationTypeLabels } from '@/utilities/notificationUtils';
 import { SubscriptionTypeLabels } from '@/utilities/subscriptionUtils';
 import { MoreHorizontal, PenLine, Trash2 } from 'lucide-react';
@@ -34,7 +35,8 @@ export const SubscriptionBlock = ({ product }: TSubscriptionBlockProps) => {
       try {
         const data = await SubscriptionApi.getPopulatedSubscriptionByProductId(product.id);
         setSubscription(data);
-      } catch {
+      } catch (err) {
+        toastApiError(err);
         setSubscription(null);
       }
     };
@@ -60,8 +62,8 @@ export const SubscriptionBlock = ({ product }: TSubscriptionBlockProps) => {
 
       toast.success(subscription ? 'Subscription updated' : 'Subscription created');
       setDialogOpen(false);
-    } catch {
-      toast.error('Failed to save subscription');
+    } catch (err) {
+      toastApiError(err);
     } finally {
       setLoading(false);
     }
@@ -76,8 +78,8 @@ export const SubscriptionBlock = ({ product }: TSubscriptionBlockProps) => {
       setSubscription(null);
       toast.success('Subscription deleted');
       setDeleteOpen(false);
-    } catch {
-      toast.error('Failed to delete subscription');
+    } catch (err) {
+      toastApiError(err);
     } finally {
       setLoading(false);
     }
