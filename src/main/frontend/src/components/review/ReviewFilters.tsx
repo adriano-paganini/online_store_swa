@@ -3,6 +3,7 @@
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 type TReviewFiltersProps = {
   minRating?: number;
@@ -29,16 +30,21 @@ export function ReviewFilters({
         <div className="space-y-3">
           <div>
             <Label className="mb-2 block">Sort By</Label>
-            <select
+
+            <Select
               value={sort}
-              onChange={(e) => setSort(e.target.value)}
-              className="w-full rounded-md border px-3 py-2 text-sm"
+              onValueChange={setSort}
             >
-              <option value="timestamp,desc">Newest first</option>
-              <option value="timestamp,asc">Oldest first</option>
-              <option value="score,desc">Highest rating</option>
-              <option value="score,asc">Lowest rating</option>
-            </select>
+              <SelectTrigger className="w-full">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="timestamp,desc">Newest first</SelectItem>
+                <SelectItem value="timestamp,asc">Oldest first</SelectItem>
+                <SelectItem value="score,desc">Highest rating</SelectItem>
+                <SelectItem value="score,asc">Lowest rating</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
 
           <div>

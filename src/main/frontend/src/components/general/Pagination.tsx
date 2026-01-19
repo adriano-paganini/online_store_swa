@@ -1,6 +1,7 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 type TPaginationProps = {
   page: number;
@@ -19,16 +20,21 @@ export function Pagination({ page, totalPages, limit, onLimitChange, onPageChang
     <div className="mt-8 flex flex-wrap items-center justify-between gap-4">
       <div className="flex items-center gap-2 text-sm">
         <span className="text-muted-foreground">Items per page</span>
-        <select
-          value={limit}
-          onChange={(e) => onLimitChange?.(Number(e.target.value))}
-          className="rounded-md border px-2 py-1 text-sm"
+
+        <Select
+          value={String(limit)}
+          onValueChange={(value) => onLimitChange(Number(value))}
         >
-          <option value={6}>6</option>
-          <option value={12}>12</option>
-          <option value={24}>24</option>
-          <option value={48}>48</option>
-        </select>
+          <SelectTrigger className="h-8 w-[90px] text-sm">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="6">6</SelectItem>
+            <SelectItem value="12">12</SelectItem>
+            <SelectItem value="24">24</SelectItem>
+            <SelectItem value="48">48</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
 
       <div className="flex items-center gap-2">

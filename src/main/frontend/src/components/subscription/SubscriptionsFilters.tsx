@@ -3,6 +3,7 @@
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 import { NotificationType } from '@/DTO/notification.types';
 import { SubscriptionType } from '@/DTO/subscription.types';
@@ -91,7 +92,6 @@ export function SubscriptionFilters({
           <Label className="mb-2 block">Channels</Label>
 
           <div className="space-y-2">
-            {/* All */}
             <div className="flex items-center gap-2">
               <Checkbox
                 checked={allChannelsSelected}
@@ -116,22 +116,20 @@ export function SubscriptionFilters({
         </div>
 
         <div>
-          <Label
-            htmlFor="sort"
-            className="mb-2 block"
-          >
-            Sort By
-          </Label>
+          <Label className="mb-2 block">Sort By</Label>
 
-          <select
-            id="sort"
+          <Select
             value={sort}
-            onChange={(e) => setSort(e.target.value)}
-            className="w-full rounded-md border px-3 py-2 text-sm"
+            onValueChange={setSort}
           >
-            <option value="id,desc">Newest subscriptions</option>
-            <option value="id,asc">Oldest subscriptions</option>
-          </select>
+            <SelectTrigger className="w-full">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="id,desc">Newest subscriptions</SelectItem>
+              <SelectItem value="id,asc">Oldest subscriptions</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
 
         <Button

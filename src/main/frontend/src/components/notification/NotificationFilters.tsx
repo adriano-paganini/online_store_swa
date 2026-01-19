@@ -3,6 +3,7 @@
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 import { NotificationStatus, NotificationType } from '@/DTO/notification.types';
 
@@ -81,22 +82,20 @@ export function NotificationFilters({
         </div>
 
         <div>
-          <Label
-            htmlFor="sort"
-            className="mb-2 block"
-          >
-            Sort By
-          </Label>
+          <Label className="mb-2 block">Sort By</Label>
 
-          <select
-            id="sort"
+          <Select
             value={sort}
-            onChange={(e) => setSort(e.target.value)}
-            className="w-full rounded-md border px-3 py-2 text-sm"
+            onValueChange={setSort}
           >
-            <option value="timestamp,desc">Newest first</option>
-            <option value="timestamp,asc">Oldest first</option>
-          </select>
+            <SelectTrigger className="w-full">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="timestamp,desc">Newest first</SelectItem>
+              <SelectItem value="timestamp,asc">Oldest first</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
 
         <Button

@@ -10,6 +10,7 @@ import { ProductApi } from '@/utilities/productApi';
 import { Pagination } from '@/components/general/Pagination';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 import { ProductDeleteDialog } from './ProductDeleteDialog';
 import { ProductDialog } from './ProductDialog';
@@ -131,20 +132,24 @@ export const ProductTable = () => {
           className="max-w-sm"
         />
 
-        <select
+        <Select
           value={sort}
-          onChange={(e) => setSort(e.target.value)}
-          className="rounded-md border px-3 py-2 text-sm"
+          onValueChange={setSort}
         >
-          <option value="id,asc">Default</option>
-          <option value="name,asc">Name A–Z</option>
-          <option value="name,desc">Name Z–A</option>
-          <option value="price,asc">Price ↑</option>
-          <option value="price,desc">Price ↓</option>
-          <option value="stock,asc">Stock ↑</option>
-          <option value="stock,desc">Stock ↓</option>
-          <option value="discount,desc">Discount ↓</option>
-        </select>
+          <SelectTrigger className="w-[200px]">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="id,asc">Default</SelectItem>
+            <SelectItem value="name,asc">Name A–Z</SelectItem>
+            <SelectItem value="name,desc">Name Z–A</SelectItem>
+            <SelectItem value="price,asc">Price ↑</SelectItem>
+            <SelectItem value="price,desc">Price ↓</SelectItem>
+            <SelectItem value="stock,asc">Stock ↑</SelectItem>
+            <SelectItem value="stock,desc">Stock ↓</SelectItem>
+            <SelectItem value="discount,desc">Discount ↓</SelectItem>
+          </SelectContent>
+        </Select>
 
         <Button
           className="ml-auto"
