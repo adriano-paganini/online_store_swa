@@ -5,6 +5,7 @@ import at.qe.skeleton.configs.JwtTokenProvider;
 import at.qe.skeleton.configs.TokenAuthenticationFilter;
 import at.qe.skeleton.controllers.PaymentController;
 import at.qe.skeleton.dtos.PaymentRequestDTO;
+import at.qe.skeleton.services.OrderService;
 import at.qe.skeleton.services.UserxService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
@@ -44,6 +45,9 @@ public class PaymentControllerTest {
 
     @MockitoBean
     private JwtConfig jwtConfig;
+
+    @MockitoBean
+    private OrderService orderService;
 
     @MockitoBean
     private UserxService userService;

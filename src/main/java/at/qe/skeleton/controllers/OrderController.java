@@ -65,11 +65,6 @@ public class OrderController {
         return orderMapper.toDto(order);
     }
 
-    @PatchMapping("/{orderNumber}/confirm")
-    public OrderDTO confirmOrder(@PathVariable String orderNumber) {
-        Order order = orderService.confirmPayment(orderNumber);
-        return orderMapper.toDto(order);
-    }
 
     @PostMapping("/{orderNumber}/cancel")
     @ResponseStatus(HttpStatus.OK)
