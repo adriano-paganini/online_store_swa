@@ -161,7 +161,7 @@ public class OrderService {
         applicationEventPublisher.publishEvent(new OrderCompletionEvent(updated));
 
         return updated;
-    };
+    }
 
     @Transactional
     public Order updateOrderStatus(OrderStatus status, String orderNumber){

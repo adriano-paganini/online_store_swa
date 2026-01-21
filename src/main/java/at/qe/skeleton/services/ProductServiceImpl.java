@@ -7,7 +7,6 @@ import at.qe.skeleton.model.Product;
 import at.qe.skeleton.model.Subscription;
 import at.qe.skeleton.model.Userx;
 import at.qe.skeleton.repositories.ProductRepository;
-import org.springframework.boot.autoconfigure.graphql.GraphQlProperties;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;

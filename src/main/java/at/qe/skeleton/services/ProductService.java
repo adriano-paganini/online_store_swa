@@ -1,6 +1,5 @@
 package at.qe.skeleton.services;
 
-import at.qe.skeleton.dtos.ProductCreateDTO;
 import at.qe.skeleton.dtos.ProductUpdateDTO;
 import at.qe.skeleton.model.Product;
 import org.springframework.data.domain.Page;
