@@ -81,7 +81,8 @@ public class SubscriptionService {
 
         // Assign ownership and persist the new subscription
         subscription.setUser(user);
-        return subscriptionRepository.save(subscription);
+        subscriptionRepository.save(subscription);
+        return subscription;
     }
 
     @Transactional
