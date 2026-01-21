@@ -9,6 +9,12 @@ import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
+/**
+ * Mapper used to initialize new {@link Subscription} entities from {@link SubscriptionCreateDTO}.
+ * <p>It resolves the associated product via the repository during the mapping process.
+ * Mapping from entity to creation DTO is not supported.</p>
+ */
+
 @Component
 public class SubscriptionCreateMapper implements DTOMapper<Subscription, SubscriptionCreateDTO> {
 

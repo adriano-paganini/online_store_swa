@@ -5,6 +5,10 @@ import at.qe.skeleton.model.SubscriptionType;
 
 import java.time.format.DateTimeFormatter;
 
+/**
+ * Concrete implementation for product price changes.
+ * * Hierarchy: Extends ProductEvent<Double> specifically.
+ */
 public class ProductPriceUpdateEvent extends ProductEvent<Double> {
     public ProductPriceUpdateEvent(Product product, Double oldValue, Double newValue) {
         super(product, SubscriptionType.PRICEUPDATE, oldValue, newValue);
@@ -12,6 +16,7 @@ public class ProductPriceUpdateEvent extends ProductEvent<Double> {
 
     @Override
     public String getPayloadSubjectLine() {
+        // Returns a formatted string with the old and new prices
         DateTimeFormatter dateId = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
         String formattedDate = super.getTimestamp().format(dateId);
 

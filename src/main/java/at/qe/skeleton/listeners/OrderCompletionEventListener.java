@@ -13,24 +13,40 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
 
+/**
+ * Event listener responsible for reacting to {@link OrderCompletionEvent}s.
+ * <p>
+ * This component orchestrates the post-purchase notification flow by creating a persistent
+ * {@link Notification} record and publishing a specialized {@link EmailNotificationEvent}
+ * to trigger the actual delivery.
+ */
 @Component
 public class OrderCompletionEventListener {
 
     private final NotificationService notificationService;
     private final ApplicationEventPublisher applicationEventPublisher;
 
-
     public OrderCompletionEventListener(NotificationService notificationService, ApplicationEventPublisher applicationEventPublisher) {
         this.notificationService = notificationService;
         this.applicationEventPublisher = applicationEventPublisher;
     }
 
+    // Triggered asynchronously after the order transaction has been successfully committed
     @Async
     @Transactional
-    @TransactionalEventListener(phase= TransactionPhase.AFTER_COMMIT)
-    public void handleOrderCompleteEvent(OrderCompletionEvent event){
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    public void handleOrderCompleteEvent(OrderCompletionEvent event) {
+        // Retrieve the order details from the event payload
         Order order = event.getPayloadInfo();
-        Notification notification = notificationService.createNotification(order.getUser().getId(), NotificationType.EMAIL, event);
-        applicationEventPublisher.publishEvent(new EmailNotificationEvent<>(notification,event));
+
+        // Create and persist a new notification entry for the user's audit trail
+        Notification notification = notificationService.createNotification(
+                order.getUser().getId(),
+                NotificationType.EMAIL,
+                event
+        );
+
+        // Publish a delivery event to be handled by the specialized Email listener
+        applicationEventPublisher.publishEvent(new EmailNotificationEvent<>(notification, event));
     }
 }
