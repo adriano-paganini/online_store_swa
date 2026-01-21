@@ -1,6 +1,5 @@
 package at.qe.skeleton.model;
 
-
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.data.domain.Persistable;
@@ -11,6 +10,19 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+/**
+ * Entity representing a notification sent to a user.
+ * <p>
+ * This class tracks the following parameters:
+ * <ul>
+ * <li><b>id:</b> The unique database identifier for the notification.</li>
+ * <li><b>userId:</b> The ID of the user who is the recipient of this notification.</li>
+ * <li><b>message:</b> The actual text content of the notification (up to 5000 characters).</li>
+ * <li><b>channel:</b> The {@link NotificationType} used for delivery (e.g., EMAIL, SMS).</li>
+ * <li><b>status:</b> The current {@link NotificationStatus} (e.g., QUEUED, SENT).</li>
+ * <li><b>timestamp:</b> The date and time when the notification was created.</li>
+ * </ul>
+ */
 @Entity
 public class Notification implements Persistable<Long>, Serializable, Comparable<Notification> {
 
@@ -40,11 +52,11 @@ public class Notification implements Persistable<Long>, Serializable, Comparable
         this.userId = userId;
         this.message = message;
         this.channel = channel;
+        // Default status for new notifications is QUEUED
         this.status = NotificationStatus.QUEUED;
     }
 
     public Notification() {
-
     }
 
     public void setId(Long id) {
@@ -93,6 +105,7 @@ public class Notification implements Persistable<Long>, Serializable, Comparable
 
     @Override
     public int compareTo(Notification n) {
+        // Compare notifications based on their database ID
         assert n.getId() != null;
         return this.id.compareTo(n.getId());
     }
@@ -105,6 +118,7 @@ public class Notification implements Persistable<Long>, Serializable, Comparable
 
     @Override
     public boolean isNew() {
+        // Entity is considered new if the ID has not been assigned yet
         return (null == id);
     }
 
@@ -130,6 +144,4 @@ public class Notification implements Persistable<Long>, Serializable, Comparable
     public String toString() {
         return "at.qe.skeleton.model.Notification[ id=" + id + " ]";
     }
-
-
 }

@@ -4,6 +4,11 @@ import at.qe.skeleton.dtos.NotificationResponseDTO;
 import at.qe.skeleton.model.Notification;
 import org.springframework.stereotype.Service;
 
+/**
+ * Mapper for converting {@link Notification} entities into {@link NotificationResponseDTO}.
+ * <p>Note: Reverse mapping from DTO to entity is currently unsupported.</p>
+ */
+
 @Service
 public class NotificationResponseMapper implements DTOMapper<Notification, NotificationResponseDTO> {
 

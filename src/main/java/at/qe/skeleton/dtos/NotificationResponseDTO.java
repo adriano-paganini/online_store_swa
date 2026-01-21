@@ -9,6 +9,10 @@ import jakarta.validation.constraints.Size;
 
 import java.time.LocalDateTime;
 
+/**
+ * Data Transfer Object for transmitting notification details from the backend to the frontend.
+ * Includes validation constraints to ensure data integrity for messages, channels, and status.
+ */
 public record NotificationResponseDTO(
         @NotBlank(message = "Message content cannot be empty")
         @Size(max = 500, message = "Message is too long")

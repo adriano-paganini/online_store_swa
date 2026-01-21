@@ -5,6 +5,13 @@ import at.qe.skeleton.model.Notification;
 import at.qe.skeleton.model.NotificationStatus;
 import org.springframework.stereotype.Service;
 
+/**
+ * Service responsible for the simulated delivery of SMS notifications.
+ * <p>
+ * This class serves as a proof-of-concept (stub) implementation. It demonstrates
+ * how an SMS delivery service would interact with the {@link NotificationService}
+ * to retrieve message data and update delivery statuses based on transmission results.
+ */
 @Service
 public class SmsNotificationService {
 
@@ -15,14 +22,20 @@ public class SmsNotificationService {
     }
 
     public void sendSms(Long notificationId, Payload<?> payload) {
-        //This is a Stub. The actual functionality is not needed, as this is just a proof of concept.
-        //90% success rate
+        // Retrieve the notification entity to access recipient details
         Notification notification = notificationService.getNotificationById(notificationId);
-        System.out.println(payload.getPayloadInfo().getPayloadSubjectLine() + "for User: "+notification.getUserId());
+
+        // Log the simulated output to the console
+        System.out.println(payload.getPayloadInfo().getPayloadSubjectLine() + " for User: " + notification.getUserId());
+
+        // Simulate a real-world network failure scenario with a 90% success probability
         boolean sendingSuccess = Math.random() < 0.9;
+
         if (sendingSuccess) {
+            // Update the audit trail to SENT if the simulation succeeds
             notificationService.updateNotificationStatus(NotificationStatus.SENT, notification);
         } else {
+            // Update the audit trail to FAILED if the simulation fails
             notificationService.updateNotificationStatus(NotificationStatus.FAILED, notification);
         }
     }

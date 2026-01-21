@@ -8,6 +8,10 @@ import jakarta.validation.constraints.Positive;
 
 import java.util.Set;
 
+/**
+ * Data Transfer Object representing the full state of a Subscription.
+ * Used for sending complete subscription details to the frontend.
+ */
 public record SubscriptionDTO(
         @NotNull(message = "Subscription ID must be provided")
         @Positive(message = "Subscription ID must be a positive number")
@@ -24,7 +28,7 @@ public record SubscriptionDTO(
         @NotEmpty(message = "Subscription must contain at least one type (e.g., EMAIL, SMS)")
         Set<SubscriptionType> types,
 
-        @NotEmpty(message = "At leas one notification channel must be selected")
+        @NotEmpty(message = "At least one notification channel must be selected")
         Set<NotificationType> channels
 ) {
 }
