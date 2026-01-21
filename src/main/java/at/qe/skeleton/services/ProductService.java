@@ -5,6 +5,7 @@ import at.qe.skeleton.dtos.ProductUpdateDTO;
 import at.qe.skeleton.model.Product;
 import org.springframework.data.domain.Page;
 
+import java.util.Map;
 import java.util.Optional;
 
 public interface ProductService {
@@ -30,7 +31,9 @@ public interface ProductService {
     Product createProduct(Product product);
     
     Product updateProduct(Long id, ProductUpdateDTO updateDTO);
-    
+
+    void adjustProductStockWithMap(Map<Long,Integer> items);
+
     void softDeleteProduct(Long id);
 }
 
