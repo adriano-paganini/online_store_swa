@@ -87,7 +87,7 @@ public final class OrderEmailComposer {
 
             // Append discount info only if a discount was actually applied
             if (p.discountPercent() > 0.0) {
-                sb.append(" - ").append(trimZeros(p.discountPercent())).append("% off");
+                sb.append(" - ").append(trimZeros(p.discountPercent()*100)).append("% off");
             }
 
             sb.append(")\n");
@@ -101,7 +101,7 @@ public final class OrderEmailComposer {
         double discountPercent = item.getAppliedDiscount() != null ? item.getAppliedDiscount() : 0.0;
 
         // Calculate final unit price after discount (ensuring it doesn't go below 0)
-        double unitFinal = Math.max(0.0, baseUnit * (1.0 - discountPercent / 100.0));
+        double unitFinal = Math.max(0.0, baseUnit * (1.0 - discountPercent));
 
         // Calculate subtotal for the line item
         double lineTotal = unitFinal * Math.max(0, qty);
