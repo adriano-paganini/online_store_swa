@@ -15,7 +15,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -124,6 +126,13 @@ public class OrderService {
                 total
         );
 
+        Map<Long,Integer> productIdQuanityMap = new HashMap<>();
+
+        for (OrderItem item: orderItems){
+            productIdQuanityMap.put(item.getProductId(),item.getQuantity());
+        }
+        productService.adjustProductStockWithMap(productIdQuanityMap);
+
         Order savedOrder = orderRepository.save(order);
         cartService.clearCart();
         return savedOrder;
@@ -152,7 +161,7 @@ public class OrderService {
         applicationEventPublisher.publishEvent(new OrderCompletionEvent(updated));
 
         return updated;
-    };
+    }
 
     @Transactional
     public Order updateOrderStatus(OrderStatus status, String orderNumber){
@@ -177,6 +186,13 @@ public class OrderService {
         if (order.getStatus() == OrderStatus.CANCELED) {
             return order;
         }
+
+        Map<Long,Integer> productIdQuanityMap = new HashMap<>();
+
+        for (OrderItem item: order.getItems()){
+            productIdQuanityMap.put(item.getProductId(),-1*item.getQuantity());
+        }
+        productService.adjustProductStockWithMap(productIdQuanityMap);
 
         order.setStatus(OrderStatus.CANCELED);
         return orderRepository.save(order);

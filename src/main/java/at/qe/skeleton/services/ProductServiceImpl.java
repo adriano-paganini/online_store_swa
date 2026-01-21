@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -217,5 +218,23 @@ public class ProductServiceImpl implements ProductService {
                 (field.equals("id") || field.equals("name") || field.equals("price") || field.equals("effectivePrice")||
                         field.equals("stock") || field.equals("discount") || field.equals("avgScore") ||
                         field.equals("createDate") || field.equals("updateDate"));
+    }
+
+
+    @Override
+    @Transactional
+    public void adjustProductStockWithMap(Map<Long,Integer> items) {
+        for (Long productId:items.keySet()) {
+            Product product = getProductById(productId).orElseThrow(() -> new ResponseStatusException(
+                    HttpStatus.NOT_FOUND, "Product not found"));
+
+            Integer stock = product.getStock();
+            Integer requiredQuantity = items.get(productId);
+            if (stock >= requiredQuantity) {
+                product.setStock(stock - requiredQuantity);
+            }else if (requiredQuantity>0){
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Not enough Stock");
+            }
+        }
     }
 }
