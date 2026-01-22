@@ -177,14 +177,14 @@ class AddressControllerTest {
                 null, "Graz", null, null, null, null
         );
 
-        String UPDATED_CITY = "Graz";
+        String updatedCity = "Graz";
 
         Address updated = new Address();
         updated.setId(ADDRESS_ID);
-        updated.setCity(UPDATED_CITY);
+        updated.setCity(updatedCity);
 
         AddressDTO updatedDTO = new AddressDTO(
-                ADDRESS_ID, COUNTRY, UPDATED_CITY, POSTAL_CODE, STREET, NUMBER, EXTRA
+                ADDRESS_ID, COUNTRY, updatedCity, POSTAL_CODE, STREET, NUMBER, EXTRA
         );
 
         Mockito.when(userxService.updateAddress(ADDRESS_ID, updateDTO))
@@ -197,7 +197,7 @@ class AddressControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsString(updateDTO)))
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.city").value(UPDATED_CITY));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.city").value(updatedCity));
     }
 
     @Test

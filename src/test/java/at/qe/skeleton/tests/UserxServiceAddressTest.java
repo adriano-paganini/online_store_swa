@@ -38,7 +38,7 @@ class UserxServiceAddressTest {
     private static final String NUMBER = "1";
     private static final String EXTRA = "RR15";
 
-    private Address TEST_ADDRESS;
+    private Address testAddress;
 
     @Autowired
     private UserxService userxService;
@@ -67,7 +67,7 @@ class UserxServiceAddressTest {
         address.setPostalCode(POSTAL_CODE);
         address.setExtra(EXTRA);
 
-        TEST_ADDRESS = address;
+        testAddress = address;
 
         Mockito.when(authenticatedUserService.requireAuthenticatedUser())
                 .thenReturn(testUser);
@@ -76,7 +76,7 @@ class UserxServiceAddressTest {
     @Test
     @WithMockUser(username = USERNAME)
     void addAddressSuccess() {
-        Address result = userxService.addAddress(TEST_ADDRESS);
+        Address result = userxService.addAddress(testAddress);
 
         Assertions.assertNotNull(result);
         Assertions.assertEquals(COUNTRY, result.getCountry());
@@ -94,7 +94,7 @@ class UserxServiceAddressTest {
 
         ResponseStatusException ex =
                 Assertions.assertThrows(ResponseStatusException.class,
-                        () -> userxService.addAddress(TEST_ADDRESS));
+                        () -> userxService.addAddress(testAddress));
 
         Assertions.assertEquals(HttpStatus.UNAUTHORIZED, ex.getStatusCode());
     }
@@ -109,7 +109,7 @@ class UserxServiceAddressTest {
 
         ResponseStatusException ex =
                 Assertions.assertThrows(ResponseStatusException.class,
-                        () -> userxService.addAddress(TEST_ADDRESS));
+                        () -> userxService.addAddress(testAddress));
 
         Assertions.assertEquals(HttpStatus.UNAUTHORIZED, ex.getStatusCode());
     }
