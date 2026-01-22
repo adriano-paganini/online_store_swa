@@ -78,7 +78,7 @@ public class OrderService {
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND, "Order not found"));
 
-        if (!order.getUser().getId().equals(user.getId())) {
+        if (!(order.getUser().getId() != null && order.getUser().getId().equals(user.getId()))) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Order not found");
         }
 

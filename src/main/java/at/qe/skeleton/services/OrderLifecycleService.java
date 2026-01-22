@@ -29,10 +29,8 @@ public class OrderLifecycleService {
             return OrderStatus.PENDING;
         }
 
-        if (order.getStatus() == OrderStatus.PAID) {
-            if (order.getTimestamp().plusHours(12).isBefore(now)) {
-                return OrderStatus.SHIPPING;
-            }
+        if (order.getStatus() == OrderStatus.PAID && order.getTimestamp().plusHours(12).isBefore(now)) {
+            return OrderStatus.SHIPPING;
         }
 
         if (order.getStatus() == OrderStatus.SHIPPING) {
