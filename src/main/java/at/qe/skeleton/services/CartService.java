@@ -99,6 +99,7 @@ public class CartService {
                     .orElse(0.0);
 
             cartItem.setCurrentPrice(productPrice);
+            validateDiscount(productDiscount);
             cartItem.setAppliedDiscount(productDiscount > 0 ? productDiscount : null);
 
             cart.getItems().add(cartItem);
@@ -106,6 +107,17 @@ public class CartService {
         }
 
         return cartRepository.save(cart);
+    }
+
+    private void validateDiscount(Double discount) {
+        if (discount == null) return;
+
+        if (discount < 0.0 || discount > 1.0) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Discount must be between 0.00 and 1.00"
+            );
+        }
     }
 
     @Transactional
