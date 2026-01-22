@@ -449,6 +449,78 @@ class OrderServiceTest {
     }
 
     @Test
+    void getCurrentUserOrdersWithoutStatusUsesCorrectPaginationAndSorting() {
+        Page<Order> page = new PageImpl<>(List.of(
+                new Order(user, List.of(), null, null,
+                        ShippingMethod.FAIRY_DUST_DISPATCH, 0.0)
+        ));
+
+        Mockito.when(orderRepository.findByUser(
+                Mockito.eq(user),
+                Mockito.any(Pageable.class)
+        )).thenReturn(page);
+
+        Page<Order> result = orderService.getCurrentUserOrders(null, 2, 5);
+
+        // result correctness
+        Assertions.assertEquals(1, result.getTotalElements());
+
+        // verify repository call + pageable
+        ArgumentCaptor<Pageable> pageableCaptor =
+                ArgumentCaptor.forClass(Pageable.class);
+
+        Mockito.verify(orderRepository).findByUser(
+                Mockito.eq(user),
+                pageableCaptor.capture()
+        );
+
+        Pageable used = pageableCaptor.getValue();
+        Assertions.assertEquals(2, used.getPageNumber());
+        Assertions.assertEquals(5, used.getPageSize());
+
+        Sort.Order sort = used.getSort().getOrderFor("timestamp");
+        Assertions.assertNotNull(sort);
+        Assertions.assertTrue(sort.isDescending());
+    }
+
+    @Test
+    void getCurrentUserOrdersWithStatusFiltersByStatusAndUsesPagination() {
+        Page<Order> page = new PageImpl<>(List.of(
+                new Order(user, List.of(), null, null,
+                        ShippingMethod.FAIRY_DUST_DISPATCH, 0.0)
+        ));
+
+        Mockito.when(orderRepository.findByUserAndStatus(
+                Mockito.eq(user),
+                Mockito.eq(OrderStatus.PENDING),
+                Mockito.any(Pageable.class)
+        )).thenReturn(page);
+
+        Page<Order> result =
+                orderService.getCurrentUserOrders(OrderStatus.PENDING, 1, 3);
+
+        Assertions.assertEquals(1, result.getTotalElements());
+
+        ArgumentCaptor<Pageable> pageableCaptor =
+                ArgumentCaptor.forClass(Pageable.class);
+
+        Mockito.verify(orderRepository).findByUserAndStatus(
+                Mockito.eq(user),
+                Mockito.eq(OrderStatus.PENDING),
+                pageableCaptor.capture()
+        );
+
+        Pageable used = pageableCaptor.getValue();
+        Assertions.assertEquals(1, used.getPageNumber());
+        Assertions.assertEquals(3, used.getPageSize());
+        Assertions.assertTrue(
+                used.getSort().getOrderFor("timestamp").isDescending()
+        );
+    }
+
+
+
+    @Test
     void getCurrentUserOrdersUnauthenticatedFails() {
         Mockito.when(authenticatedUserService.requireAuthenticatedUser())
                 .thenThrow(new ResponseStatusException(

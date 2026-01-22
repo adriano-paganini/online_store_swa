@@ -46,6 +46,18 @@ public class OrderService {
         this.applicationEventPublisher = applicationEventPublisher;
     }
 
+    @Transactional
+    protected void applyLifecycleUpdates(Page<Order> orders) {
+        LocalDateTime now = LocalDateTime.now();
+
+        orders.forEach(order -> {
+            if (orderLifecycleService.applyResolvedStatus(order, now)) {
+                orderRepository.save(order);
+            }
+        });
+    }
+
+
     public Page<Order> getCurrentUserOrders(
             OrderStatus status,
             int page,
@@ -54,18 +66,15 @@ public class OrderService {
         Userx user = authenticatedUserService.requireAuthenticatedUser();
         Pageable pageable = PageRequest.of(page, limit, Sort.by("timestamp").descending());
 
+        Page<Order> pageResult;
+
         if (status != null) {
-            return orderRepository.findByUserAndStatus(user, status, pageable);
+            pageResult = orderRepository.findByUserAndStatus(user, status, pageable);
+        } else {
+            pageResult = orderRepository.findByUser(user, pageable);
         }
 
-        Page<Order> pageResult = orderRepository.findByUser(user, pageable);
-
-        pageResult.forEach(order -> {
-            if (orderLifecycleService.applyResolvedStatus(order, LocalDateTime.now())) {
-                orderRepository.save(order);
-            }
-        });
-
+        applyLifecycleUpdates(pageResult);
         return pageResult;
     }
 
