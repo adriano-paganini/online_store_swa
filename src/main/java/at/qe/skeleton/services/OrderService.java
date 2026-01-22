@@ -209,11 +209,29 @@ public class OrderService {
                     item.setProductId(product.getId());
                     item.setProductName(product.getName());
                     item.setPriceAtPurchase(cartItem.getCurrentPrice());
-                    item.setAppliedDiscount(cartItem.getAppliedDiscount());
+
+                    double discount = normalizeAndValidateDiscount(
+                            cartItem.getAppliedDiscount(),
+                            product.getId()
+                    );
+
+                    item.setAppliedDiscount(discount);
                     item.setQuantity(cartItem.getQuantity());
                     return item;
                 })
                 .collect(Collectors.toList());
+    }
+
+    private double normalizeAndValidateDiscount(Double rawDiscount, Long productId) {
+        double discount = rawDiscount != null ? rawDiscount : 0.0;
+
+        if (discount < 0.0 || discount > 1.0) {
+            throw new IllegalArgumentException(
+                    "Invalid discount on cart item for product " + productId
+            );
+        }
+
+        return discount;
     }
 
     private double calculateTotal(List<OrderItem> items) {
@@ -223,7 +241,7 @@ public class OrderService {
                     double discount = item.getAppliedDiscount() != null
                             ? item.getAppliedDiscount()
                             : 0.0;
-                    return (price - discount) * item.getQuantity();
+                    return (price - price * discount) * item.getQuantity();
                 })
                 .sum();
     }
