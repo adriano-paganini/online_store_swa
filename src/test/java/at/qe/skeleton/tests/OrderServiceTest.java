@@ -151,8 +151,8 @@ class OrderServiceTest {
         Assertions.assertEquals(PRODUCT_QUANTITY, item.getQuantity());
 
         // total = (50 - 5) * 2 = 90
-        double TOTAL = (PRODUCT_PRICE - PRODUCT_PRICE * PRODUCT_DISCOUNT) * PRODUCT_QUANTITY;
-        Assertions.assertEquals(TOTAL, saved.getTotal(), 0.001);
+        double total = (PRODUCT_PRICE - PRODUCT_PRICE * PRODUCT_DISCOUNT) * PRODUCT_QUANTITY;
+        Assertions.assertEquals(total, saved.getTotal(), 0.001);
 
         OrderAddress savedBilling = saved.getBillingAddress();
         Assertions.assertNotNull(savedBilling);
@@ -318,8 +318,8 @@ class OrderServiceTest {
         Order saved = orderService.createOrder(dto);
 
         // total = (50 - 0) * 2 = 100
-        double TOTAL = (PRODUCT_PRICE - 0) * PRODUCT_QUANTITY;
-        Assertions.assertEquals(TOTAL, saved.getTotal(), 0.001);
+        double total = (PRODUCT_PRICE - 0) * PRODUCT_QUANTITY;
+        Assertions.assertEquals(total, saved.getTotal(), 0.001);
         Assertions.assertEquals(0, saved.getItems().getFirst().getAppliedDiscount());
     }
 

@@ -1,6 +1,5 @@
 package at.qe.skeleton.dtos;
 
-import at.qe.skeleton.model.NotificationType;
 import at.qe.skeleton.model.UserxRole;
 
 import java.time.LocalDateTime;

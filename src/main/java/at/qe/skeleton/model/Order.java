@@ -49,25 +49,21 @@ public class Order implements Persistable<Long>, Serializable, PayloadInterface 
     private List<OrderItem> items;
 
     @Embedded
-    @AttributeOverrides({
-            @AttributeOverride(name = "country", column = @Column(name = "billing_country")),
-            @AttributeOverride(name = "city", column = @Column(name = "billing_city")),
-            @AttributeOverride(name = "postalCode", column = @Column(name = "billing_postal_code")),
-            @AttributeOverride(name = "street", column = @Column(name = "billing_street")),
-            @AttributeOverride(name = "number", column = @Column(name = "billing_number")),
-            @AttributeOverride(name = "extra", column = @Column(name = "billing_extra"))
-    })
+    @AttributeOverride(name = "country", column = @Column(name = "billing_country"))
+    @AttributeOverride(name = "city", column = @Column(name = "billing_city"))
+    @AttributeOverride(name = "postalCode", column = @Column(name = "billing_postal_code"))
+    @AttributeOverride(name = "street", column = @Column(name = "billing_street"))
+    @AttributeOverride(name = "number", column = @Column(name = "billing_number"))
+    @AttributeOverride(name = "extra", column = @Column(name = "billing_extra"))
     private OrderAddress billingAddress;
 
     @Embedded
-    @AttributeOverrides({
-            @AttributeOverride(name = "country", column = @Column(name = "shipping_country")),
-            @AttributeOverride(name = "city", column = @Column(name = "shipping_city")),
-            @AttributeOverride(name = "postalCode", column = @Column(name = "shipping_postal_code")),
-            @AttributeOverride(name = "street", column = @Column(name = "shipping_street")),
-            @AttributeOverride(name = "number", column = @Column(name = "shipping_number")),
-            @AttributeOverride(name = "extra", column = @Column(name = "shipping_extra"))
-    })
+    @AttributeOverride(name = "country", column = @Column(name = "shipping_country"))
+    @AttributeOverride(name = "city", column = @Column(name = "shipping_city"))
+    @AttributeOverride(name = "postalCode", column = @Column(name = "shipping_postal_code"))
+    @AttributeOverride(name = "street", column = @Column(name = "shipping_street"))
+    @AttributeOverride(name = "number", column = @Column(name = "shipping_number"))
+    @AttributeOverride(name = "extra", column = @Column(name = "shipping_extra"))
     private OrderAddress shippingAddress;
 
     protected Order() {
