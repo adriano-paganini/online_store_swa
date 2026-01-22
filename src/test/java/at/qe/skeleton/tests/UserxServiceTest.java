@@ -243,7 +243,7 @@ public class UserxServiceTest {
                 org.springframework.security.authentication.AuthenticationCredentialsNotFoundException.class,
                 () -> {
                     Page<Userx> page = userService.getAllUsers(0,10, null, null);
-                    for (Userx user : page.toList()) {
+                    for (Userx ignored : page.toList()) {
                         Assertions.fail(
                                 "Call to userService.getAllUsers should not work without proper authorization");
                     }
@@ -255,7 +255,7 @@ public class UserxServiceTest {
     public void testUnauthorizedLoadUsers() {
         Assertions.assertThrows(org.springframework.security.access.AccessDeniedException.class, () -> {
             Page<Userx> page = userService.getAllUsers(0,10, null, null);
-            for (Userx user : page.toList()) {
+            for (Userx ignored : page.toList()) {
                 Assertions.fail(
                         "Call to userService.getAllUsers should not work without proper authorization");
             }
@@ -266,7 +266,7 @@ public class UserxServiceTest {
     @WithMockUser(username = "user1", authorities = {"CUSTOMER"})
     public void testUnauthorizedLoadUser() {
         Assertions.assertThrows(org.springframework.security.access.AccessDeniedException.class, () -> {
-            Optional<Userx> user = userService.loadUser(1000L);
+            userService.loadUser(1000L);
             Assertions.fail(
                     "Call to userService.loadUser should not work without proper authorization for other users than the authenticated one");
         });

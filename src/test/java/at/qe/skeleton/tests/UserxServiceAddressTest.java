@@ -92,10 +92,6 @@ class UserxServiceAddressTest {
                         HttpStatus.UNAUTHORIZED, "User not authenticated"
                 ));
 
-        AddressCreateDTO dto = new AddressCreateDTO(
-                COUNTRY, CITY_INNSBRUCK, POSTAL_CODE, STREET, NUMBER, EXTRA
-        );
-
         ResponseStatusException ex =
                 Assertions.assertThrows(ResponseStatusException.class,
                         () -> userxService.addAddress(TEST_ADDRESS));
@@ -110,10 +106,6 @@ class UserxServiceAddressTest {
                 .thenThrow(new ResponseStatusException(
                         HttpStatus.UNAUTHORIZED, "User not authenticated"
                 ));
-
-        AddressCreateDTO dto = new AddressCreateDTO(
-                COUNTRY, CITY_INNSBRUCK, POSTAL_CODE, STREET, NUMBER, EXTRA
-        );
 
         ResponseStatusException ex =
                 Assertions.assertThrows(ResponseStatusException.class,
