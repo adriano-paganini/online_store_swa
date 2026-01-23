@@ -66,6 +66,9 @@ public class Order implements Persistable<Long>, Serializable, PayloadInterface 
     @AttributeOverride(name = "extra", column = @Column(name = "shipping_extra"))
     private OrderAddress shippingAddress;
 
+    private String transactionId;
+    private LocalDateTime paidAt;
+
     protected Order() {
     }
 
@@ -174,6 +177,21 @@ public class Order implements Persistable<Long>, Serializable, PayloadInterface 
 
     public void setShippingMethod(ShippingMethod shippingMethod) {
         this.shippingMethod = shippingMethod;
+    }
+
+    public LocalDateTime getPaidAt() {
+        return paidAt;
+    }
+
+    public void setPaidAt(LocalDateTime paidAt) {
+        this.paidAt = paidAt;
+    }
+
+    public String getTransactionId() {
+        return transactionId;
+    }
+    public void setTransactionId(String transactionId) {
+        this.transactionId = transactionId;
     }
 
     @Override

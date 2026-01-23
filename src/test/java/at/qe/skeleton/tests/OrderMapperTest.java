@@ -70,7 +70,10 @@ public class OrderMapperTest {
         );
         testOrder.setOrderNumber("ORD-12345");
         testOrder.setStatus(OrderStatus.PAID);
-        
+        testOrder.setTransactionId("TXN-999");
+        testOrder.setPaidAt(LocalDateTime.of(2024, 1, 15, 11, 0));
+
+
         // Set timestamp using reflection
         try {
             java.lang.reflect.Field timestampField = Order.class.getDeclaredField("timestamp");
@@ -203,5 +206,16 @@ public class OrderMapperTest {
             assertNotNull(dto);
             assertEquals(status, dto.status());
         }
+    }
+
+    @Test
+    void toDtoMapsPaymentFields() {
+        OrderDTO dto = orderMapper.toDto(testOrder);
+
+        assertEquals("TXN-999", dto.transactionId());
+        assertEquals(
+                LocalDateTime.of(2024, 1, 15, 11, 0),
+                dto.paidAt()
+        );
     }
 }

@@ -5,6 +5,8 @@ import at.qe.skeleton.configs.JwtTokenProvider;
 import at.qe.skeleton.configs.TokenAuthenticationFilter;
 import at.qe.skeleton.controllers.PaymentController;
 import at.qe.skeleton.dtos.PaymentRequestDTO;
+import at.qe.skeleton.model.Order;
+import at.qe.skeleton.model.OrderStatus;
 import at.qe.skeleton.services.OrderService;
 import at.qe.skeleton.services.UserxService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -28,6 +30,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @WebMvcTest(PaymentController.class)
@@ -55,8 +58,16 @@ public class PaymentControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
+    static final String ORDER_NUMBER = "ORD-123";
+
     @BeforeEach
     void setUp() throws Exception {
+        Order order = Mockito.mock(Order.class);
+        Mockito.when(order.getStatus()).thenReturn(OrderStatus.PENDING);
+        Mockito.when(order.getTotal()).thenReturn(99.99);
+
+        Mockito.when(orderService.getOrderByNumber(ORDER_NUMBER)).thenReturn(order);
+
         Mockito.doAnswer(invocation -> {
             HttpServletRequest request = invocation.getArgument(0);
             HttpServletResponse response = invocation.getArgument(1);
@@ -83,6 +94,7 @@ public class PaymentControllerTest {
     void processPaymentSuccess() throws Exception {
         PaymentRequestDTO requestDTO = new PaymentRequestDTO(
                 99.99,
+                ORDER_NUMBER,
                 "credit_card",
                 "4111-1111-1111-1111",
                 "John Doe",
@@ -99,6 +111,12 @@ public class PaymentControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.transactionId").exists())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Payment processed successfully"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.timestamp").exists());
+
+        Mockito.verify(orderService).confirmPayment(
+                Mockito.eq(ORDER_NUMBER),
+                Mockito.anyString()
+        );
+
     }
 
     @Test
@@ -106,6 +124,7 @@ public class PaymentControllerTest {
     void processPaymentInvalidAmount() throws Exception {
         PaymentRequestDTO requestDTO = new PaymentRequestDTO(
                 0.0,
+                ORDER_NUMBER,
                 "credit_card",
                 "4111-1111-1111-1111",
                 "John Doe",
@@ -119,6 +138,9 @@ public class PaymentControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(requestDTO)))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
+
+        Mockito.verify(orderService, Mockito.never())
+                .confirmPayment(Mockito.anyString(), Mockito.anyString());
     }
 
     @Test
@@ -126,6 +148,7 @@ public class PaymentControllerTest {
     void processPaymentDeclinedCard() throws Exception {
         PaymentRequestDTO requestDTO = new PaymentRequestDTO(
                 99.99,
+                ORDER_NUMBER,
                 "credit_card",
                 "0000-0000-0000-0000",
                 "John Doe",
@@ -159,6 +182,7 @@ public class PaymentControllerTest {
     void processPaymentUnauthenticated() throws Exception {
         PaymentRequestDTO requestDTO = new PaymentRequestDTO(
                 99.99,
+                ORDER_NUMBER,
                 "credit_card",
                 "4111-1111-1111-1111",
                 "John Doe",

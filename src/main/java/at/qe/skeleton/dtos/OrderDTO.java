@@ -14,5 +14,7 @@ public record OrderDTO (
         List<OrderItemDTO> items,
         AddressDTO shippingAddress,
         AddressDTO billingAddress,
-        ShippingMethod shippingMethod
+        ShippingMethod shippingMethod,
+        LocalDateTime paidAt,
+        String transactionId
 ) {}
