@@ -29,14 +29,13 @@ export default function OrdersPage() {
   const [limit, setLimit] = useState(10);
   const [totalPages, setTotalPages] = useState(0);
 
-  const [selectedStatuses, setSelectedStatuses] = useState<OrderStatus[]>(ALL_STATUSES);
+  const [selectedStatus, setSelectedStatus] = useState<OrderStatus | null>(null);
 
   const loadOrders = useCallback(async () => {
     try {
       setLoading(true);
 
-      const statusParam =
-        selectedStatuses.length > 0 && selectedStatuses.length <= ALL_STATUSES.length ? selectedStatuses : undefined;
+      const statusParam = selectedStatus ? [selectedStatus] : undefined;
 
       const res = await OrderApi.fetchOrders({
         page,
@@ -51,7 +50,7 @@ export default function OrdersPage() {
     } finally {
       setLoading(false);
     }
-  }, [page, limit, selectedStatuses]);
+  }, [page, limit, selectedStatus]);
 
   useEffect(() => {
     void loadOrders();
@@ -59,10 +58,10 @@ export default function OrdersPage() {
 
   useEffect(() => {
     setPage(0);
-  }, [limit, selectedStatuses]);
+  }, [limit, selectedStatus]);
 
-  const toggleStatus = (status: OrderStatus, checked: boolean) => {
-    setSelectedStatuses((prev) => (checked ? [...prev, status] : prev.filter((s) => s !== status)));
+  const selectStatus = (status: OrderStatus) => {
+    setSelectedStatus((prev) => (prev === status ? null : status));
   };
 
   return (
@@ -71,7 +70,7 @@ export default function OrdersPage() {
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline">
-              Status to show
+              {selectedStatus ? OrderStatusLabels[selectedStatus] : 'All statuses'}
               <ChevronDown className="ml-2 h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
@@ -80,8 +79,8 @@ export default function OrdersPage() {
             {ALL_STATUSES.map((status) => (
               <DropdownMenuCheckboxItem
                 key={status}
-                checked={selectedStatuses.includes(status)}
-                onCheckedChange={(v) => toggleStatus(status, Boolean(v))}
+                checked={selectedStatus === status}
+                onCheckedChange={() => selectStatus(status)}
               >
                 {OrderStatusLabels[status]}
               </DropdownMenuCheckboxItem>

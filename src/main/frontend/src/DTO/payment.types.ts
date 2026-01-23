@@ -1,6 +1,7 @@
 export type TPaymentRequestDTO = {
   amount: number;
   paymentMethod: string;
+  orderNumber: string;
   cardNumber?: string;
   cardHolderName?: string;
   expiryDate?: string;

@@ -23,3 +23,6 @@ export const SHIPPING_METHODS: TShippingMethodConfig[] = [
     description: 'No further details.',
   },
 ];
+
+export const getShippingMethodLabel = (method: ShippingMethod): string =>
+  SHIPPING_METHODS.find((m) => m.key === method)?.label ?? method;

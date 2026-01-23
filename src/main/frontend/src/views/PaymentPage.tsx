@@ -51,6 +51,11 @@ export default function PaymentPage() {
   const total = calculateOrderTotal(order.items);
 
   const handlePay = async () => {
+    if (!orderNumber) {
+      toast.error("Can't find the Order Number");
+      return;
+    }
+
     if (method === 'credit_card' && cardNumber.replace(/\s/g, '').length !== 16) {
       toast.error('Invalid card details');
       return;
@@ -62,6 +67,7 @@ export default function PaymentPage() {
       const payload: TPaymentRequestDTO = {
         amount: total,
         paymentMethod: method,
+        orderNumber: orderNumber,
         cardNumber: method === 'credit_card' || method === 'netflix_password' ? cardNumber : undefined,
         cardHolderName: method === 'credit_card' || method === 'dad_joke' ? cardHolderName : undefined,
         expiryDate: method === 'credit_card' ? `${expiryMonth}/${expiryYear}` : undefined,
