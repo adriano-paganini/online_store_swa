@@ -9,6 +9,8 @@ public record PaymentRequestDTO(
         @Positive
         Double amount,
         @NotBlank
+        String orderNumber,
+        @NotBlank
         String paymentMethod,
         String cardNumber,
         String cardHolderName,

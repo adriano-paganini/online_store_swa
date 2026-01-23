@@ -165,11 +165,17 @@ public class OrderService {
     }
 
     @Transactional
-    public Order confirmPayment(String orderNumber){
-        Order updated = updateOrderStatus(OrderStatus.PAID,orderNumber);
-        applicationEventPublisher.publishEvent(new OrderCompletionEvent(updated));
+    public Order confirmPayment(String orderNumber, String transactionId) {
+        Order order = getOrderByNumber(orderNumber);
 
-        return updated;
+        order.setStatus(OrderStatus.PAID);
+        order.setTransactionId(transactionId);
+        order.setPaidAt(LocalDateTime.now());
+
+        orderRepository.save(order);
+        applicationEventPublisher.publishEvent(new OrderCompletionEvent(order));
+
+        return order;
     }
 
     @Transactional
