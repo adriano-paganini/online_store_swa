@@ -33,6 +33,8 @@ export function CheckoutPage() {
       .catch((err) => toastApiError(err));
   }, []);
 
+  // auto-select a default shipping address once addresses are loaded
+  // without overriding users choice
   useEffect(() => {
     if (!shippingAddressId && addresses.length > 0) {
       setShippingAddressId(addresses[0].id);

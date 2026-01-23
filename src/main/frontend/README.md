@@ -1,70 +1,106 @@
-# Getting Started with Create React App
+# Frontend (Vite + React + TypeScript)
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+---
+
+## Tech Stack
+
+- **TypeScript**
+- **React 18**
+- **Vite**
+- **React Router**
+- **Tailwind CSS** + `tailwind-merge`
+- **ShadCn** using Radix UI primitives
+- **Axios** for HTTP
+- **ESLint** + **Prettier** + **Husky**
+
+---
+
+## Getting Started
+
+### Prerequisites
+
+- Node.js 18+
+- npm
+
+### Install dependencies
+
+```bash
+npm install
+```
+
+### Run the development server
+
+```bash
+npm run dev
+```
+
+The app will be available at:
+
+```
+http://localhost:3000
+```
+
+---
 
 ## Available Scripts
 
-In the project directory, you can run:
+### Base
 
-### `npm start`
+```
+npm run dev        # Starts the Vite development server with hot reload.
+npm run build      # Runs TypeScript type-checking and builds the production bundle into /dist
+npm run preview    # Serves the production build locally for testing
+```
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+---
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+### Type checking
 
-### `npm test`
+```
+npm run ts:check    # Runs a strict TypeScript type check without emitting files
+```
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+---
 
-### `npm run build`
+### Linting
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+```
+npm run lint          # Runs ESLint across the project.
+npm run lint:fix      # Automatically fixes lint issues where possible.
+```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+---
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### Formatting
 
-### `npm run eject`
+```
+npm run prettier:check      # Checks code formatting using Prettier
+npm run prettier:write      # Formats all files using Prettier.
+```
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+---
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## Project file structure
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+```
+src/
+├── Contexts/          # React context providers
+├── DTO/               # DTOs from the API spec
+├── components/        # UI components
+├── config/            # Axios config
+├── lib/               # Utilities and helpers
+├── mocks/             # Not used anymore, but kept just in case
+├── utilities/         # API clients and helpers
+├── views/             # Page components
+├── routes.ts          # Page url to component connection
+└── main.tsx           # App entry point
+```
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+---
 
-## Learn More
+## Formatting & Commits
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+- Code formatting is enforced via **Prettier**
+- Linting via **ESLint**
+- Type safety via **ts**
+- **Husky** + **lint-staged** run all 3 layers of checks on commit, aborts of anything fails

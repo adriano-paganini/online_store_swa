@@ -27,6 +27,14 @@ type TCartContextType = {
   clearCart: () => Promise<void>;
 };
 
+/**
+ * Cart context providing cart state and mutation helpers.
+ *
+ * Handles:
+ * - Fetching and refreshing the cart
+ * - Item-level loading states
+ * - Syncing cart data with authenticated user state
+ */
 const CartContext = createContext<TCartContextType | null>(null);
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
@@ -36,13 +44,17 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const [cart, setCart] = useState<TPopulatedCartDTO | null>(null);
 
   const [loading, setLoading] = useState(false);
+
+  // traks which cart item IDs are currently being mutated
   const [itemLoadingIds, setItemLoadingIds] = useState<Set<number>>(new Set());
   const [clearingCart, setClearingCart] = useState(false);
 
+  // Mark an individual cart item as loading (optimistic UI support)
   const markItemLoading = (id: number) => {
     setItemLoadingIds((prev) => new Set(prev).add(id));
   };
 
+  // Remove loading state from a specific cart item
   const unmarkItemLoading = (id: number) => {
     setItemLoadingIds((prev) => {
       const next = new Set(prev);
@@ -51,6 +63,10 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     });
   };
 
+  /**
+   * Fetches the latest cart from the API.
+   * Automatically resets cart state when the user logs out.
+   */
   const refreshCart = async () => {
     if (!isAuthenticated) {
       setCart(null);
@@ -68,6 +84,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  // Adds a new item to the cart
   const addItem = async (item: TCartItemCreateDTO) => {
     if (!isAuthenticated) {
       toast.error('You must be logged in to add items to cart');
@@ -82,6 +99,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  // Increases the quantity of a cart item
   const incrementItem = async (id: number) => {
     if (!isAuthenticated || !cart) return;
 
@@ -101,6 +119,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  // Decreases item quantity or removes the item if quantity reaches 0
   const decrementItem = async (id: number) => {
     if (!isAuthenticated || !cart) return;
 
@@ -155,11 +174,13 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  // Refresh cart whenever authentication state changes
   useEffect(() => {
     void refreshCart();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated]);
 
+  // Total number of items in the cart (sum of quantities)
   const cartItemCount = useMemo(() => cart?.items.reduce((sum, item) => sum + item.quantity, 0) ?? 0, [cart]);
 
   const value: TCartContextType = {
@@ -179,6 +200,10 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
 }
 
+/**
+ * Hook for accessing cart state and actions.
+ * Must be used within a CartProvider.
+ */
 export function useCart() {
   const context = useContext(CartContext);
   if (!context) {

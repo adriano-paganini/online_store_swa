@@ -16,8 +16,6 @@ export const ROUTES = {
   LOGIN: '/auth/login',
   REGISTER: '/auth/register',
   LOGOUT: '/logout',
-
-  // future routes
 } as const;
 
 export type TRoutesType = typeof ROUTES;

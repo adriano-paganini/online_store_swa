@@ -13,6 +13,17 @@ import type {
 
 import { ProductApi } from './productApi';
 
+/**
+ * Subscription DTOs reference products only by ID. This helper:
+ * - Collects all unique product IDs across subscriptions
+ * - Fetches the corresponding products in parallel
+ * - Replaces `productId` with the full product object
+ *
+ * @param subscriptions - Raw subscription DTOs returned from the API
+ * @returns Subscriptions enriched with full product data
+ *
+ * @throws Error if a referenced product cannot be found
+ */
 const populateSubscriptions = async (subscriptions: TSubscriptionDTO[]): Promise<TPopulatedSubscriptionDTO[]> => {
   if (!subscriptions || subscriptions.length === 0) return [];
 

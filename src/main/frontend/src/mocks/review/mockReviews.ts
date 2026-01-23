@@ -1,5 +1,6 @@
 import type { TReviewDTO } from '@/DTO/review.types';
 
+// random review mocks
 export const mockReviews: TReviewDTO[] = [
   {
     productId: 1,

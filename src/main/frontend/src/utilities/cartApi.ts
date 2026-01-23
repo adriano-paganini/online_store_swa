@@ -4,6 +4,20 @@ import type { TCartDTO, TCartItemCreateDTO, TCartItemUpdateDTO, TPopulatedCartDT
 import { getErrorMessage } from '../config/config';
 import { ProductApi } from './productApi';
 
+/**
+ * Enriches raw cart items with full product data.
+ *
+ * 1. Collects all unique product IDs from the cart
+ * 2. Fetches the corresponding product details in parallel
+ * 3. Maps each cart item to its full product object
+ *
+ * Results in a "populated" cart structure, UI ready
+ *
+ * @param cart - raw cart DTO containing items with product IDs
+ * @returns populated cart DTO with full product data attached to each item
+ *
+ * @throws Error if a referenced product cannot be found
+ */
 const populateCartItems = async (cart: TCartDTO): Promise<TPopulatedCartDTO> => {
   if (cart.items.length === 0) return { items: [] };
 

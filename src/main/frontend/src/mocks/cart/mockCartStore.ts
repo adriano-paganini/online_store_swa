@@ -6,6 +6,7 @@ export const mockCartStore: TCartDTO = {
   items: [],
 };
 
+// mock of non-persistent storage on the FE
 export const createCartItem = (
   productId: number,
   quantity: number,
