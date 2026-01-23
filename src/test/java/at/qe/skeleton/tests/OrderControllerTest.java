@@ -42,6 +42,7 @@ class OrderControllerTest {
 
     private static final String ENDPOINT = "/orders";
     private static final String ORDER_NUMBER = "ORD-ABC123";
+    private static final String TRANSACTION_ID = "TXN-123ABC";
 
     private static final String ORDER_STATUS = "PENDING";
 
@@ -99,7 +100,9 @@ class OrderControllerTest {
                 List.of(),
                 null,
                 null,
-                ShippingMethod.FAIRY_DUST_DISPATCH
+                ShippingMethod.FAIRY_DUST_DISPATCH,
+                LocalDateTime.now(),
+                TRANSACTION_ID
         );
 
         Mockito.doAnswer(invocation -> {
@@ -145,7 +148,9 @@ class OrderControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.page")
                         .value(PAGE_DEFAULT))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.limit")
-                        .value(LIMIT_DEFAULT));
+                        .value(LIMIT_DEFAULT))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data[0].transactionId").value(TRANSACTION_ID))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data[0].paidAt").exists());
     }
 
     @Test

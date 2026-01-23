@@ -49,6 +49,7 @@ class OrderServiceTest {
     private static final String EXTRA = "RR15";
 
     private static final String ORDER_NUMBER = "ORD-123";
+    private static final String TRANSACTION_ID = "TXN-ABC";
 
     @Autowired
     private OrderService orderService;
@@ -831,7 +832,7 @@ class OrderServiceTest {
         Mockito.when(orderRepository.save(Mockito.any(Order.class)))
                 .thenAnswer(invocation -> invocation.getArgument(0));
 
-        Order result = orderService.confirmPayment(ORDER_NUMBER);
+        Order result = orderService.confirmPayment(ORDER_NUMBER, TRANSACTION_ID);
 
         Assertions.assertEquals(OrderStatus.PAID, result.getStatus());
         // Verify event was published (would need to inject ApplicationEventPublisher mock)
