@@ -44,6 +44,7 @@ export function ProductFilters({
               onValueChange={(v) => {
                 const [min, max] = v as [number, number];
 
+                // If the selected max value equals the slider's max, treat it as "no limit" (null)
                 setPriceRange([min, max >= MAX_PRICE ? null : max]);
               }}
               min={0}

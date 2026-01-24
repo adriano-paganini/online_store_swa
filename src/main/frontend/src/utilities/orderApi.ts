@@ -36,7 +36,7 @@ const cancelOrder = async (num: string): Promise<void> => {
   try {
     await axios.post<void>(`/orders/${num}/cancel`);
   } catch (err: unknown) {
-    throw new Error(`Error creating order: ${getErrorMessage(err)}`);
+    throw new Error(`Error cancelling order: ${getErrorMessage(err)}`);
   }
 };
 
