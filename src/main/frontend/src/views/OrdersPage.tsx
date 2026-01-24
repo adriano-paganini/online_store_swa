@@ -14,6 +14,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { OrderStatus, type TOrderDTO } from '@/DTO/order.types';
 import { toastApiError } from '@/lib/utils';
 import { OrderApi } from '@/utilities/orderApi';
@@ -30,6 +31,7 @@ export default function OrdersPage() {
   const [totalPages, setTotalPages] = useState(0);
 
   const [selectedStatus, setSelectedStatus] = useState<OrderStatus | null>(null);
+  const [sort, setSort] = useState<'timestamp,asc' | 'timestamp,desc'>('timestamp,desc');
 
   const loadOrders = useCallback(async () => {
     try {
@@ -41,6 +43,7 @@ export default function OrdersPage() {
         page,
         limit,
         status: statusParam,
+        sort,
       });
 
       setOrders(res.data);
@@ -50,7 +53,7 @@ export default function OrdersPage() {
     } finally {
       setLoading(false);
     }
-  }, [page, limit, selectedStatus]);
+  }, [page, limit, selectedStatus, sort]);
 
   useEffect(() => {
     void loadOrders();
@@ -58,7 +61,7 @@ export default function OrdersPage() {
 
   useEffect(() => {
     setPage(0);
-  }, [limit, selectedStatus]);
+  }, [limit, selectedStatus, sort]);
 
   const selectStatus = (status: OrderStatus) => {
     setSelectedStatus((prev) => (prev === status ? null : status));
@@ -66,7 +69,7 @@ export default function OrdersPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center gap-4">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline">
@@ -87,6 +90,19 @@ export default function OrdersPage() {
             ))}
           </DropdownMenuContent>
         </DropdownMenu>
+
+        <Select
+          value={sort}
+          onValueChange={(v) => setSort(v as typeof sort)}
+        >
+          <SelectTrigger className="w-[220px]">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="timestamp,desc">Newest first</SelectItem>
+            <SelectItem value="timestamp,asc">Oldest first</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
 
       <OrdersTable

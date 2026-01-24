@@ -54,10 +54,10 @@ export function OrderRow({ order }: TOrderRowProps) {
   };
 
   return (
-    <div>
+    <div className="w-full">
       <button
         onClick={() => setRowOpen((v) => !v)}
-        className="grid w-full grid-cols-[1fr_auto_auto_auto] items-center gap-6 px-4 py-4 text-left hover:bg-muted"
+        className="flex w-full items-center justify-between gap-3 border-b px-4 py-3 text-sm transition-opacity hover:bg-muted"
       >
         <div className="space-y-1">
           <div className="flex items-center gap-2 font-medium">
@@ -78,71 +78,73 @@ export function OrderRow({ order }: TOrderRowProps) {
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
-          {order.status === OrderStatus.PENDING && (
-            <Link to={`/payment/${order.orderNumber}`}>
-              <Button
-                size="sm"
-                variant="outline"
-                onClick={(e) => e.stopPropagation()}
-              >
-                Pay now
-              </Button>
-            </Link>
-          )}
-
-          {(order.status === OrderStatus.PENDING || order.status === OrderStatus.PAID) && (
-            <Dialog
-              open={dialogOpen}
-              onOpenChange={setDialogOpen}
-            >
-              <DialogTrigger asChild>
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
+            {order.status === OrderStatus.PENDING && (
+              <Link to={`/payment/${order.orderNumber}`}>
                 <Button
                   size="sm"
-                  variant="destructive"
+                  variant="outline"
                   onClick={(e) => e.stopPropagation()}
                 >
-                  Cancel
+                  Pay now
                 </Button>
-              </DialogTrigger>
+              </Link>
+            )}
 
-              <DialogContent onClick={(e) => e.stopPropagation()}>
-                <DialogHeader>
-                  <DialogTitle>Cancel order?</DialogTitle>
-                </DialogHeader>
-
-                <p className="text-sm text-muted-foreground">
-                  Are you sure you want to cancel order <strong>#{order.orderNumber}</strong>? This action cannot be
-                  undone.
-                </p>
-
-                <DialogFooter>
+            {(order.status === OrderStatus.PENDING || order.status === OrderStatus.PAID) && (
+              <Dialog
+                open={dialogOpen}
+                onOpenChange={setDialogOpen}
+              >
+                <DialogTrigger asChild>
                   <Button
-                    variant="outline"
-                    onClick={() => setDialogOpen(false)}
-                    disabled={cancelling}
-                  >
-                    <X className="h-4 w-4" />
-                    Keep order
-                  </Button>
-
-                  <Button
+                    size="sm"
                     variant="destructive"
-                    onClick={() => void handleCancel()}
-                    disabled={cancelling}
+                    onClick={(e) => e.stopPropagation()}
                   >
-                    <Trash2 className="h-4 w-4" />
-                    {cancelling ? 'Cancelling…' : 'Confirm cancel'}
+                    Cancel
                   </Button>
-                </DialogFooter>
-              </DialogContent>
-            </Dialog>
-          )}
+                </DialogTrigger>
+
+                <DialogContent onClick={(e) => e.stopPropagation()}>
+                  <DialogHeader>
+                    <DialogTitle>Cancel order?</DialogTitle>
+                  </DialogHeader>
+
+                  <p className="text-sm text-muted-foreground">
+                    Are you sure you want to cancel order <strong>#{order.orderNumber}</strong>? This action cannot be
+                    undone.
+                  </p>
+
+                  <DialogFooter>
+                    <Button
+                      variant="outline"
+                      onClick={() => setDialogOpen(false)}
+                      disabled={cancelling}
+                    >
+                      <X className="h-4 w-4" />
+                      Keep order
+                    </Button>
+
+                    <Button
+                      variant="destructive"
+                      onClick={() => void handleCancel()}
+                      disabled={cancelling}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                      {cancelling ? 'Cancelling…' : 'Confirm cancel'}
+                    </Button>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
+            )}
+          </div>
+
+          <div className="text-right text-sm font-semibold">${actualTotal.toFixed(2)}</div>
+
+          <ChevronDown className={cn('h-4 w-4 transition-transform', rowOpen && 'rotate-180')} />
         </div>
-
-        <div className="text-right text-sm font-semibold">${actualTotal.toFixed(2)}</div>
-
-        <ChevronDown className={cn('h-4 w-4 transition-transform', rowOpen && 'rotate-180')} />
       </button>
 
       {rowOpen && (
@@ -193,12 +195,14 @@ export function OrderRow({ order }: TOrderRowProps) {
             </div>
           </div>
 
-          <Separator />
-
           {order.status !== OrderStatus.CANCELED && order.status !== OrderStatus.PENDING && (
-            <div className="text-center text-muted-foreground">
-              Paid on {new Date(order.paidAt).toLocaleDateString()} · Transaction ID: {order.transactionId}
-            </div>
+            <>
+              <Separator />
+
+              <div className="text-center text-muted-foreground">
+                Paid on {new Date(order.paidAt).toLocaleDateString()} · Transaction ID: {order.transactionId}
+              </div>
+            </>
           )}
         </div>
       )}

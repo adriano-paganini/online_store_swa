@@ -53,11 +53,18 @@ export default function ProfilePage() {
     setSuccess(false);
 
     try {
-      const updated = await UserxApi.updateMe(form);
+      // destructure password out so it does not get sent by default
+      const { password, ...rest } = form;
+
+      // only include password in payload if user actually provided one
+      const payload: TUserMeUpdateDTO = password ? { ...rest, password } : rest;
+
+      const updated = await UserxApi.updateMe(payload);
       setUser(updated);
       setSuccess(true);
 
-      setForm((prev) => ({ ...prev, password: '' }));
+      // remove password from form state entirely after save to not include on next send
+      setForm(rest);
     } catch (err: unknown) {
       setError(getErrorMessage(err));
     } finally {

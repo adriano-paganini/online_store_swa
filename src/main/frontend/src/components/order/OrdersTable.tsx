@@ -28,7 +28,7 @@ export function OrdersTable({ orders, loading }: TOrdersTableProps) {
   }
 
   return (
-    <div className="overflow-hidden rounded-lg border">
+    <div className="overflow-hidden rounded-lg">
       {orders.map((order) => (
         <OrderRow
           key={order.orderNumber}
