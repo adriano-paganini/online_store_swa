@@ -31,7 +31,7 @@ export const ProductTable = () => {
   const [loading, setLoading] = useState(true);
 
   const [page, setPage] = useState(0);
-  const [limit, setLimit] = useState(12);
+  const [limit, setLimit] = useState(10);
   const [totalPages, setTotalPages] = useState(0);
   const [sort, setSort] = useState('id,asc');
 
@@ -144,11 +144,11 @@ export const ProductTable = () => {
             <SelectItem value="id,asc">Default</SelectItem>
             <SelectItem value="name,asc">Name A–Z</SelectItem>
             <SelectItem value="name,desc">Name Z–A</SelectItem>
-            <SelectItem value="price,asc">Price ↑</SelectItem>
-            <SelectItem value="price,desc">Price ↓</SelectItem>
-            <SelectItem value="stock,asc">Stock ↑</SelectItem>
-            <SelectItem value="stock,desc">Stock ↓</SelectItem>
-            <SelectItem value="discount,desc">Discount ↓</SelectItem>
+            <SelectItem value="price,asc">Price Ascending</SelectItem>
+            <SelectItem value="price,desc">Price Descending</SelectItem>
+            <SelectItem value="stock,asc">Stock Ascending</SelectItem>
+            <SelectItem value="stock,desc">Stock Descending</SelectItem>
+            <SelectItem value="discount,desc">Discount Descending</SelectItem>
           </SelectContent>
         </Select>
 
@@ -156,7 +156,7 @@ export const ProductTable = () => {
           className="ml-auto"
           onClick={openCreate}
         >
-          <Plus className="mr-2 h-4 w-4" />
+          <Plus className="h-4 w-4" />
           Add Product
         </Button>
       </div>

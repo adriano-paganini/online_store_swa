@@ -201,14 +201,14 @@ export function Header() {
                 variant="ghost"
                 className="w-full justify-start text-destructive"
               >
-                <LogOut className="mr-2 h-4 w-4" />
+                <LogOut className="h-4 w-4" />
                 Logout
               </Button>
             </Link>
           ) : (
             <>
               <Link to={ROUTES.LOGIN}>
-                <Button className="mb-2 w-full">Log in</Button>
+                <Button className="w-full">Log in</Button>
               </Link>
 
               <Link to={ROUTES.REGISTER}>
@@ -300,7 +300,7 @@ export function Header() {
                     to="/logout"
                     className="text-destructive"
                   >
-                    <LogOut className="mr-2 h-4 w-4" />
+                    <LogOut className="h-4 w-4" />
                     Logout
                   </Link>
                 </DropdownMenuItem>

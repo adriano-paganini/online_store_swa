@@ -141,7 +141,7 @@ export default function ProductDetailsPage() {
               onClick={() => void handleAddToCart()}
               disabled={product.stock === 0 || cartLoading}
             >
-              <ShoppingCartIcon className="mr-2 h-5 w-5" />
+              <ShoppingCartIcon className="h-5 w-5" />
               {product.stock === 0 ? 'Out of stock' : 'Add to cart'}
             </Button>
           </div>
