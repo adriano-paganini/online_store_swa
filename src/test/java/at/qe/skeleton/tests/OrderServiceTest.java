@@ -831,6 +831,9 @@ class OrderServiceTest {
                 .thenReturn(Optional.of(order));
         Mockito.when(orderRepository.save(Mockito.any(Order.class)))
                 .thenAnswer(invocation -> invocation.getArgument(0));
+        Mockito.when(orderRepository.findByOrderNumberWithItems(ORDER_NUMBER))
+                .thenReturn(Optional.of(order));
+
 
         Order result = orderService.confirmPayment(ORDER_NUMBER, TRANSACTION_ID);
 

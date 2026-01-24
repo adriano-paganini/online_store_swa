@@ -173,7 +173,12 @@ public class OrderService {
         order.setPaidAt(LocalDateTime.now());
 
         orderRepository.save(order);
-        applicationEventPublisher.publishEvent(new OrderCompletionEvent(order));
+        //load order with items, to avoid lazy-loading exception
+        Order fullOrder = orderRepository.findByOrderNumberWithItems(order.getOrderNumber())
+                .orElseThrow();
+
+
+        applicationEventPublisher.publishEvent(new OrderCompletionEvent(fullOrder));
 
         return order;
     }
