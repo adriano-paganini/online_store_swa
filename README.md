@@ -7,7 +7,7 @@ PS Software Architecture (WS25/26), University of Innsbruck.
 ## Baseline
 
 This project is based on the official **SWA Skeleton Project** provided by the course instructors:
-https://git.uibk.ac.at/informatik/qe/swa_swe/swa/swa-skeleton
+<https://git.uibk.ac.at/informatik/qe/swa_swe/swa/swa-skeleton>
 
 ## Requirements
 
@@ -30,10 +30,10 @@ Ensure backend URL is `localhost:8080`:
 ```bash
 cd src/main/frontend
 cp .env.example .env
-npm start
+npm run dev
 ```
 
-Frontend runs at: http://localhost:3000/
+Frontend runs at: <http://localhost:3000/>
 
 You can log in with:
 
