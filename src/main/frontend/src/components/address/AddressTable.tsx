@@ -29,6 +29,7 @@ export function AddressTable({ addresses, loading, onChanged }: TAddressTablePro
   }
 
   return (
+    // Renders a list of address rows. Not a traditional <table> to allow flexible mobile layout.
     <div className="overflow-hidden rounded-lg">
       {addresses.map((address) => (
         <AddressRow

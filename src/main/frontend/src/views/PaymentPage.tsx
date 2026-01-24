@@ -56,6 +56,7 @@ export default function PaymentPage() {
       return;
     }
 
+    // Basic validation for credit card number: 16 digits required
     if (method === 'credit_card' && cardNumber.replace(/\s/g, '').length !== 16) {
       toast.error('Invalid card details');
       return;
