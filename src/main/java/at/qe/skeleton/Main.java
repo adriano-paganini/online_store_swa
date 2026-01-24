@@ -15,6 +15,7 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 @SpringBootApplication
 @EnableMethodSecurity(prePostEnabled = true)
 @EnableAsync
+@org.springframework.scheduling.annotation.EnableScheduling
 public class Main extends SpringBootServletInitializer {
 
     public static void main(String[] args) {

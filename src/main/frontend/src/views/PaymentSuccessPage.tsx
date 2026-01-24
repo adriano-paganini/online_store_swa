@@ -21,6 +21,9 @@ export default function PaymentSuccessPage() {
 
         <CardContent className="space-y-4">
           <p className="text-muted-foreground">Thank you for your purchase.</p>
+          <p className="text-sm font-medium text-green-600">
+            An email confirmation has been sent to your registered email address.
+          </p>
 
           <p className="text-sm">
             Your order

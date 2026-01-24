@@ -7,6 +7,10 @@ const processPayment = async (payment: TPaymentRequestDTO): Promise<TPaymentResp
     const response = await axios.post<TPaymentResponseDTO>('/cart/payment', payment);
     return response.data;
   } catch (err: unknown) {
+    if (axios.isAxiosError(err) && err.response?.data) {
+      // Return the backend's error response structure if available
+      return err.response.data as TPaymentResponseDTO;
+    }
     throw new Error(`Error processing payment: ${getErrorMessage(err)}`);
   }
 };

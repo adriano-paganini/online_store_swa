@@ -83,6 +83,9 @@ export default function PaymentPage() {
       } else {
         toast.error(res.message);
       }
+    } catch (err) {
+      // Handle generic errors (like network issues) that aren't API rejections
+      toastApiError(err);
     } finally {
       setSubmitting(false);
     }

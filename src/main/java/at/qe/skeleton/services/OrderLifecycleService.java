@@ -29,16 +29,22 @@ public class OrderLifecycleService {
             return OrderStatus.PENDING;
         }
 
-        if (order.getStatus() == OrderStatus.PAID && order.getTimestamp().plusHours(12).isBefore(now)) {
-            return OrderStatus.SHIPPING;
+        // Logic updated for demo purposes:
+        // PAID -> SHIPPING after 1 minute
+        if (order.getStatus() == OrderStatus.PAID) {
+            // Check if PAID time (or order timestamp if paidAt missing) is > 1 minute ago
+            LocalDateTime refTime = order.getPaidAt() != null ? order.getPaidAt() : order.getTimestamp();
+            if (refTime.plusMinutes(1).isBefore(now)) {
+                return OrderStatus.SHIPPING;
+            }
         }
 
         if (order.getStatus() == OrderStatus.SHIPPING) {
-            long hours = shippingHours(order.getShippingMethod());
-
-            if (order.getTimestamp().plusHours(12 + hours).isBefore(now)) {
-                return OrderStatus.DELIVERED;
-            }
+             LocalDateTime refTime = order.getPaidAt() != null ? order.getPaidAt() : order.getTimestamp();
+             // 1 min to reach shipping + 1 min in shipping = 2 mins total from payment
+             if (refTime.plusMinutes(2).isBefore(now)) {
+                 return OrderStatus.DELIVERED;
+             }
         }
 
         return order.getStatus();
