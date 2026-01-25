@@ -11,11 +11,11 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+import at.qe.skeleton.Helpers.SortHelper;
 
 import java.util.List;
 import java.util.Optional;
 
-import static at.qe.skeleton.Helpers.SortHelper.parseSort;
 
 /**
  * Service for managing product subscriptions.
@@ -28,9 +28,11 @@ import static at.qe.skeleton.Helpers.SortHelper.parseSort;
 public class SubscriptionService {
 
     private final SubscriptionRepository subscriptionRepository;
+    private final SortHelper sortHelper;
 
-    public SubscriptionService(SubscriptionRepository subscriptionRepository) {
+    public SubscriptionService(SubscriptionRepository subscriptionRepository, SortHelper sortHelper) {
         this.subscriptionRepository = subscriptionRepository;
+        this.sortHelper = sortHelper;
     }
 
     // Retrieves a specific subscription by user ID and product ID
@@ -52,7 +54,7 @@ public class SubscriptionService {
             Userx user, int page, int limit, SubscriptionType[] types, NotificationType[] channels, String sort) {
 
         // Utilize SortHelper to validate sort fields, allowing "userId", "types", and "channels", falling back to "product"
-        Sort sortObj = parseSort(sort,
+        Sort sortObj = sortHelper.parseSort(sort,Subscription.class,
                 field -> List.of("userId", "types", "channels").contains(field),
                 "product");
 

@@ -1,50 +1,107 @@
 package at.qe.skeleton.Helpers;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.metamodel.Attribute;
 import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Predicate;
 
-/**
- * Utility class for parsing and validating sort strings provided by the frontend.
- * * <p>The primary function {@code parseSort} processes raw strings (e.g., "name,asc")
- * and ensures that sorting fields are permitted based on a provided predicate.</p>
- * * <ul>
- * <li><b>sortString:</b> The raw input string from the request (e.g., "name,asc").</li>
- * <li><b>isValidField:</b> A function/predicate that returns true if the field name is allowed.</li>
- * <li><b>fallback:</b> The default field used if an illegal or missing field name is selected.</li>
- * </ul>
- */
+@Component
 public class SortHelper {
 
-    private SortHelper(){}
+    @PersistenceContext
+    private EntityManager entityManager;
 
-    public static Sort parseSort(String sortString, Predicate<String> isValidField, String fallback) {
-        // If no valid information is given, fallback to a base sort
+    /**
+     * Parses a sort string like:
+     *  - "username,asc"
+     *  - "firstName,desc"
+     *  - "username,asc;id,desc"   (multi-sort, separated by ';')
+     *
+     * For each field, it checks:
+     *  - allowed via isValidField predicate
+     *  - attribute type via JPA metamodel (String -> ignoreCase enabled)
+     *
+     * If sortString is invalid/blank, or a field is illegal, it falls back to `fallback`.
+     */
+    public Sort parseSort(String sortString,
+                          Class<?> entityClass,
+                          Predicate<String> isValidField,
+                          String fallback) {
+
+        // No sort -> fallback
         if (sortString == null || sortString.isBlank()) {
-            return Sort.by(Sort.Direction.DESC, fallback);
+            return Sort.by(buildOrder(entityClass, Sort.Direction.DESC, fallback));
         }
 
-        // Extract arguments from sortString and sanity check. Falling back to base sort if needed.
-        String[] parts = sortString.split(",");
-        if (parts.length != 2) {
-            return Sort.by(Sort.Direction.DESC, fallback);
+        // Support multiple sort clauses separated by ';'
+        String[] clauses = sortString.split(";");
+        List<Sort.Order> orders = new ArrayList<>();
+
+        for (String clause : clauses) {
+            if (clause == null || clause.isBlank()) {
+                continue;
+            }
+
+            String[] parts = clause.split(",");
+            if (parts.length < 1) {
+                continue;
+            }
+
+            String field = parts[0].trim();
+            String directionRaw = (parts.length >= 2 ? parts[1].trim().toLowerCase() : "desc");
+
+            Sort.Direction direction = "asc".equals(directionRaw)
+                    ? Sort.Direction.ASC
+                    : Sort.Direction.DESC;
+
+            // validate field -> fallback if not allowed
+            if (!isValidField.test(field)) {
+                field = fallback;
+            }
+
+            orders.add(buildOrder(entityClass, direction, field));
         }
 
-        // Extract the field and sorting-direction
-        String field = parts[0].trim();
-        String direction = parts[1].trim().toLowerCase();
-
-        // Check if the direction is valid. If not, set to DESC
-        Sort.Direction sortDirection = "asc".equals(direction)
-                ? Sort.Direction.ASC
-                : Sort.Direction.DESC;
-
-        // Use the isValidField function. If it fails, use the fallback.
-        if (!isValidField.test(field)) {
-            field = fallback;
+        // If everything was garbage, fallback
+        if (orders.isEmpty()) {
+            return Sort.by(buildOrder(entityClass, Sort.Direction.DESC, fallback));
         }
 
-        // Return the extracted sort object
-        return Sort.by(sortDirection, field);
+        return Sort.by(orders);
+    }
+
+    /**
+     * Builds a Sort.Order and applies ignoreCase() ONLY if the attribute is String.
+     * This prevents "lower(id)" crashes for Long/Number fields.
+     */
+    private Sort.Order buildOrder(Class<?> entityClass, Sort.Direction direction, String field) {
+        Sort.Order order = new Sort.Order(direction, field);
+
+        if (isStringAttribute(entityClass, field)) {
+            order = order.ignoreCase();
+        }
+
+        return order;
+    }
+
+    /**
+     * Uses JPA metamodel to detect attribute type reliably.
+     */
+    private boolean isStringAttribute(Class<?> entityClass, String field) {
+        try {
+            Attribute<?, ?> attr = entityManager.getMetamodel()
+                    .entity(entityClass)
+                    .getAttribute(field);
+
+            return String.class.equals(attr.getJavaType());
+        } catch (IllegalArgumentException ex) {
+            // unknown attribute -> treat as non-string (no ignoreCase)
+            return false;
+        }
     }
 }
