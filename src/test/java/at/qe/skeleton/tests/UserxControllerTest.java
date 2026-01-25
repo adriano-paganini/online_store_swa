@@ -43,10 +43,10 @@ public class UserxControllerTest {
     public void testUpdateMe() throws Exception {
 
         UserxUpdateDTO dto = new UserxUpdateDTO(
-                null,
+                "unchanged",
                 null,
                 "HttpUpdated",
-                null,
+                "unchanged",
                 "http@update.at",
                 null,
                 null
