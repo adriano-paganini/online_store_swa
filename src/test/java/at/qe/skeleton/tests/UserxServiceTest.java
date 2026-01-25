@@ -343,7 +343,6 @@ public class UserxServiceTest {
     public void testUpdateCurrentUserSelfService() {
 
         UserxMeUpdateDTO dto = new UserxMeUpdateDTO(
-                null,
                 "NewStrongPass1",
                 "UpdatedFirst",
                 "UpdatedLast",

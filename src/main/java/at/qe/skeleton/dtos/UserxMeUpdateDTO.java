@@ -3,15 +3,6 @@ package at.qe.skeleton.dtos;
 import jakarta.validation.constraints.*;
 
 public record UserxMeUpdateDTO(
-
-        @NotNull(message = "Username must be provided.")
-        @Size(
-                min = 3,
-                max = 50,
-                message = "Username must be between 3 and 50 characters long.n"
-        )
-        String username,
-
         @Size(
                 min = 8,
                 max = 72,
@@ -19,21 +10,21 @@ public record UserxMeUpdateDTO(
         )
         String password,
 
-        @NotNull(message = "First name must be provided.")
+        @NotBlank(message = "First name must be provided.")
         @Size(
                 max = 50,
                 message = "First name must not exceed 50 characters."
         )
         String firstName,
 
-        @NotNull(message = "Last name must be provided.")
+        @NotBlank(message = "Last name must be provided.")
         @Size(
                 max = 50,
                 message = "Last name must not exceed 50 characters."
         )
         String lastName,
 
-        @NotNull(message = "Email address must be provided.")
+        @NotBlank(message = "Email address must be provided.")
         @Email(message = "Email address must be a valid email.")
         @Size(
                 max = 100,
