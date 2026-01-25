@@ -160,7 +160,6 @@ public class UserxService implements UserDetailsService {
             }
             // only soft delete users
             userToDelete.setDeleted(true);
-            userToDelete.setEnabled(false);
             userRepository.save(userToDelete);
         });
     }
@@ -260,7 +259,6 @@ public class UserxService implements UserDetailsService {
         // enforced defaults
         user.setRoles(Set.of(UserxRole.CUSTOMER));
         user.setChannels(Set.of(NotificationType.EMAIL));
-        user.setEnabled(true);
         user.setDeleted(false);
 
         return userRepository.save(user);
