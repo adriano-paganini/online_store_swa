@@ -22,247 +22,141 @@ class UserxRepositorySortingTest {
 
     @Test
     void findWithPaginationFiltersSortsByUsernameAscendingUsingSeedData() {
-
-        Pageable pageable = PageRequest.of(
-                0,
-                10,
-                Sort.by(Sort.Direction.ASC, "username")
-        );
+        Pageable pageable = PageRequest.of(0, 10, Sort.by(Sort.Direction.ASC, "username"));
 
         Page<Userx> result =
-                userRepository.findWithPaginationFilters(null, null, pageable);
+                userRepository.findWithPaginationFilters(null, false, pageable);
 
-        List<String> usernames = result.getContent()
-                .stream()
+        List<String> usernames = result.getContent().stream()
                 .map(Userx::getUsername)
                 .toList();
 
-        Assertions.assertEquals(
-                List.of("admin", "elvis", "user1", "user2"),
-                usernames
-        );
+        Assertions.assertEquals(List.of("admin", "elvis", "user1", "user2"), usernames);
     }
 
     @Test
     void findWithPaginationFiltersSortsByUsernameDescendingUsingSeedData() {
-
-        Pageable pageable = PageRequest.of(
-                0,
-                10,
-                Sort.by(Sort.Direction.DESC, "username")
-        );
+        Pageable pageable = PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "username"));
 
         Page<Userx> result =
-                userRepository.findWithPaginationFilters(null, null, pageable);
+                userRepository.findWithPaginationFilters(null, false, pageable);
 
-        List<String> usernames = result.getContent()
-                .stream()
+        List<String> usernames = result.getContent().stream()
                 .map(Userx::getUsername)
                 .toList();
 
-        Assertions.assertEquals(
-                List.of("user2", "user1", "elvis", "admin"),
-                usernames
-        );
+        Assertions.assertEquals(List.of("user2", "user1", "elvis", "admin"), usernames);
     }
 
     @Test
     void findWithPaginationFiltersSortsByLastNameAscendingUsingSeedData() {
-
-        Pageable pageable = PageRequest.of(
-                0,
-                10,
-                Sort.by(Sort.Direction.ASC, "lastName")
-        );
+        Pageable pageable = PageRequest.of(0, 10, Sort.by(Sort.Direction.ASC, "lastName"));
 
         Page<Userx> result =
-                userRepository.findWithPaginationFilters(null, null, pageable);
+                userRepository.findWithPaginationFilters(null, false, pageable);
 
-        List<String> lastNames = result.getContent()
-                .stream()
+        List<String> lastNames = result.getContent().stream()
                 .map(Userx::getLastName)
                 .toList();
 
-        Assertions.assertEquals(
-                List.of("Istrator", "Kaufgern", "Mustermann", "The King"),
-                lastNames
-        );
+        Assertions.assertEquals(List.of("Istrator", "Kaufgern", "Mustermann", "The King"), lastNames);
     }
 
     @Test
     void findWithPaginationFiltersSortsByLastNameDescendingUsingSeedData() {
-
-        Pageable pageable = PageRequest.of(
-                0,
-                10,
-                Sort.by(Sort.Direction.DESC, "lastName")
-        );
+        Pageable pageable = PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "lastName"));
 
         Page<Userx> result =
-                userRepository.findWithPaginationFilters(null, null, pageable);
+                userRepository.findWithPaginationFilters(null, false, pageable);
 
-        List<String> lastNames = result.getContent()
-                .stream()
+        List<String> lastNames = result.getContent().stream()
                 .map(Userx::getLastName)
                 .toList();
 
-        Assertions.assertEquals(
-                List.of("The King", "Mustermann", "Kaufgern", "Istrator"),
-                lastNames
-        );
+        Assertions.assertEquals(List.of("The King", "Mustermann", "Kaufgern", "Istrator"), lastNames);
     }
 
     @Test
     void findWithPaginationFiltersSortsByIdAscendingUsingSeedData() {
-
-        Pageable pageable = PageRequest.of(
-                0,
-                10,
-                Sort.by(Sort.Direction.ASC, "id")
-        );
+        Pageable pageable = PageRequest.of(0, 10, Sort.by(Sort.Direction.ASC, "id"));
 
         Page<Userx> result =
-                userRepository.findWithPaginationFilters(null, null, pageable);
+                userRepository.findWithPaginationFilters(null, false, pageable);
 
-        List<Long> ids = result.getContent()
-                .stream()
+        List<Long> ids = result.getContent().stream()
                 .map(Userx::getId)
                 .toList();
 
-        Assertions.assertEquals(
-                List.of(1000L, 2000L, 3000L, 4000L),
-                ids
-        );
+        Assertions.assertEquals(List.of(1000L, 2000L, 3000L, 4000L), ids);
     }
 
     @Test
     void findWithPaginationFiltersSortsByIdDescendingUsingSeedData() {
-
-        Pageable pageable = PageRequest.of(
-                0,
-                10,
-                Sort.by(Sort.Direction.DESC, "id")
-        );
+        Pageable pageable = PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "id"));
 
         Page<Userx> result =
-                userRepository.findWithPaginationFilters(null, null, pageable);
+                userRepository.findWithPaginationFilters(null, false, pageable);
 
-        List<Long> ids = result.getContent()
-                .stream()
+        List<Long> ids = result.getContent().stream()
                 .map(Userx::getId)
                 .toList();
 
-        Assertions.assertEquals(
-                List.of(4000L, 3000L, 2000L, 1000L),
-                ids
-        );
+        Assertions.assertEquals(List.of(4000L, 3000L, 2000L, 1000L), ids);
     }
 
     @Test
     void findWithPaginationFiltersFiltersByAdminRole() {
-
-        Pageable pageable = PageRequest.of(
-                0,
-                10,
-                Sort.by(Sort.Direction.ASC, "username")
-        );
+        Pageable pageable = PageRequest.of(0, 10, Sort.by(Sort.Direction.ASC, "username"));
 
         Page<Userx> result =
-                userRepository.findWithPaginationFilters(
-                        List.of(UserxRole.ADMIN),
-                        null,
-                        pageable
-                );
+                userRepository.findWithPaginationFilters(List.of(UserxRole.ADMIN), false, pageable);
 
-        List<String> usernames = result.getContent()
-                .stream()
+        List<String> usernames = result.getContent().stream()
                 .map(Userx::getUsername)
                 .toList();
 
-        Assertions.assertEquals(
-                List.of("admin", "elvis"),
-                usernames
-        );
+        Assertions.assertEquals(List.of("admin", "elvis"), usernames);
     }
 
     @Test
     void findWithPaginationFiltersFiltersByManagerRole() {
-
-        Pageable pageable = PageRequest.of(
-                0,
-                10,
-                Sort.by(Sort.Direction.ASC, "username")
-        );
+        Pageable pageable = PageRequest.of(0, 10, Sort.by(Sort.Direction.ASC, "username"));
 
         Page<Userx> result =
-                userRepository.findWithPaginationFilters(
-                        List.of(UserxRole.MANAGER),
-                        null,
-                        pageable
-                );
+                userRepository.findWithPaginationFilters(List.of(UserxRole.MANAGER), false, pageable);
 
-        List<String> usernames = result.getContent()
-                .stream()
+        List<String> usernames = result.getContent().stream()
                 .map(Userx::getUsername)
                 .toList();
 
-        Assertions.assertEquals(
-                List.of("user1"),
-                usernames
-        );
+        Assertions.assertEquals(List.of("user1"), usernames);
     }
 
     @Test
     void findWithPaginationFiltersFiltersByAdminOrManagerRole() {
-
-        Pageable pageable = PageRequest.of(
-                0,
-                10,
-                Sort.by(Sort.Direction.ASC, "username")
-        );
+        Pageable pageable = PageRequest.of(0, 10, Sort.by(Sort.Direction.ASC, "username"));
 
         Page<Userx> result =
-                userRepository.findWithPaginationFilters(
-                        List.of(UserxRole.ADMIN, UserxRole.MANAGER),
-                        null,
-                        pageable
-                );
+                userRepository.findWithPaginationFilters(List.of(UserxRole.ADMIN, UserxRole.MANAGER), false, pageable);
 
-        List<String> usernames = result.getContent()
-                .stream()
+        List<String> usernames = result.getContent().stream()
                 .map(Userx::getUsername)
                 .toList();
 
-        Assertions.assertEquals(
-                List.of("admin", "elvis", "user1"),
-                usernames
-        );
+        Assertions.assertEquals(List.of("admin", "elvis", "user1"), usernames);
     }
 
     @Test
     void findWithPaginationFiltersFiltersByCustomerRole() {
-
-        Pageable pageable = PageRequest.of(
-                0,
-                10,
-                Sort.by(Sort.Direction.ASC, "username")
-        );
+        Pageable pageable = PageRequest.of(0, 10, Sort.by(Sort.Direction.ASC, "username"));
 
         Page<Userx> result =
-                userRepository.findWithPaginationFilters(
-                        List.of(UserxRole.CUSTOMER),
-                        null,
-                        pageable
-                );
+                userRepository.findWithPaginationFilters(List.of(UserxRole.CUSTOMER), false, pageable);
 
-        List<String> usernames = result.getContent()
-                .stream()
+        List<String> usernames = result.getContent().stream()
                 .map(Userx::getUsername)
                 .toList();
 
-        Assertions.assertEquals(
-                List.of("admin", "elvis", "user1", "user2"),
-                usernames
-        );
+        Assertions.assertEquals(List.of("admin", "elvis", "user1", "user2"), usernames);
     }
 }

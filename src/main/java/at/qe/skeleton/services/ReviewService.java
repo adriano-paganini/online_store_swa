@@ -1,5 +1,6 @@
 package at.qe.skeleton.services;
 
+import at.qe.skeleton.Helpers.SortHelper;
 import at.qe.skeleton.model.Review;
 import at.qe.skeleton.model.Userx;
 import at.qe.skeleton.repositories.ReviewRepository;
@@ -15,7 +16,6 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.Objects;
 import java.util.Optional;
 
-import static at.qe.skeleton.Helpers.SortHelper.parseSort;
 
 @Service
 public class ReviewService {
@@ -23,14 +23,16 @@ public class ReviewService {
     private final ReviewRepository reviewRepository;
     private final AuthenticatedUserService authenticatedUserService;
     private final ProductService productService;
+    private final SortHelper sortHelper;
 
     public ReviewService(
             ReviewRepository reviewRepository,
             AuthenticatedUserService authenticatedUserService,
-            ProductService productService) {
+            ProductService productService, SortHelper sortHelper) {
         this.reviewRepository = reviewRepository;
         this.authenticatedUserService = authenticatedUserService;
         this.productService = productService;
+        this.sortHelper = sortHelper;
     }
 
 
@@ -43,7 +45,7 @@ public class ReviewService {
             String sort) {
 
 
-        Sort sortObj = parseSort(sort,
+        Sort sortObj = sortHelper.parseSort(sort,Review.class,
                 field -> Objects.equals("score", field),
                 "timestamp");
 

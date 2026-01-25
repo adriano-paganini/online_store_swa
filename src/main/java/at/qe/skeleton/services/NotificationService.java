@@ -1,5 +1,6 @@
 package at.qe.skeleton.services;
 
+import at.qe.skeleton.Helpers.SortHelper;
 import at.qe.skeleton.events.Payload;
 import at.qe.skeleton.model.Notification;
 import at.qe.skeleton.model.NotificationStatus;
@@ -15,7 +16,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-import static at.qe.skeleton.Helpers.SortHelper.parseSort;
 
 /**
  * Service for managing the lifecycle of {@link Notification} entities.
@@ -27,9 +27,11 @@ import static at.qe.skeleton.Helpers.SortHelper.parseSort;
 public class NotificationService {
 
     private final NotificationRepository notificationRepository;
+    private final SortHelper sortHelper;
 
-    public NotificationService(NotificationRepository notificationRepository) {
+    public NotificationService(NotificationRepository notificationRepository, SortHelper sortHelper) {
         this.notificationRepository = notificationRepository;
+        this.sortHelper = sortHelper;
     }
 
     // Fetches a specific Notification by its unique identifier
@@ -59,7 +61,7 @@ public class NotificationService {
             Userx user, int page, int limit, NotificationStatus status, NotificationType channel, String sort) {
 
         // Utilize SortHelper to validate sort fields, allowing "channel" and "status", falling back to "timestamp"
-        Sort sortObj = parseSort(sort,
+        Sort sortObj = sortHelper.parseSort(sort,Notification.class,
                 field -> List.of("channel","status").contains(field),
                 "timestamp");
 
