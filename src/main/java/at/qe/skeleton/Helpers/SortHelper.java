@@ -16,6 +16,8 @@ import java.util.function.Predicate;
  */
 public class SortHelper {
 
+    private SortHelper(){}
+
     public static Sort parseSort(String sortString, Predicate<String> isValidField, String fallback) {
         // If no valid information is given, fallback to a base sort
         if (sortString == null || sortString.isBlank()) {

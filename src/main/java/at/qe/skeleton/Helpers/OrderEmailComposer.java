@@ -32,10 +32,11 @@ public final class OrderEmailComposer {
         String fullName = (firstName + " " + lastName).trim();
 
         // Extract order metadata with sanity checks
-        String orderNumber = safe(order.getOrderNumber(), "(unknown)");
-        String orderDate = order.getTimestamp() != null ? order.getTimestamp().format(DATE_FMT) : "(unknown)";
-        String shippingMethod = order.getShippingMethod() != null ? order.getShippingMethod().getDisplayName() : "(unknown)";
-        String status = order.getStatus() != null ? order.getStatus().name() : "(unknown)";
+        String fallback = "(unknown)";
+        String orderNumber = safe(order.getOrderNumber(), fallback);
+        String orderDate = order.getTimestamp() != null ? order.getTimestamp().format(DATE_FMT) : fallback;
+        String shippingMethod = order.getShippingMethod() != null ? order.getShippingMethod().getDisplayName() : fallback;
+        String status = order.getStatus() != null ? order.getStatus().name() : fallback;
 
         // Configure currency formatting for US Locale
         NumberFormat money = NumberFormat.getCurrencyInstance(LOCALE_EN);

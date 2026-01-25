@@ -16,7 +16,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import static org.mockito.Mockito.*;
 
 @SpringBootTest(classes = {SmsNotificationEventListener.class})
-@Import(AsyncConfigTest.class)
+@Import(AsyncTestConfig.class)
 class SmsNotificationEventListenerTest {
 
     @Autowired

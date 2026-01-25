@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -169,7 +170,7 @@ public class ProductController {
         } catch (Exception e) {
             // No authentication available, use null (public access)
         }
-        return null;
+        return Collections.emptyList();
     }
 }
 
