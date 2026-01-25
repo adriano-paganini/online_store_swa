@@ -31,6 +31,7 @@ public class ProductServiceImpl implements ProductService {
     private final ApplicationEventPublisher applicationEventPublisher;
     private final SubscriptionService subscriptionService;
     private final ProductMapper productMapper;
+    private final String PRODUCT_NOT_FOUND_STRING = "Product not found";
 
     public ProductServiceImpl(
             ProductRepository productRepository,
@@ -72,7 +73,7 @@ public class ProductServiceImpl implements ProductService {
     public void updateProductAverageScore(Long productId, Double averageScore) {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "Product not found"));
+                        HttpStatus.NOT_FOUND, PRODUCT_NOT_FOUND_STRING));
         product.setAvgScore(averageScore);
         productRepository.save(product);
     }
@@ -115,7 +116,7 @@ public class ProductServiceImpl implements ProductService {
     public Product updateProduct(Long id, ProductUpdateDTO updateDTO) {
         Product product = productRepository.findByIdAndNotDeleted(id)
                 .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "Product not found"));
+                        HttpStatus.NOT_FOUND, PRODUCT_NOT_FOUND_STRING));
         
         // Store old values for event publishing (service can access DTO to keep controller thin)
         String oldName = product.getName();
@@ -166,7 +167,7 @@ public class ProductServiceImpl implements ProductService {
     public void softDeleteProduct(Long id) {
         Product product = productRepository.findByIdAndNotDeleted(id)
                 .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "Product not found"));
+                        HttpStatus.NOT_FOUND, PRODUCT_NOT_FOUND_STRING));
 
         product.setDeleted(true);
         productRepository.save(product);
@@ -226,7 +227,7 @@ public class ProductServiceImpl implements ProductService {
     public void adjustProductStockWithMap(Map<Long,Integer> items) {
         for (Long productId:items.keySet()) {
             Product product = getProductById(productId).orElseThrow(() -> new ResponseStatusException(
-                    HttpStatus.NOT_FOUND, "Product not found"));
+                    HttpStatus.NOT_FOUND, PRODUCT_NOT_FOUND_STRING));
 
             Integer stock = product.getStock();
             Integer requiredQuantity = items.get(productId);

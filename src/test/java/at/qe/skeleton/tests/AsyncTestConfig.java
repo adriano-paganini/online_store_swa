@@ -9,7 +9,7 @@ import java.util.concurrent.Executor;
 
 @TestConfiguration
 @EnableAsync
-public class AsyncConfigTest {
+public class AsyncTestConfig {
     @Bean(name = "taskExecutor")
     public Executor taskExecutor() {
         return new SyncTaskExecutor();
