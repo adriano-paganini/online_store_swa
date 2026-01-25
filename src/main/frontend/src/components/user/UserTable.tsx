@@ -91,7 +91,7 @@ const UserTable = () => {
   ): TUserxValidationResult => {
     if (!user) return { valid: false, message: 'No user selected' };
 
-    const required: (keyof TUserDTO)[] = ['firstName', 'lastName', 'username'];
+    const required: (keyof TUserDTO)[] = ['firstName', 'lastName', 'username', 'email', 'password'];
     const { requirePassword = true } = opts; // password input on edit user not needed
     const fieldErrors: Partial<Record<keyof TUserDTO, string>> = {};
 

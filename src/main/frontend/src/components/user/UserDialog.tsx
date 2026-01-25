@@ -14,9 +14,8 @@ import {
 import { TUserDTO } from '@/DTO/userx.types';
 import { TUserxValidationResult } from '@/utilities/userxUtilities';
 import { CheckedState } from '@radix-ui/react-checkbox';
-import { AlertTriangle, Check, X } from 'lucide-react';
+import { Check, X } from 'lucide-react';
 import React from 'react';
-import { Alert, AlertDescription, AlertTitle } from '../ui/alert';
 import { Button } from '../ui/button';
 import { UserForm } from './UserForm';
 
@@ -60,17 +59,6 @@ export const UserDialog: React.FC<TUserDialogProps> = ({
             {isNewUser ? 'Fill in the form below to create a new user.' : 'Modify the fields and save your changes.'}
           </DialogDescription>
         </DialogHeader>
-
-        {validation.message && (
-          <Alert
-            variant="destructive"
-            className="mb-4"
-          >
-            <AlertTriangle className="h-5 w-5" />
-            <AlertTitle>Error</AlertTitle>
-            <AlertDescription>{validation.message}</AlertDescription>
-          </Alert>
-        )}
 
         {user && (
           <UserForm
