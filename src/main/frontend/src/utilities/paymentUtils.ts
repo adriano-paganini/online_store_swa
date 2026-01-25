@@ -1,6 +1,6 @@
 export type TPaymentMethodKey = 'credit_card' | 'netflix_password' | 'dad_joke';
 
-export type TPaymentMethodConfig = {
+type TPaymentMethodConfig = {
   key: TPaymentMethodKey;
   label: string;
   description: string;

@@ -31,7 +31,7 @@ type TUserContextType = {
 };
 
 // Create a new context object
-export const UserContext = createContext<TUserContextType | null>(null);
+const UserContext = createContext<TUserContextType | null>(null);
 
 type TCustomJwtPayload = JwtPayload & {
   roles: string[];
