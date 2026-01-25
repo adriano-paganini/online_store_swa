@@ -45,6 +45,7 @@ class OrderControllerTest {
     private static final String TRANSACTION_ID = "TXN-123ABC";
 
     private static final String ORDER_STATUS = "PENDING";
+    private static final String ORDER_SORT_DESC = "timestamp,desc";
 
     private static final Long ADDRESS_SHIPPING = 1L;
     private static final Long ADDRESS_BILLING = 2L;
@@ -133,7 +134,7 @@ class OrderControllerTest {
         Page<Order> page = new PageImpl<>(List.of(order));
 
         Mockito.when(orderService.getCurrentUserOrders(
-                null, PAGE_DEFAULT, LIMIT_DEFAULT
+                null, PAGE_DEFAULT, LIMIT_DEFAULT,ORDER_SORT_DESC
         )).thenReturn(page);
 
         Mockito.when(orderMapper.toDto(order))
@@ -159,7 +160,7 @@ class OrderControllerTest {
         Page<Order> page = new PageImpl<>(List.of(order));
 
         Mockito.when(orderService.getCurrentUserOrders(
-                OrderStatus.PENDING, PAGE_DEFAULT, LIMIT_DEFAULT
+                OrderStatus.PENDING, PAGE_DEFAULT, LIMIT_DEFAULT,ORDER_SORT_DESC
         )).thenReturn(page);
 
         Mockito.when(orderMapper.toDto(order))

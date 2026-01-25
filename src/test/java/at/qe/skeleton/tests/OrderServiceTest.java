@@ -51,6 +51,9 @@ class OrderServiceTest {
     private static final String ORDER_NUMBER = "ORD-123";
     private static final String TRANSACTION_ID = "TXN-ABC";
 
+    private static final String ORDER_SORT_DESC = "timestamp,desc";
+    private static final String ORDER_SORT_ASC = "timestamp,asc";
+
     @Autowired
     private OrderService orderService;
 
@@ -409,7 +412,7 @@ class OrderServiceTest {
         Mockito.when(orderRepository.findByUser(Mockito.eq(user), Mockito.any(Pageable.class)))
                 .thenReturn(page);
 
-        Page<Order> result = orderService.getCurrentUserOrders(null, 0, 10);
+        Page<Order> result = orderService.getCurrentUserOrders(null, 0, 10,ORDER_SORT_DESC);
 
         Assertions.assertEquals(1, result.getTotalElements());
 
@@ -439,7 +442,7 @@ class OrderServiceTest {
                         Mockito.any(Pageable.class)))
                 .thenReturn(page);
 
-        Page<Order> result = orderService.getCurrentUserOrders(OrderStatus.PENDING, 1, 5);
+        Page<Order> result = orderService.getCurrentUserOrders(OrderStatus.PENDING, 1, 5,ORDER_SORT_DESC);
 
         Assertions.assertEquals(1, result.getTotalElements());
         Mockito.verify(orderRepository).findByUserAndStatus(
@@ -461,7 +464,7 @@ class OrderServiceTest {
                 Mockito.any(Pageable.class)
         )).thenReturn(page);
 
-        Page<Order> result = orderService.getCurrentUserOrders(null, 2, 5);
+        Page<Order> result = orderService.getCurrentUserOrders(null, 2, 5,ORDER_SORT_DESC);
 
         // result correctness
         Assertions.assertEquals(1, result.getTotalElements());
@@ -498,7 +501,7 @@ class OrderServiceTest {
         )).thenReturn(page);
 
         Page<Order> result =
-                orderService.getCurrentUserOrders(OrderStatus.PENDING, 1, 3);
+                orderService.getCurrentUserOrders(OrderStatus.PENDING, 1, 3,ORDER_SORT_DESC);
 
         Assertions.assertEquals(1, result.getTotalElements());
 
@@ -530,7 +533,7 @@ class OrderServiceTest {
 
         ResponseStatusException ex = Assertions.assertThrows(
                 ResponseStatusException.class,
-                () -> orderService.getCurrentUserOrders(null, 0, 10)
+                () -> orderService.getCurrentUserOrders(null, 0, 10,ORDER_SORT_DESC)
         );
 
         Assertions.assertEquals(HttpStatus.UNAUTHORIZED, ex.getStatusCode());
@@ -945,4 +948,35 @@ class OrderServiceTest {
         Assertions.assertEquals(OrderStatus.CANCELED, result.getStatus());
         Mockito.verify(orderRepository, Mockito.never()).save(Mockito.any());
     }
+
+    @Test
+    void getCurrentUserOrdersWithoutStatusUsesAscendingSortingWhenRequested() {
+        Page<Order> page = new PageImpl<>(List.of(new Order(
+                user,
+                List.of(),
+                new OrderAddress(COUNTRY, CITY_INNSBRUCK, POSTAL, STREET, NUMBER, EXTRA),
+                new OrderAddress(COUNTRY, CITY_GRAZ, POSTAL, STREET, NUMBER, null),
+                ShippingMethod.FAIRY_DUST_DISPATCH,
+                0.0
+        )));
+
+        Mockito.when(orderRepository.findByUser(Mockito.eq(user), Mockito.any(Pageable.class)))
+                .thenReturn(page);
+
+        Page<Order> result = orderService.getCurrentUserOrders(null, 0, 10, ORDER_SORT_ASC);
+
+        Assertions.assertEquals(1, result.getTotalElements());
+
+        ArgumentCaptor<Pageable> pageableCaptor = ArgumentCaptor.forClass(Pageable.class);
+        Mockito.verify(orderRepository).findByUser(Mockito.eq(user), pageableCaptor.capture());
+
+        Pageable used = pageableCaptor.getValue();
+        Assertions.assertEquals(0, used.getPageNumber());
+        Assertions.assertEquals(10, used.getPageSize());
+
+        Sort.Order sortOrder = used.getSort().getOrderFor("timestamp");
+        Assertions.assertNotNull(sortOrder);
+        Assertions.assertTrue(sortOrder.isAscending());
+    }
+
 }
