@@ -1,8 +1,8 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 import { NotificationType } from '@/DTO/notification.types';
@@ -29,34 +29,8 @@ export function SubscriptionFilters({
   setSort,
   onApplyFilters,
 }: TSubscriptionFiltersProps) {
-  const allTypesSelected = types.length === 0;
-  const allChannelsSelected = channels.length === 0;
-
-  const toggleType = (type: SubscriptionType) => {
-    if (types.includes(type)) {
-      const next = types.filter((t) => t !== type);
-      setTypes(next.length === 0 ? [] : next);
-    } else {
-      setTypes([...types, type]);
-    }
-  };
-
-  const toggleAllTypes = () => {
-    setTypes([]);
-  };
-
-  const toggleChannel = (channel: NotificationType) => {
-    if (channels.includes(channel)) {
-      const next = channels.filter((c) => c !== channel);
-      setChannels(next.length === 0 ? [] : next);
-    } else {
-      setChannels([...channels, channel]);
-    }
-  };
-
-  const toggleAllChannels = () => {
-    setChannels([]);
-  };
+  const selectedType = types[0] ?? 'all';
+  const selectedChannel = channels[0] ?? 'all';
 
   return (
     <aside className="w-full space-y-6 lg:w-64">
@@ -64,12 +38,12 @@ export function SubscriptionFilters({
         <div>
           <Label className="mb-2 block">Subscription Types</Label>
 
-          <div className="space-y-2">
+          <RadioGroup
+            value={selectedType}
+            onValueChange={(value) => (value === 'all' ? setTypes([]) : setTypes([value as SubscriptionType]))}
+          >
             <div className="flex items-center gap-2">
-              <Checkbox
-                checked={allTypesSelected}
-                onCheckedChange={toggleAllTypes}
-              />
+              <RadioGroupItem value="all" />
               <span className="text-sm font-medium">All</span>
             </div>
 
@@ -78,25 +52,22 @@ export function SubscriptionFilters({
                 key={type}
                 className="flex items-center gap-2"
               >
-                <Checkbox
-                  checked={!allTypesSelected && types.includes(type)}
-                  onCheckedChange={() => toggleType(type)}
-                />
+                <RadioGroupItem value={type} />
                 <span className="text-sm">{SubscriptionTypeLabels[type]}</span>
               </div>
             ))}
-          </div>
+          </RadioGroup>
         </div>
 
         <div>
           <Label className="mb-2 block">Channels</Label>
 
-          <div className="space-y-2">
+          <RadioGroup
+            value={selectedChannel}
+            onValueChange={(value) => (value === 'all' ? setChannels([]) : setChannels([value as NotificationType]))}
+          >
             <div className="flex items-center gap-2">
-              <Checkbox
-                checked={allChannelsSelected}
-                onCheckedChange={toggleAllChannels}
-              />
+              <RadioGroupItem value="all" />
               <span className="text-sm font-medium">All</span>
             </div>
 
@@ -105,14 +76,11 @@ export function SubscriptionFilters({
                 key={channel}
                 className="flex items-center gap-2"
               >
-                <Checkbox
-                  checked={!allChannelsSelected && channels.includes(channel)}
-                  onCheckedChange={() => toggleChannel(channel)}
-                />
+                <RadioGroupItem value={channel} />
                 <span className="text-sm">{NotificationTypeLabels[channel]}</span>
               </div>
             ))}
-          </div>
+          </RadioGroup>
         </div>
 
         <div>

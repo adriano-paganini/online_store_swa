@@ -1,11 +1,12 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 import { NotificationStatus, NotificationType } from '@/DTO/notification.types';
+import { NotificationStatusLabels, NotificationTypeLabels } from '@/utilities/notificationUtils';
 
 type TNotificationFiltersProps = {
   status: NotificationStatus | null;
@@ -31,12 +32,13 @@ export function NotificationFilters({
       <div className="space-y-4 rounded-lg border p-4">
         <div>
           <Label className="mb-2 block">Status</Label>
-          <div className="space-y-2">
+
+          <RadioGroup
+            value={status ?? 'all'}
+            onValueChange={(value) => setStatus(value === 'all' ? null : (value as NotificationStatus))}
+          >
             <div className="flex items-center gap-2">
-              <Checkbox
-                checked={status === null}
-                onCheckedChange={() => setStatus(null)}
-              />
+              <RadioGroupItem value="all" />
               <span className="text-sm font-medium">All</span>
             </div>
 
@@ -45,24 +47,22 @@ export function NotificationFilters({
                 key={s}
                 className="flex items-center gap-2"
               >
-                <Checkbox
-                  checked={status === s}
-                  onCheckedChange={() => setStatus(s)}
-                />
-                <span className="text-sm">{s}</span>
+                <RadioGroupItem value={s} />
+                <span className="text-sm">{NotificationStatusLabels[s]}</span>
               </div>
             ))}
-          </div>
+          </RadioGroup>
         </div>
 
         <div>
           <Label className="mb-2 block">Channel</Label>
-          <div className="space-y-2">
+
+          <RadioGroup
+            value={channel ?? 'all'}
+            onValueChange={(value) => setChannel(value === 'all' ? null : (value as NotificationType))}
+          >
             <div className="flex items-center gap-2">
-              <Checkbox
-                checked={channel === null}
-                onCheckedChange={() => setChannel(null)}
-              />
+              <RadioGroupItem value="all" />
               <span className="text-sm font-medium">All</span>
             </div>
 
@@ -71,14 +71,11 @@ export function NotificationFilters({
                 key={c}
                 className="flex items-center gap-2"
               >
-                <Checkbox
-                  checked={channel === c}
-                  onCheckedChange={() => setChannel(c)}
-                />
-                <span className="text-sm">{c}</span>
+                <RadioGroupItem value={c} />
+                <span className="text-sm">{NotificationTypeLabels[c]}</span>
               </div>
             ))}
-          </div>
+          </RadioGroup>
         </div>
 
         <div>

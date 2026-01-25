@@ -16,7 +16,7 @@ export default function ProductsPage() {
 
   const [page, setPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
-  const [limit, setLimit] = useState(12);
+  const [limit, setLimit] = useState(10);
 
   const [draftPriceRange, setDraftPriceRange] = useState<[number, number | null]>([0, null]);
   const [draftInStockOnly, setDraftInStockOnly] = useState(false);
