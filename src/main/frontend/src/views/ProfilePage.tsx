@@ -115,17 +115,9 @@ export default function ProfilePage() {
             onSubmit={(e) => void handleSubmit(e)}
             className="space-y-4"
           >
-            <div className="grid gap-2">
-              <Label htmlFor="username">Username</Label>
-              <Input
-                id="username"
-                name="username"
-                value={form.username ?? ''}
-                onChange={handleChange}
-                minLength={3}
-                maxLength={50}
-                required
-              />
+            <div className="grid gap-1">
+              <Label>Username</Label>
+              <p className="rounded-md text-muted-foreground">{form.username}</p>
             </div>
 
             <div className="grid gap-2 sm:grid-cols-2">
