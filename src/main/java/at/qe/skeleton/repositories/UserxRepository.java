@@ -38,17 +38,16 @@ public interface UserxRepository extends AbstractRepository<Userx, Long> {
 
     Optional<Userx> findById(Long id);
 
-    @Query("""
+    @Query(""" 
     SELECT DISTINCT u
     FROM Userx u
     LEFT JOIN u.roles r
-    WHERE u.deleted = :deleted
+    WHERE (:deleted IS NULL OR u.deleted = :deleted)
       AND (:roles IS NULL OR r IN :roles)
 """)
     Page<Userx> findWithPaginationFilters(
             @Param("roles") List<UserxRole> roles,
-            @Param("deleted") boolean deleted,
-            Pageable pageable
-    );
+            @Param("deleted") Boolean deleted,
+            Pageable pageable);
 }
 

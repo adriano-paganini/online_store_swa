@@ -295,10 +295,9 @@ public class UserxService implements UserDetailsService {
                 field -> List.of("username","firstName","lastName").contains(field),
                 "id");
 
-        boolean deletedFlag = (deleted != null) && deleted; // null -> false
 
         Pageable pageable = PageRequest.of(page,limit,sortObj);
-        return userRepository.findWithPaginationFilters(role,deletedFlag,pageable);
+        return userRepository.findWithPaginationFilters(role,deleted,pageable);
     }
 
 }
