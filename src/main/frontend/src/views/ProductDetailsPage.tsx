@@ -3,6 +3,7 @@
 import { ShoppingCartIcon, Star } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { toast } from 'sonner';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -10,13 +11,15 @@ import { Separator } from '@/components/ui/separator';
 
 import { useCart } from '@/Contexts/cartContext';
 import { ProductApi } from '@/utilities/productApi';
-import { toast } from 'sonner';
 
 import { ReviewsList } from '@/components/review/ReviewsList';
 import { SubscriptionBlock } from '@/components/subscription/SubscriptionBlock';
 import { Avatar, AvatarImage } from '@/components/ui/avatar';
 import { getInitials, toastApiError } from '@/lib/utils';
 import { AvatarFallback } from '@radix-ui/react-avatar';
+
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
+
 import type { TProductDTO } from '../DTO/product.types';
 
 export default function ProductDetailsPage() {
@@ -75,16 +78,28 @@ export default function ProductDetailsPage() {
     <div className="mx-auto max-w-6xl space-y-10">
       <div className="grid gap-8 md:grid-cols-2">
         <div className="overflow-hidden rounded-lg bg-muted">
-          <Avatar className="h-full w-full rounded-none">
-            <AvatarImage
-              src={product.images?.[0]}
-              alt={product.name}
-              className="aspect-square w-full object-cover"
-            />
-            <AvatarFallback className="flex aspect-square w-full items-center justify-center bg-muted text-4xl font-semibold">
-              {getInitials(product.name)}
-            </AvatarFallback>
-          </Avatar>
+          <Carousel className="w-full">
+            <CarouselContent>
+              {product.images.map((src, idx) => (
+                <CarouselItem key={idx}>
+                  <Avatar className="h-full w-full rounded-none">
+                    <AvatarImage
+                      src={src}
+                      alt={product.name}
+                      className="aspect-square w-full object-cover"
+                    />
+                    <AvatarFallback className="flex aspect-square w-full items-center justify-center bg-muted text-4xl font-semibold">
+                      {getInitials(product.name)}
+                    </AvatarFallback>
+                  </Avatar>
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+
+            <CarouselPrevious className="!left-2 !top-1/2 !-translate-y-1/2 bg-background/70 hover:bg-background disabled:pointer-events-none disabled:opacity-0" />
+
+            <CarouselNext className="!right-2 !top-1/2 !-translate-y-1/2 bg-background/70 hover:bg-background disabled:pointer-events-none disabled:opacity-0" />
+          </Carousel>
         </div>
 
         <div className="flex flex-col gap-4">
@@ -103,7 +118,6 @@ export default function ProductDetailsPage() {
                   orientation="vertical"
                   className="h-6"
                 />
-
                 <Badge className="bg-destructive/90 text-sm font-semibold">
                   {Math.round(product.discount * 100)}% OFF
                 </Badge>
@@ -116,7 +130,6 @@ export default function ProductDetailsPage() {
                   orientation="vertical"
                   className="h-6"
                 />
-
                 <Badge className="bg-orange-400/90 text-sm font-semibold">Only {product.stock} left in stock!</Badge>
               </>
             )}
