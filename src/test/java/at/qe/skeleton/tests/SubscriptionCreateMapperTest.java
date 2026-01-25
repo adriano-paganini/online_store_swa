@@ -67,8 +67,10 @@ class SubscriptionCreateMapperTest {
 
     @Test
     void mapTo_ShouldThrowUnsupportedOperationException() {
+        Subscription subscription = new Subscription();
+
         assertThrows(UnsupportedOperationException.class, () ->
-                mapper.mapTo(new Subscription())
+                mapper.mapTo(subscription)
         );
     }
 }

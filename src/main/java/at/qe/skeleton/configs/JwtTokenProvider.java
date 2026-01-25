@@ -17,11 +17,9 @@ import io.jsonwebtoken.security.SignatureException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
-import java.security.Key;
 import java.time.Instant;
 import java.util.Date;
 import java.util.List;
@@ -85,6 +83,7 @@ public class JwtTokenProvider {
      * @return an Optional with the signed JWT object if the token is valid, or an empty Optional otherwise
      */
     public Optional<Jws<Claims>> validateTokenAndGetJws(String token) {
+        String failed = " failed : " ;
         try {
             SecretKey key = Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtConfig.getJwtSecret()));
 
@@ -93,15 +92,15 @@ public class JwtTokenProvider {
             return Optional.of(jws);
 
         } catch (ExpiredJwtException exception) {
-            System.err.println("Request to parse expired JWT : " + token + " failed : " + exception.getMessage());
+            System.err.println("Request to parse expired JWT : " + token + failed  + exception.getMessage());
         } catch (UnsupportedJwtException exception) {
-            System.err.println("Request to parse unsupported JWT : " + token + " failed : " + exception.getMessage());
+            System.err.println("Request to parse unsupported JWT : " + token + failed + exception.getMessage());
         } catch (MalformedJwtException exception) {
-            System.err.println("Request to parse invalid JWT : " + token + " failed : " + exception.getMessage());
+            System.err.println("Request to parse invalid JWT : " + token + failed+ exception.getMessage());
         } catch (SignatureException exception) {
-            System.err.println("Request to parse JWT with invalid signature : " + token + " failed : " + exception.getMessage());
+            System.err.println("Request to parse JWT with invalid signature : " + token + failed+ exception.getMessage());
         } catch (IllegalArgumentException exception) {
-            System.err.println("Request to parse empty or null JWT : " + token + " failed : " + exception.getMessage());
+            System.err.println("Request to parse empty or null JWT : " + token + failed + exception.getMessage());
         }
         return Optional.empty();
     }

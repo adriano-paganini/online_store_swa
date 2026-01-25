@@ -95,26 +95,3 @@ export const NotFoundRoute = {
   url: '*',
   component: NotFoundPage,
 };
-
-// ofr the future routes
-
-//
-// export const OrderConfirmationPageRoute = {
-//   url: "/order-confirmation/:orderNumber",
-//   component: OrderConfirmationPage,
-// }
-//
-// export const ProfilePageRoute = {
-//   url: ROUTES.PROFILE,
-//   component: ProfilePage,
-// }
-//
-// export const OrdersPageRoute = {
-//   url: ROUTES.ORDERS,
-//   component: OrdersPage,
-// }
-//
-// export const NotificationsPageRoute = {
-//   url: ROUTES.NOTIFICATIONS,
-//   component: NotificationsPage,
-// }

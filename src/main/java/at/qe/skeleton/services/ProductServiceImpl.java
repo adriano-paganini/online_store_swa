@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -30,6 +31,7 @@ public class ProductServiceImpl implements ProductService {
     private final ApplicationEventPublisher applicationEventPublisher;
     private final SubscriptionService subscriptionService;
     private final ProductMapper productMapper;
+    private final String PRODUCT_NOT_FOUND_STRING = "Product not found";
 
     public ProductServiceImpl(
             ProductRepository productRepository,
@@ -71,7 +73,7 @@ public class ProductServiceImpl implements ProductService {
     public void updateProductAverageScore(Long productId, Double averageScore) {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "Product not found"));
+                        HttpStatus.NOT_FOUND, PRODUCT_NOT_FOUND_STRING));
         product.setAvgScore(averageScore);
         productRepository.save(product);
     }
@@ -114,7 +116,7 @@ public class ProductServiceImpl implements ProductService {
     public Product updateProduct(Long id, ProductUpdateDTO updateDTO) {
         Product product = productRepository.findByIdAndNotDeleted(id)
                 .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "Product not found"));
+                        HttpStatus.NOT_FOUND, PRODUCT_NOT_FOUND_STRING));
         
         // Store old values for event publishing (service can access DTO to keep controller thin)
         String oldName = product.getName();
@@ -126,8 +128,7 @@ public class ProductServiceImpl implements ProductService {
         // Apply DTO changes via mapper
         productMapper.apply(product, updateDTO);
         
-        // Publish events if values changed (service can access DTO for event logic)
-        //TODO:ADD MORE EVENT TYPES
+
         if (updateDTO.name() != null && !oldName.equals(updateDTO.name())) {
             applicationEventPublisher.publishEvent(new ProductNameUpdateEvent(
                     product, oldName, updateDTO.name()));
@@ -165,7 +166,7 @@ public class ProductServiceImpl implements ProductService {
     public void softDeleteProduct(Long id) {
         Product product = productRepository.findByIdAndNotDeleted(id)
                 .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "Product not found"));
+                        HttpStatus.NOT_FOUND, PRODUCT_NOT_FOUND_STRING));
 
         product.setDeleted(true);
         productRepository.save(product);
@@ -217,5 +218,23 @@ public class ProductServiceImpl implements ProductService {
                 (field.equals("id") || field.equals("name") || field.equals("price") || field.equals("effectivePrice")||
                         field.equals("stock") || field.equals("discount") || field.equals("avgScore") ||
                         field.equals("createDate") || field.equals("updateDate"));
+    }
+
+
+    @Override
+    @Transactional
+    public void adjustProductStockWithMap(Map<Long,Integer> items) {
+        for (Long productId:items.keySet()) {
+            Product product = getProductById(productId).orElseThrow(() -> new ResponseStatusException(
+                    HttpStatus.NOT_FOUND, PRODUCT_NOT_FOUND_STRING));
+
+            Integer stock = product.getStock();
+            Integer requiredQuantity = items.get(productId);
+            if (stock >= requiredQuantity) {
+                product.setStock(stock - requiredQuantity);
+            }else if (requiredQuantity>0){
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Not enough Stock");
+            }
+        }
     }
 }

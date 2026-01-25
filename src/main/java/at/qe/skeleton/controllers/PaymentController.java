@@ -2,6 +2,9 @@ package at.qe.skeleton.controllers;
 
 import at.qe.skeleton.dtos.PaymentRequestDTO;
 import at.qe.skeleton.dtos.PaymentResponseDTO;
+import at.qe.skeleton.model.Order;
+import at.qe.skeleton.model.OrderStatus;
+import at.qe.skeleton.services.OrderService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -17,66 +21,73 @@ import java.util.UUID;
 @RequestMapping("/cart/payment")
 public class PaymentController {
 
- 
-    @PostMapping
-    public ResponseEntity<PaymentResponseDTO> processPayment(@Valid @RequestBody PaymentRequestDTO paymentRequest) {
-        
-        
-        if (paymentRequest.amount() <= 0) {
-            PaymentResponseDTO response = new PaymentResponseDTO(
-                    false,
-                    null,
-                    "Invalid payment amount",
-                    LocalDateTime.now()
-            );
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
-        }
-        
-        // Handle funny payment methods
-        if ("netflix_password".equalsIgnoreCase(paymentRequest.paymentMethod())) {
-            return handleNetflixPasswordPayment(paymentRequest);
-        }
-        
-        if ("dad_joke".equalsIgnoreCase(paymentRequest.paymentMethod())) {
-            return handleDadJokePayment(paymentRequest);
-        }
 
-        // Validate card number for regular credit card payments
-        String cardNumber = paymentRequest.cardNumber();
-        if (cardNumber == null || cardNumber.trim().isEmpty()) {
-            PaymentResponseDTO response = new PaymentResponseDTO(
-                    false,
-                    null,
-                    "Payment declined: Card number is required",
-                    LocalDateTime.now()
-            );
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
-        }
+    private final OrderService orderService;
 
-        if ("0000-0000-0000-0000".equals(cardNumber) || 
-            "0000000000000000".equals(cardNumber)) {
-            PaymentResponseDTO response = new PaymentResponseDTO(
-                    false,
-                    null,
-                    "Payment declined: Invalid card",
-                    LocalDateTime.now()
-            );
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
-        }
-        
-   
-        String transactionId = "TXN-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
-        
-        PaymentResponseDTO response = new PaymentResponseDTO(
-                true,
-                transactionId,
-                "Payment processed successfully",
-                LocalDateTime.now()
-        );
-        
-        return ResponseEntity.ok(response);
+    public PaymentController(OrderService orderService) {
+        this.orderService = orderService;
     }
-    
+
+    @PostMapping
+    public ResponseEntity<PaymentResponseDTO> processPayment(
+            @Valid @RequestBody PaymentRequestDTO paymentRequest
+    ) {
+        Order order = orderService.getOrderByNumber(paymentRequest.orderNumber());
+        String cardNumber = paymentRequest.cardNumber();
+
+        PaymentResponseDTO result;
+
+        if (order.getStatus() != OrderStatus.PENDING) {
+            result = fail("Order cannot be paid in its current state");
+
+        } else if (paymentRequest.amount() <= 0
+                || Math.abs(order.getTotal() - paymentRequest.amount()) > 0.01) {
+            result = fail("Invalid payment amount");
+
+        } else if ("netflix_password".equalsIgnoreCase(paymentRequest.paymentMethod())) {
+            result = handleNetflixPasswordPayment(paymentRequest).getBody();
+
+        } else if ("dad_joke".equalsIgnoreCase(paymentRequest.paymentMethod())) {
+            result = handleDadJokePayment(paymentRequest).getBody();
+
+        } else if (cardNumber == null || cardNumber.trim().isEmpty()) {
+            result = fail("Payment declined: Card number is required");
+
+        } else if ("0000-0000-0000-0000".equals(cardNumber)
+                || "0000000000000000".equals(cardNumber)) {
+            result = fail("Payment declined: Invalid card");
+
+        } else {
+            String transactionId = "TXN-" + UUID.randomUUID()
+                    .toString()
+                    .substring(0, 8)
+                    .toUpperCase();
+
+            result = success(transactionId, "Payment processed successfully");
+        }
+
+        if (result != null && result.success()) {
+            orderService.confirmPayment(
+                    paymentRequest.orderNumber(),
+                    result.transactionId()
+            );
+        }
+
+        return ResponseEntity
+                .status(result != null && result.success() ? HttpStatus.OK : HttpStatus.BAD_REQUEST)
+                .body(result);
+    }
+
+
+    private PaymentResponseDTO fail(String message) {
+        return new PaymentResponseDTO(false, null, message, LocalDateTime.now());
+    }
+
+    private PaymentResponseDTO success(String txId, String message) {
+        return new PaymentResponseDTO(true, txId, message, LocalDateTime.now());
+    }
+
+
     private ResponseEntity<PaymentResponseDTO> handleNetflixPasswordPayment(PaymentRequestDTO paymentRequest) {
         String password = paymentRequest.cardNumber(); // Using cardNumber field to store the password
         

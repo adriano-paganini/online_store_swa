@@ -1,5 +1,6 @@
 import type { TProductDTO } from '@/DTO/product.types';
 
+// random product mocks
 export const mockProducts: TProductDTO[] = [
   {
     id: 1,

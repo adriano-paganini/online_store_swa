@@ -14,6 +14,13 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
+/**
+ * REST controller serving as the API interface for managing user notifications.
+ * * <p>This controller provides endpoints to retrieve notifications for the currently
+ * authenticated user. It supports filtering by status and channel, providing
+ * the data in a paginated format optimized for frontend consumption.</p>
+ */
+
 @RestController
 @RequestMapping("/notifications")
 public class NotificationController {
@@ -36,13 +43,16 @@ public class NotificationController {
             @RequestParam(required = false) NotificationType channel
     ) {
         try {
+            // Retrieve a paginated list of notifications matching the specified criteria.
             Page<Notification> notificationPage = notificationService.getUserNotifications(
                     user, page, limit, status, channel, sort);
 
+            // Map Notification entities to NotificationResponseDTOs.
             List<NotificationResponseDTO> notificationResponseDTOS = notificationPage.getContent().stream()
                     .map(notificationResponseMapper::mapTo)
                     .toList();
 
+            // Wrap the list and metadata into a PageResponseDTO for structured pagination.
             PageResponseDTO<NotificationResponseDTO> response = new PageResponseDTO<>(
                     notificationResponseDTOS,
                     page,
@@ -51,14 +61,11 @@ public class NotificationController {
                     notificationPage.getTotalPages()
             );
 
+            // Return 200 OK with the paginated notifications as the payload.
             return ResponseEntity.ok(response);
         } catch (Exception e) {
+            // Propagate internal errors to the Frontend with a 500 status code.
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error fetching notifications: " + e.getMessage());
         }
     }
 }
-
-
-
-
-

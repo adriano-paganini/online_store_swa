@@ -20,7 +20,9 @@ public class OrderMapper {
                 mapItems(order.getItems()),
                 mapAddress(order.getShippingAddress()),
                 mapAddress(order.getBillingAddress()),
-                order.getShippingMethod()
+                order.getShippingMethod(),
+                order.getPaidAt(),
+                order.getTransactionId()
         );
     }
 

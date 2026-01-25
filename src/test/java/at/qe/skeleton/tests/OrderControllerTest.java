@@ -42,8 +42,10 @@ class OrderControllerTest {
 
     private static final String ENDPOINT = "/orders";
     private static final String ORDER_NUMBER = "ORD-ABC123";
+    private static final String TRANSACTION_ID = "TXN-123ABC";
 
     private static final String ORDER_STATUS = "PENDING";
+    private static final String ORDER_SORT_DESC = "timestamp,desc";
 
     private static final Long ADDRESS_SHIPPING = 1L;
     private static final Long ADDRESS_BILLING = 2L;
@@ -99,7 +101,9 @@ class OrderControllerTest {
                 List.of(),
                 null,
                 null,
-                ShippingMethod.FAIRY_DUST_DISPATCH
+                ShippingMethod.FAIRY_DUST_DISPATCH,
+                LocalDateTime.now(),
+                TRANSACTION_ID
         );
 
         Mockito.doAnswer(invocation -> {
@@ -130,7 +134,7 @@ class OrderControllerTest {
         Page<Order> page = new PageImpl<>(List.of(order));
 
         Mockito.when(orderService.getCurrentUserOrders(
-                null, PAGE_DEFAULT, LIMIT_DEFAULT
+                null, PAGE_DEFAULT, LIMIT_DEFAULT,ORDER_SORT_DESC
         )).thenReturn(page);
 
         Mockito.when(orderMapper.toDto(order))
@@ -145,7 +149,9 @@ class OrderControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.page")
                         .value(PAGE_DEFAULT))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.limit")
-                        .value(LIMIT_DEFAULT));
+                        .value(LIMIT_DEFAULT))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data[0].transactionId").value(TRANSACTION_ID))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data[0].paidAt").exists());
     }
 
     @Test
@@ -154,7 +160,7 @@ class OrderControllerTest {
         Page<Order> page = new PageImpl<>(List.of(order));
 
         Mockito.when(orderService.getCurrentUserOrders(
-                OrderStatus.PENDING, PAGE_DEFAULT, LIMIT_DEFAULT
+                OrderStatus.PENDING, PAGE_DEFAULT, LIMIT_DEFAULT,ORDER_SORT_DESC
         )).thenReturn(page);
 
         Mockito.when(orderMapper.toDto(order))

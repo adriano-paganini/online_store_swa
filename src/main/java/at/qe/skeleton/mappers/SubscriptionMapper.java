@@ -8,6 +8,11 @@ import at.qe.skeleton.repositories.UserxRepository;
 
 import org.springframework.stereotype.Service;
 
+/**
+ * Standard mapper for bidirectional conversion between {@link Subscription} entities and {@link SubscriptionDTO}.
+ * <p>Handles full entity resolution by looking up existing subscriptions, products,
+ * and users from their respective repositories.</p>
+ */
 
 @Service
 public class SubscriptionMapper implements DTOMapper<Subscription, SubscriptionDTO> {

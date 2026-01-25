@@ -34,7 +34,7 @@ class OrderServiceTest {
     private static final String PRODUCT_NAME = "Test Product";
     private static final Integer  PRODUCT_QUANTITY = 2;
     private static final Double PRODUCT_PRICE = 50.0;
-    private static final Double PRODUCT_DISCOUNT = 5.0;
+    private static final Double PRODUCT_DISCOUNT = 0.5;
 
 
     private static final Long BILLING_ADDRESS_ID = 100L;
@@ -49,6 +49,10 @@ class OrderServiceTest {
     private static final String EXTRA = "RR15";
 
     private static final String ORDER_NUMBER = "ORD-123";
+    private static final String TRANSACTION_ID = "TXN-ABC";
+
+    private static final String ORDER_SORT_DESC = "timestamp,desc";
+    private static final String ORDER_SORT_ASC = "timestamp,asc";
 
     @Autowired
     private OrderService orderService;
@@ -151,8 +155,8 @@ class OrderServiceTest {
         Assertions.assertEquals(PRODUCT_QUANTITY, item.getQuantity());
 
         // total = (50 - 5) * 2 = 90
-        double TOTAL = (PRODUCT_PRICE - PRODUCT_DISCOUNT) * PRODUCT_QUANTITY;
-        Assertions.assertEquals(TOTAL, saved.getTotal(), 0.001);
+        double total = (PRODUCT_PRICE - PRODUCT_PRICE * PRODUCT_DISCOUNT) * PRODUCT_QUANTITY;
+        Assertions.assertEquals(total, saved.getTotal(), 0.001);
 
         OrderAddress savedBilling = saved.getBillingAddress();
         Assertions.assertNotNull(savedBilling);
@@ -318,9 +322,9 @@ class OrderServiceTest {
         Order saved = orderService.createOrder(dto);
 
         // total = (50 - 0) * 2 = 100
-        double TOTAL = (PRODUCT_PRICE - 0) * PRODUCT_QUANTITY;
-        Assertions.assertEquals(TOTAL, saved.getTotal(), 0.001);
-        Assertions.assertNull(saved.getItems().getFirst().getAppliedDiscount());
+        double total = (PRODUCT_PRICE - 0) * PRODUCT_QUANTITY;
+        Assertions.assertEquals(total, saved.getTotal(), 0.001);
+        Assertions.assertEquals(0, saved.getItems().getFirst().getAppliedDiscount());
     }
 
     @Test
@@ -408,7 +412,7 @@ class OrderServiceTest {
         Mockito.when(orderRepository.findByUser(Mockito.eq(user), Mockito.any(Pageable.class)))
                 .thenReturn(page);
 
-        Page<Order> result = orderService.getCurrentUserOrders(null, 0, 10);
+        Page<Order> result = orderService.getCurrentUserOrders(null, 0, 10,ORDER_SORT_DESC);
 
         Assertions.assertEquals(1, result.getTotalElements());
 
@@ -438,7 +442,7 @@ class OrderServiceTest {
                         Mockito.any(Pageable.class)))
                 .thenReturn(page);
 
-        Page<Order> result = orderService.getCurrentUserOrders(OrderStatus.PENDING, 1, 5);
+        Page<Order> result = orderService.getCurrentUserOrders(OrderStatus.PENDING, 1, 5,ORDER_SORT_DESC);
 
         Assertions.assertEquals(1, result.getTotalElements());
         Mockito.verify(orderRepository).findByUserAndStatus(
@@ -449,6 +453,78 @@ class OrderServiceTest {
     }
 
     @Test
+    void getCurrentUserOrdersWithoutStatusUsesCorrectPaginationAndSorting() {
+        Page<Order> page = new PageImpl<>(List.of(
+                new Order(user, List.of(), null, null,
+                        ShippingMethod.FAIRY_DUST_DISPATCH, 0.0)
+        ));
+
+        Mockito.when(orderRepository.findByUser(
+                Mockito.eq(user),
+                Mockito.any(Pageable.class)
+        )).thenReturn(page);
+
+        Page<Order> result = orderService.getCurrentUserOrders(null, 2, 5,ORDER_SORT_DESC);
+
+        // result correctness
+        Assertions.assertEquals(1, result.getTotalElements());
+
+        // verify repository call + pageable
+        ArgumentCaptor<Pageable> pageableCaptor =
+                ArgumentCaptor.forClass(Pageable.class);
+
+        Mockito.verify(orderRepository).findByUser(
+                Mockito.eq(user),
+                pageableCaptor.capture()
+        );
+
+        Pageable used = pageableCaptor.getValue();
+        Assertions.assertEquals(2, used.getPageNumber());
+        Assertions.assertEquals(5, used.getPageSize());
+
+        Sort.Order sort = used.getSort().getOrderFor("timestamp");
+        Assertions.assertNotNull(sort);
+        Assertions.assertTrue(sort.isDescending());
+    }
+
+    @Test
+    void getCurrentUserOrdersWithStatusFiltersByStatusAndUsesPagination() {
+        Page<Order> page = new PageImpl<>(List.of(
+                new Order(user, List.of(), null, null,
+                        ShippingMethod.FAIRY_DUST_DISPATCH, 0.0)
+        ));
+
+        Mockito.when(orderRepository.findByUserAndStatus(
+                Mockito.eq(user),
+                Mockito.eq(OrderStatus.PENDING),
+                Mockito.any(Pageable.class)
+        )).thenReturn(page);
+
+        Page<Order> result =
+                orderService.getCurrentUserOrders(OrderStatus.PENDING, 1, 3,ORDER_SORT_DESC);
+
+        Assertions.assertEquals(1, result.getTotalElements());
+
+        ArgumentCaptor<Pageable> pageableCaptor =
+                ArgumentCaptor.forClass(Pageable.class);
+
+        Mockito.verify(orderRepository).findByUserAndStatus(
+                Mockito.eq(user),
+                Mockito.eq(OrderStatus.PENDING),
+                pageableCaptor.capture()
+        );
+
+        Pageable used = pageableCaptor.getValue();
+        Assertions.assertEquals(1, used.getPageNumber());
+        Assertions.assertEquals(3, used.getPageSize());
+        Assertions.assertTrue(
+                used.getSort().getOrderFor("timestamp").isDescending()
+        );
+    }
+
+
+
+    @Test
     void getCurrentUserOrdersUnauthenticatedFails() {
         Mockito.when(authenticatedUserService.requireAuthenticatedUser())
                 .thenThrow(new ResponseStatusException(
@@ -457,7 +533,7 @@ class OrderServiceTest {
 
         ResponseStatusException ex = Assertions.assertThrows(
                 ResponseStatusException.class,
-                () -> orderService.getCurrentUserOrders(null, 0, 10)
+                () -> orderService.getCurrentUserOrders(null, 0, 10,ORDER_SORT_DESC)
         );
 
         Assertions.assertEquals(HttpStatus.UNAUTHORIZED, ex.getStatusCode());
@@ -559,7 +635,7 @@ class OrderServiceTest {
         cartItem.setQuantity(99);
         cartItem.setAppliedDiscount(99.0);
 
-        double expected = (PRODUCT_PRICE - PRODUCT_DISCOUNT) * PRODUCT_QUANTITY;
+        double expected = (PRODUCT_PRICE - PRODUCT_PRICE * PRODUCT_DISCOUNT) * PRODUCT_QUANTITY;
         Assertions.assertEquals(expected, order.getTotal(), 0.001);
     }
 
@@ -628,12 +704,12 @@ class OrderServiceTest {
     }
 
     @Test
-    void calculateTotalWithNegativeDiscount() {
+    void calculateTotalWithNegativeDiscountFails() {
         CartItem item1 = new CartItem();
         item1.setProductId(PRODUCT_ID);
         item1.setQuantity(1);
         item1.setCurrentPrice(100.0);
-        item1.setAppliedDiscount(-10.0); // Negative discount (edge case)
+        item1.setAppliedDiscount(-0.1);
 
         cart.setItems(new ArrayList<>(List.of(item1)));
 
@@ -648,28 +724,24 @@ class OrderServiceTest {
                 BILLING_ADDRESS_ID,
                 ShippingMethod.FAIRY_DUST_DISPATCH
         );
-
-        Order order = orderService.createOrder(dto);
-
-        // Total should be (100 - (-10)) * 1 = 110
-        Assertions.assertEquals(110.0, order.getTotal(), 0.001);
+        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+            orderService.createOrder(dto);
+        });
     }
 
     @Test
-    void calculateTotalWithDiscountLargerThanPrice() {
+    void calculateTotalWithDiscountLargerThan1Fails() {
         CartItem item1 = new CartItem();
         item1.setProductId(PRODUCT_ID);
         item1.setQuantity(1);
         item1.setCurrentPrice(50.0);
-        item1.setAppliedDiscount(100.0); // Discount larger than price
+        item1.setAppliedDiscount(2.0);
 
         cart.setItems(new ArrayList<>(List.of(item1)));
 
         Mockito.when(cartService.getCart()).thenReturn(cart);
         Mockito.when(productService.getProductById(PRODUCT_ID))
                 .thenReturn(Optional.of(product));
-        Mockito.when(orderRepository.save(Mockito.any(Order.class)))
-                .thenAnswer(invocation -> invocation.getArgument(0));
 
         OrderCreateDTO dto = new OrderCreateDTO(
                 SHIPPING_ADDRESS_ID,
@@ -677,10 +749,9 @@ class OrderServiceTest {
                 ShippingMethod.FAIRY_DUST_DISPATCH
         );
 
-        Order order = orderService.createOrder(dto);
-
-        // Total should be (50 - 100) * 1 = -50 (edge case, but current implementation allows it)
-        Assertions.assertEquals(-50.0, order.getTotal(), 0.001);
+        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+            orderService.createOrder(dto);
+        });
     }
 
     @Test
@@ -689,7 +760,7 @@ class OrderServiceTest {
         item1.setProductId(PRODUCT_ID);
         item1.setQuantity(2);
         item1.setCurrentPrice(100.0);
-        item1.setAppliedDiscount(10.0);
+        item1.setAppliedDiscount(0.1);
 
         CartItem item2 = new CartItem();
         item2.setProductId(PRODUCT_ID);
@@ -713,7 +784,7 @@ class OrderServiceTest {
 
         Order order = orderService.createOrder(dto);
 
-        // Total: (100 - 10) * 2 + (50 - 0) * 3 = 180 + 150 = 330
+        // Total: (100 - 100 * 0.1) * 2 + (50 - 0) * 3 = 180 + 150 = 330
         Assertions.assertEquals(330.0, order.getTotal(), 0.001);
     }
 
@@ -721,8 +792,9 @@ class OrderServiceTest {
     void calculateTotalWithVeryLargeNumbers() {
         CartItem item1 = new CartItem();
         item1.setProductId(PRODUCT_ID);
+        Double PRICE = 999999.99;
         item1.setQuantity(1000);
-        item1.setCurrentPrice(999999.99);
+        item1.setCurrentPrice(PRICE);
         item1.setAppliedDiscount(0.01);
 
         cart.setItems(new ArrayList<>(List.of(item1)));
@@ -741,7 +813,7 @@ class OrderServiceTest {
 
         Order order = orderService.createOrder(dto);
 
-        double expected = (999999.99 - 0.01) * 1000;
+        double expected = (PRICE - PRICE * 0.01) * 1000;
         Assertions.assertEquals(expected, order.getTotal(), 0.01);
     }
 
@@ -762,8 +834,11 @@ class OrderServiceTest {
                 .thenReturn(Optional.of(order));
         Mockito.when(orderRepository.save(Mockito.any(Order.class)))
                 .thenAnswer(invocation -> invocation.getArgument(0));
+        Mockito.when(orderRepository.findByOrderNumberWithItems(ORDER_NUMBER))
+                .thenReturn(Optional.of(order));
 
-        Order result = orderService.confirmPayment(ORDER_NUMBER);
+
+        Order result = orderService.confirmPayment(ORDER_NUMBER, TRANSACTION_ID);
 
         Assertions.assertEquals(OrderStatus.PAID, result.getStatus());
         // Verify event was published (would need to inject ApplicationEventPublisher mock)
@@ -873,4 +948,35 @@ class OrderServiceTest {
         Assertions.assertEquals(OrderStatus.CANCELED, result.getStatus());
         Mockito.verify(orderRepository, Mockito.never()).save(Mockito.any());
     }
+
+    @Test
+    void getCurrentUserOrdersWithoutStatusUsesAscendingSortingWhenRequested() {
+        Page<Order> page = new PageImpl<>(List.of(new Order(
+                user,
+                List.of(),
+                new OrderAddress(COUNTRY, CITY_INNSBRUCK, POSTAL, STREET, NUMBER, EXTRA),
+                new OrderAddress(COUNTRY, CITY_GRAZ, POSTAL, STREET, NUMBER, null),
+                ShippingMethod.FAIRY_DUST_DISPATCH,
+                0.0
+        )));
+
+        Mockito.when(orderRepository.findByUser(Mockito.eq(user), Mockito.any(Pageable.class)))
+                .thenReturn(page);
+
+        Page<Order> result = orderService.getCurrentUserOrders(null, 0, 10, ORDER_SORT_ASC);
+
+        Assertions.assertEquals(1, result.getTotalElements());
+
+        ArgumentCaptor<Pageable> pageableCaptor = ArgumentCaptor.forClass(Pageable.class);
+        Mockito.verify(orderRepository).findByUser(Mockito.eq(user), pageableCaptor.capture());
+
+        Pageable used = pageableCaptor.getValue();
+        Assertions.assertEquals(0, used.getPageNumber());
+        Assertions.assertEquals(10, used.getPageSize());
+
+        Sort.Order sortOrder = used.getSort().getOrderFor("timestamp");
+        Assertions.assertNotNull(sortOrder);
+        Assertions.assertTrue(sortOrder.isAscending());
+    }
+
 }

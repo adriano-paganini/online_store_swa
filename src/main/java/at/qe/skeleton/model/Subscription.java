@@ -10,6 +10,18 @@ import java.io.Serializable;
 import java.util.Objects;
 import java.util.Set;
 
+/**
+ * Entity representing a user's subscription to a specific product.
+ * <p>
+ * This class tracks the following parameters:
+ * <ul>
+ * <li><b>id:</b> The unique database identifier for the subscription.</li>
+ * <li><b>user:</b> The {@link Userx} who owns this subscription.</li>
+ * <li><b>product:</b> The {@link Product} the user is subscribed to.</li>
+ * <li><b>types:</b> A set of {@link SubscriptionType} defining what events trigger notifications (e.g., price drops).</li>
+ * <li><b>channels:</b> A set of {@link NotificationType} defining how the user is notified (e.g., EMAIL, SMS).</li>
+ * </ul>
+ */
 @Entity
 @Table(name = "subscription",
         uniqueConstraints = {@UniqueConstraint(columnNames = {"user_id", "product_id"})},
@@ -27,16 +39,17 @@ public class Subscription implements Persistable<Long>, Serializable, PayloadInt
     @JoinColumn(name = "user_id", nullable = false)
     private Userx user;
 
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 
+    // Storing the subscription categories as a collection of strings in a separate table
     @ElementCollection(targetClass = SubscriptionType.class, fetch = FetchType.LAZY)
     @CollectionTable(name = "Subscription_Types")
     @Enumerated(EnumType.STRING)
     private Set<SubscriptionType> types;
 
+    // Storing the notification delivery methods as a collection of strings in a separate table
     @ElementCollection(targetClass = NotificationType.class, fetch = FetchType.LAZY)
     @CollectionTable(name = "Notification_Types")
     @Enumerated(EnumType.STRING)
@@ -83,6 +96,7 @@ public class Subscription implements Persistable<Long>, Serializable, PayloadInt
     public void setProduct(Product product) {
         this.product = product;
     }
+
     public void setTypes(Set<SubscriptionType> types) {
         this.types = types;
     }
@@ -107,6 +121,7 @@ public class Subscription implements Persistable<Long>, Serializable, PayloadInt
 
     @Override
     public boolean isNew() {
+        // If the ID is null, the entity is considered new for Spring Data's Persistable
         return (null == id);
     }
 
@@ -114,5 +129,4 @@ public class Subscription implements Persistable<Long>, Serializable, PayloadInt
     public String toString() {
         return "at.qe.skeleton.model.Subscription[ id=" + id + " ]";
     }
-
 }

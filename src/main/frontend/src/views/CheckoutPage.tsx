@@ -14,6 +14,7 @@ import { CheckoutCartItems } from '@/components/checkout/CheckoutCartItems';
 import { ShippingMethodSelector } from '@/components/checkout/ShippingMethodSelector';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { toastApiError } from '@/lib/utils';
 
 export function CheckoutPage() {
   const navigate = useNavigate();
@@ -29,9 +30,11 @@ export function CheckoutPage() {
   useEffect(() => {
     AddressApi.fetchAddresses()
       .then(setAddresses)
-      .catch(() => toast.error('Failed to load addresses'));
+      .catch((err) => toastApiError(err));
   }, []);
 
+  // auto-select a default shipping address once addresses are loaded
+  // without overriding users choice
   useEffect(() => {
     if (!shippingAddressId && addresses.length > 0) {
       setShippingAddressId(addresses[0].id);
@@ -70,8 +73,8 @@ export function CheckoutPage() {
       await clearCart();
 
       navigate(`/payment/${order.orderNumber}`);
-    } catch {
-      toast.error('Failed to create order');
+    } catch (err) {
+      toastApiError(err);
     } finally {
       setSubmitting(false);
     }

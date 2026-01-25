@@ -88,6 +88,7 @@ public class WebSecurityConfig {
                             .requestMatchers("/cart/**").authenticated()
                             .requestMatchers("/products/**").authenticated() // POST, PUT, DELETE product endpoints require auth
                             .requestMatchers("/admin/**").authenticated()
+                            .requestMatchers("/error/**").permitAll()
                             .requestMatchers("/users/**").authenticated()
                             .requestMatchers("/addresses/**").authenticated()
                             .requestMatchers("/subscriptions/**").authenticated()

@@ -16,6 +16,16 @@ export const OrderStatusBgClasses: Record<OrderStatus, string> = {
   [OrderStatus.SHIPPING]: 'bg-indigo-500',
 };
 
+/**
+ * Calculates the total money of an order.
+ *
+ * For each order item, the total is computed using the price at the time of
+ * purchase, adjusted by any applied discount, and multiplied by the item quantity.
+ * The final sum is rounded to two decimal points to avoid floating-point precision issues.
+ *
+ * @param items - The list of order items to include in the total calculation
+ * @returns The final order total rounded to two decimal places
+ */
 export function calculateOrderTotal(items: TOrderItemDTO[]): number {
   const total = items.reduce((sum, item) => {
     const discounted = item.priceAtPurchase * (1 - item.appliedDiscount);

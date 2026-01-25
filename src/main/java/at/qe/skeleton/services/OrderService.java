@@ -15,7 +15,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -44,26 +46,50 @@ public class OrderService {
         this.applicationEventPublisher = applicationEventPublisher;
     }
 
-    public Page<Order> getCurrentUserOrders(
-            OrderStatus status,
-            int page,
-            int limit
-    ) {
-        Userx user = authenticatedUserService.requireAuthenticatedUser();
-        Pageable pageable = PageRequest.of(page, limit, Sort.by("timestamp").descending());
+    @Transactional
+    protected void applyLifecycleUpdates(Page<Order> orders) {
+        LocalDateTime now = LocalDateTime.now();
 
-        if (status != null) {
-            return orderRepository.findByUserAndStatus(user, status, pageable);
-        }
-
-        Page<Order> pageResult = orderRepository.findByUser(user, pageable);
-
-        pageResult.forEach(order -> {
-            if (orderLifecycleService.applyResolvedStatus(order, LocalDateTime.now())) {
+        orders.forEach(order -> {
+            if (orderLifecycleService.applyResolvedStatus(order, now)) {
                 orderRepository.save(order);
             }
         });
+    }
 
+
+    public Page<Order> getCurrentUserOrders(
+            OrderStatus status,
+            int page,
+            int limit,
+            String sort
+    ) {
+        Sort.Direction direction = Sort.Direction.DESC; // default
+
+        if (sort != null) {
+            String[] parts = sort.split(",");
+            if (parts.length > 1) {
+                direction = Sort.Direction.fromOptionalString(parts[1].toLowerCase())
+                        .orElse(Sort.Direction.DESC);
+            }
+        }
+
+        Userx user = authenticatedUserService.requireAuthenticatedUser();
+
+        Pageable pageable = PageRequest.of(
+                page,
+                limit,
+                Sort.by(direction, "timestamp")
+        );
+        Page<Order> pageResult;
+
+        if (status != null) {
+            pageResult = orderRepository.findByUserAndStatus(user, status, pageable);
+        } else {
+            pageResult = orderRepository.findByUser(user, pageable);
+        }
+
+        applyLifecycleUpdates(pageResult);
         return pageResult;
     }
 
@@ -76,7 +102,7 @@ public class OrderService {
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND, "Order not found"));
 
-        if (!order.getUser().getId().equals(user.getId())) {
+        if (!(order.getUser().getId() != null && order.getUser().getId().equals(user.getId()))) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Order not found");
         }
 
@@ -124,6 +150,13 @@ public class OrderService {
                 total
         );
 
+        Map<Long,Integer> productIdQuanityMap = new HashMap<>();
+
+        for (OrderItem item: orderItems){
+            productIdQuanityMap.put(item.getProductId(),item.getQuantity());
+        }
+        productService.adjustProductStockWithMap(productIdQuanityMap);
+
         Order savedOrder = orderRepository.save(order);
         cartService.clearCart();
         return savedOrder;
@@ -147,12 +180,23 @@ public class OrderService {
     }
 
     @Transactional
-    public Order confirmPayment(String orderNumber){
-        Order updated = updateOrderStatus(OrderStatus.PAID,orderNumber);
-        applicationEventPublisher.publishEvent(new OrderCompletionEvent(updated));
+    public Order confirmPayment(String orderNumber, String transactionId) {
+        Order order = getOrderByNumber(orderNumber);
 
-        return updated;
-    };
+        order.setStatus(OrderStatus.PAID);
+        order.setTransactionId(transactionId);
+        order.setPaidAt(LocalDateTime.now());
+
+        orderRepository.save(order);
+        //load order with items, to avoid lazy-loading exception
+        Order fullOrder = orderRepository.findByOrderNumberWithItems(order.getOrderNumber())
+                .orElseThrow();
+
+
+        applicationEventPublisher.publishEvent(new OrderCompletionEvent(fullOrder));
+
+        return order;
+    }
 
     @Transactional
     public Order updateOrderStatus(OrderStatus status, String orderNumber){
@@ -178,6 +222,13 @@ public class OrderService {
             return order;
         }
 
+        Map<Long,Integer> productIdQuanityMap = new HashMap<>();
+
+        for (OrderItem item: order.getItems()){
+            productIdQuanityMap.put(item.getProductId(),-1*item.getQuantity());
+        }
+        productService.adjustProductStockWithMap(productIdQuanityMap);
+
         order.setStatus(OrderStatus.CANCELED);
         return orderRepository.save(order);
     }
@@ -193,11 +244,29 @@ public class OrderService {
                     item.setProductId(product.getId());
                     item.setProductName(product.getName());
                     item.setPriceAtPurchase(cartItem.getCurrentPrice());
-                    item.setAppliedDiscount(cartItem.getAppliedDiscount());
+
+                    double discount = normalizeAndValidateDiscount(
+                            cartItem.getAppliedDiscount(),
+                            product.getId()
+                    );
+
+                    item.setAppliedDiscount(discount);
                     item.setQuantity(cartItem.getQuantity());
                     return item;
                 })
                 .collect(Collectors.toList());
+    }
+
+    private double normalizeAndValidateDiscount(Double rawDiscount, Long productId) {
+        double discount = rawDiscount != null ? rawDiscount : 0.0;
+
+        if (discount < 0.0 || discount > 1.0) {
+            throw new IllegalArgumentException(
+                    "Invalid discount on cart item for product " + productId
+            );
+        }
+
+        return discount;
     }
 
     private double calculateTotal(List<OrderItem> items) {
@@ -207,7 +276,7 @@ public class OrderService {
                     double discount = item.getAppliedDiscount() != null
                             ? item.getAppliedDiscount()
                             : 0.0;
-                    return (price - discount) * item.getQuantity();
+                    return (price - price * discount) * item.getQuantity();
                 })
                 .sum();
     }

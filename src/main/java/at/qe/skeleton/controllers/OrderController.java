@@ -33,12 +33,14 @@ public class OrderController {
     public ResponseEntity<PageResponseDTO<OrderDTO>> getCurrentUserOrders(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int limit,
-            @RequestParam(required = false) OrderStatus status
+            @RequestParam(required = false) OrderStatus status,
+            @RequestParam(required = false, defaultValue = "timestamp,desc") String sort
     ) {
         Page<Order> orderPage = orderService.getCurrentUserOrders(
                 status,
                 page,
-                limit
+                limit,
+                sort
         );
 
         List<OrderDTO> orderDTOs = orderPage.getContent().stream()
@@ -65,11 +67,6 @@ public class OrderController {
         return orderMapper.toDto(order);
     }
 
-    @PatchMapping("/{orderNumber}/confirm")
-    public OrderDTO confirmOrder(@PathVariable String orderNumber) {
-        Order order = orderService.confirmPayment(orderNumber);
-        return orderMapper.toDto(order);
-    }
 
     @PostMapping("/{orderNumber}/cancel")
     @ResponseStatus(HttpStatus.OK)

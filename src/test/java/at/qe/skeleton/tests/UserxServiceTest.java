@@ -3,7 +3,6 @@ package at.qe.skeleton.tests;
 import at.qe.skeleton.dtos.UserxMeUpdateDTO;
 import at.qe.skeleton.dtos.UserxRegistrationDTO;
 import at.qe.skeleton.mappers.UserxRegistrationMapper;
-import at.qe.skeleton.model.NotificationType;
 import at.qe.skeleton.model.Userx;
 import at.qe.skeleton.model.UserxRole;
 import at.qe.skeleton.services.UserxService;
@@ -21,7 +20,6 @@ import java.util.Optional;
 
 /**
  * Some very basic tests for {@link UserxService}.
- *
  * This class is part of the skeleton project provided for students of the courses "Software
  * Architecture" and "Software Engineering" offered by the University of Innsbruck.
  */
@@ -227,15 +225,18 @@ public class UserxServiceTest {
     @Test
     @WithMockUser(username = "admin", authorities = {"ADMIN"})
     public void testExceptionForEmptyUser() {
-        Assertions.assertThrows(IllegalArgumentException.class, () -> {
-            Optional<Userx> adminUser = userService.loadUser(1000L);
-            Assertions.assertFalse(adminUser.isEmpty(),
-                    "Admin user could not be loaded from test data source");
 
-            Userx toBeCreatedUser = new Userx();
-            userService.saveUser(toBeCreatedUser);
-        });
+        Optional<Userx> adminUser = userService.loadUser(1000L);
+        Assertions.assertFalse(adminUser.isEmpty(),
+                "Admin user could not be loaded from test data source");
+
+        Userx toBeCreatedUser = new Userx();
+
+        Assertions.assertThrows(IllegalArgumentException.class, () ->
+                userService.saveUser(toBeCreatedUser)
+        );
     }
+
 
     @Test
     public void testUnauthenticatedLoadUsers() {
@@ -243,7 +244,7 @@ public class UserxServiceTest {
                 org.springframework.security.authentication.AuthenticationCredentialsNotFoundException.class,
                 () -> {
                     Page<Userx> page = userService.getAllUsers(0,10, null, null);
-                    for (Userx user : page.toList()) {
+                    for (Userx ignored : page.toList()) {
                         Assertions.fail(
                                 "Call to userService.getAllUsers should not work without proper authorization");
                     }
@@ -255,7 +256,7 @@ public class UserxServiceTest {
     public void testUnauthorizedLoadUsers() {
         Assertions.assertThrows(org.springframework.security.access.AccessDeniedException.class, () -> {
             Page<Userx> page = userService.getAllUsers(0,10, null, null);
-            for (Userx user : page.toList()) {
+            for (Userx ignored : page.toList()) {
                 Assertions.fail(
                         "Call to userService.getAllUsers should not work without proper authorization");
             }
@@ -266,7 +267,7 @@ public class UserxServiceTest {
     @WithMockUser(username = "user1", authorities = {"CUSTOMER"})
     public void testUnauthorizedLoadUser() {
         Assertions.assertThrows(org.springframework.security.access.AccessDeniedException.class, () -> {
-            Optional<Userx> user = userService.loadUser(1000L);
+            userService.loadUser(1000L);
             Assertions.fail(
                     "Call to userService.loadUser should not work without proper authorization for other users than the authenticated one");
         });

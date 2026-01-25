@@ -1,10 +1,8 @@
 package at.qe.skeleton.mappers;
 
 import at.qe.skeleton.dtos.UserxDTO;
-import at.qe.skeleton.dtos.UserxMeDTO;
 import at.qe.skeleton.dtos.UserxUpdateDTO;
 import at.qe.skeleton.model.Userx;
-import at.qe.skeleton.services.UserxService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -29,23 +27,22 @@ public class UserxMapper {
             return null;
         }
         Userx creator = user.getCreateUser();
-        UserxDTO dto = new UserxDTO(
-                user.getId(), 
+
+        return new UserxDTO(
+                user.getId(),
                 creator != null ? creator.getId() : null,
-                user.getCreateDate(), 
-                user.getUpdateUser() != null ? user.getUpdateUser().getId() : null, 
+                user.getCreateDate(),
+                user.getUpdateUser() != null ? user.getUpdateUser().getId() : null,
                 user.getUpdateDate(),
-                user.getUsername(), 
-                user.getFirstName(), 
-                user.getLastName(), 
-                user.getEmail(), 
-                user.getPhone(), 
+                user.getUsername(),
+                user.getFirstName(),
+                user.getLastName(),
+                user.getEmail(),
+                user.getPhone(),
                 user.isEnabled(),
                 user.isDeleted(),
                 user.getRoles()
         );
-        
-        return dto;
     }
 
     public void apply(Userx user, UserxUpdateDTO dto) {

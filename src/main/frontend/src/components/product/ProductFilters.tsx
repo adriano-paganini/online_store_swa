@@ -5,6 +5,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { DualRangeSlider } from '@/components/ui/dual-range-slider';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 type TProductFiltersProps = {
   priceRange: [number, number | null];
@@ -43,6 +44,7 @@ export function ProductFilters({
               onValueChange={(v) => {
                 const [min, max] = v as [number, number];
 
+                // If the selected max value equals the slider's max, treat it as "no limit" (null)
                 setPriceRange([min, max >= MAX_PRICE ? null : max]);
               }}
               min={0}
@@ -56,28 +58,27 @@ export function ProductFilters({
           </div>
 
           <div>
-            <Label
-              htmlFor="sort"
-              className="mb-2 block"
-            >
-              Sort By
-            </Label>
-            <select
-              id="sort"
+            <Label className="mb-2 block">Sort By</Label>
+
+            <Select
               value={sort}
-              onChange={(e) => setSort(e.target.value)}
-              className="w-full rounded-md border px-3 py-2 text-sm"
+              onValueChange={setSort}
             >
-              <option value="id,asc">Default</option>
-              <option value="price,asc">Price: Ascending</option>
-              <option value="price,desc">Price: Descending</option>
-              <option value="avgScore,asc">Rating: Ascending</option>
-              <option value="avgScore,desc">Rating: Descending</option>
-              <option value="discount,asc">Discount: Ascending</option>
-              <option value="discount,desc">Discount: Descending</option>
-              <option value="name,asc">Name: A to Z</option>
-              <option value="name,desc">Name: Z to A</option>
-            </select>
+              <SelectTrigger className="w-full">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="id,asc">Default</SelectItem>
+                <SelectItem value="price,asc">Price Ascending</SelectItem>
+                <SelectItem value="price,desc">Price Descending</SelectItem>
+                <SelectItem value="avgScore,asc">Rating Ascending</SelectItem>
+                <SelectItem value="avgScore,desc">Rating Descending</SelectItem>
+                <SelectItem value="discount,asc">Discount Ascending</SelectItem>
+                <SelectItem value="discount,desc">Discount Descending</SelectItem>
+                <SelectItem value="name,asc">Name A-Z</SelectItem>
+                <SelectItem value="name,desc">Name Z-A</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
 
           <div className="flex items-center space-x-2">
@@ -90,12 +91,7 @@ export function ProductFilters({
           </div>
 
           <div>
-            <Label
-              htmlFor="minRating"
-              className="mb-2 block"
-            >
-              Minimum Rating
-            </Label>
+            <Label className="mb-2 block">Minimum Rating</Label>
             <Input
               id="minRating"
               type="number"

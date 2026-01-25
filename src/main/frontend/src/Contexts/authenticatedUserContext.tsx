@@ -76,7 +76,6 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
     const { bearerToken } = await AuthApi.login(loginDto);
     if (!bearerToken || bearerToken.length < 10) {
       setError(new Error('Missing or invalid bearer token in response!'));
-      console.log('Error: missing or invalid bearer token in response');
       return;
     }
 
@@ -97,6 +96,11 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
 
   /**
    * Get the current user by decoding the bearer token stored in the local storage.
+   *
+   * The token payload is expected to contain:
+   * - name: Full name (mapped to firstName/lastName)
+   * - username: Unique username
+   * - roles: Array of user roles
    */
   const currentUser = useMemo<TUserDTO | null>(() => {
     if (!token) {

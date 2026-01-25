@@ -17,6 +17,12 @@ import java.util.List;
 
 import static at.qe.skeleton.Helpers.SortHelper.parseSort;
 
+/**
+ * Service for managing the lifecycle of {@link Notification} entities.
+ * <p>
+ * This service provides methods for creating new notifications, updating their status,
+ * and retrieving paginated notification lists for specific users with filtering capabilities.
+ */
 @Service
 public class NotificationService {
 
@@ -26,33 +32,41 @@ public class NotificationService {
         this.notificationRepository = notificationRepository;
     }
 
+    // Fetches a specific Notification by its unique identifier
     public Notification getNotificationById(Long id){
         return notificationRepository.getNotificationById(id);
     }
 
     @Transactional
     public void updateNotificationStatus(NotificationStatus status, Notification notification){
+        // Persist the new status (e.g., SENT, FAILED) to the database
         notification.setStatus(status);
         notificationRepository.save(notification);
     }
 
     @Transactional
-    public Notification createNotification(Long userId, NotificationType chanel, Payload<?> event) {
-        Notification notification = new Notification(userId, event.getPayloadInfo().getPayloadSubjectLine(), chanel);
+    public Notification createNotification(Long userId, NotificationType channel, Payload<?> event) {
+        // Instantiate a new notification based on user, delivery channel, and event subject information
+        Notification notification = new Notification(userId, event.getPayloadInfo().getPayloadSubjectLine(), channel);
 
+        // Persist the notification to generate an ID and audit trail
         notificationRepository.save(notification);
+
         return notification;
     }
 
     public Page<Notification> getUserNotifications(
             Userx user, int page, int limit, NotificationStatus status, NotificationType channel, String sort) {
 
+        // Utilize SortHelper to validate sort fields, allowing "channel" and "status", falling back to "timestamp"
         Sort sortObj = parseSort(sort,
                 field -> List.of("channel","status").contains(field),
                 "timestamp");
 
+        // Create a pageable object with the extracted sort and pagination parameters
         Pageable pageable = PageRequest.of(page, limit, sortObj);
 
+        // Query the repository for filtered and paginated user notifications
         return notificationRepository.findByUserWithFilter(user.getId(), status, channel, pageable);
     }
 }

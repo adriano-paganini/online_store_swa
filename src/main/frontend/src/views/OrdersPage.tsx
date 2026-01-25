@@ -2,7 +2,6 @@
 
 import { ChevronDown } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
-import { toast } from 'sonner';
 
 import { Pagination } from '@/components/general/Pagination';
 import { OrdersTable } from '@/components/order/OrdersTable';
@@ -15,7 +14,9 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { OrderStatus, type TOrderDTO } from '@/DTO/order.types';
+import { toastApiError } from '@/lib/utils';
 import { OrderApi } from '@/utilities/orderApi';
 import { OrderStatusLabels } from '@/utilities/orderUtils';
 
@@ -29,28 +30,30 @@ export default function OrdersPage() {
   const [limit, setLimit] = useState(10);
   const [totalPages, setTotalPages] = useState(0);
 
-  const [selectedStatuses, setSelectedStatuses] = useState<OrderStatus[]>(ALL_STATUSES);
+  const [selectedStatus, setSelectedStatus] = useState<OrderStatus | null>(null);
+  const [sort, setSort] = useState<'timestamp,asc' | 'timestamp,desc'>('timestamp,desc');
 
   const loadOrders = useCallback(async () => {
     try {
       setLoading(true);
 
-      const statusParam = selectedStatuses.length === 1 ? selectedStatuses[0] : undefined;
+      const statusParam = selectedStatus ? [selectedStatus] : undefined;
 
       const res = await OrderApi.fetchOrders({
         page,
         limit,
         status: statusParam,
+        sort,
       });
 
       setOrders(res.data);
       setTotalPages(res.totalPages);
-    } catch {
-      toast.error('Failed to load orders');
+    } catch (err) {
+      toastApiError(err);
     } finally {
       setLoading(false);
     }
-  }, [page, limit, selectedStatuses]);
+  }, [page, limit, selectedStatus, sort]);
 
   useEffect(() => {
     void loadOrders();
@@ -58,19 +61,19 @@ export default function OrdersPage() {
 
   useEffect(() => {
     setPage(0);
-  }, [limit, selectedStatuses]);
+  }, [limit, selectedStatus, sort]);
 
-  const toggleStatus = (status: OrderStatus, checked: boolean) => {
-    setSelectedStatuses((prev) => (checked ? [...prev, status] : prev.filter((s) => s !== status)));
+  const selectStatus = (status: OrderStatus) => {
+    setSelectedStatus((prev) => (prev === status ? null : status));
   };
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center gap-4">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline">
-              Status to show
+              {selectedStatus ? OrderStatusLabels[selectedStatus] : 'All statuses'}
               <ChevronDown className="ml-2 h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
@@ -79,14 +82,27 @@ export default function OrdersPage() {
             {ALL_STATUSES.map((status) => (
               <DropdownMenuCheckboxItem
                 key={status}
-                checked={selectedStatuses.includes(status)}
-                onCheckedChange={(v) => toggleStatus(status, Boolean(v))}
+                checked={selectedStatus === status}
+                onCheckedChange={() => selectStatus(status)}
               >
                 {OrderStatusLabels[status]}
               </DropdownMenuCheckboxItem>
             ))}
           </DropdownMenuContent>
         </DropdownMenu>
+
+        <Select
+          value={sort}
+          onValueChange={(v) => setSort(v as typeof sort)}
+        >
+          <SelectTrigger className="w-[220px]">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="timestamp,desc">Newest first</SelectItem>
+            <SelectItem value="timestamp,asc">Oldest first</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
 
       <OrdersTable

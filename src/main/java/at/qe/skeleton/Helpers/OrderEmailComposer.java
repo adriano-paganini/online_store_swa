@@ -10,7 +10,11 @@ import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 import java.util.Objects;
 
-//AI helped with Text generation here
+/**
+ * Utility class for generating professional plain-text email descriptions for Orders.
+ * Handles null-safety, currency formatting, and address block construction.
+ * * Note: Initial text templates were refined using AI for professional tone.
+ */
 public final class OrderEmailComposer {
 
     private static final Locale LOCALE_EN = Locale.US;
@@ -21,18 +25,23 @@ public final class OrderEmailComposer {
     public static String composePlainText(Order order) {
         Objects.requireNonNull(order, "order must not be null");
 
+        // Extract user information with safe fallbacks for missing names
         Userx user = order.getUser();
         String firstName = safe(user != null ? user.getFirstName() : null, "there");
         String lastName = safe(user != null ? user.getLastName() : null, "");
         String fullName = (firstName + " " + lastName).trim();
 
-        String orderNumber = safe(order.getOrderNumber(), "(unknown)");
-        String orderDate = order.getTimestamp() != null ? order.getTimestamp().format(DATE_FMT) : "(unknown)";
-        String shippingMethod = order.getShippingMethod() != null ? order.getShippingMethod().getDisplayName() : "(unknown)";
-        String status = order.getStatus() != null ? order.getStatus().name() : "(unknown)";
+        // Extract order metadata with sanity checks
+        String fallback = "(unknown)";
+        String orderNumber = safe(order.getOrderNumber(), fallback);
+        String orderDate = order.getTimestamp() != null ? order.getTimestamp().format(DATE_FMT) : fallback;
+        String shippingMethod = order.getShippingMethod() != null ? order.getShippingMethod().getDisplayName() : fallback;
+        String status = order.getStatus() != null ? order.getStatus().name() : fallback;
 
+        // Configure currency formatting for US Locale
         NumberFormat money = NumberFormat.getCurrencyInstance(LOCALE_EN);
 
+        // Construct the final email body string
         return "Hi " + fullName + ",\n\n" +
                 "thanks for your order — we’ve received it and it’s now being processed.\n\n" +
                 "Order details\n" +
@@ -58,12 +67,14 @@ public final class OrderEmailComposer {
     }
 
     private static String formatItems(Order order, NumberFormat money) {
+        // Return placeholder if the order contains no items
         if (order.getItems() == null || order.getItems().isEmpty()) {
             return "- (no items)\n";
         }
 
         StringBuilder sb = new StringBuilder();
 
+        // Iterate through items to build the price breakdown list
         for (OrderItem item : order.getItems()) {
             String name = safe(item.getProductName(), "Item");
             int qty = item.getQuantity() != null ? item.getQuantity() : 0;
@@ -75,6 +86,7 @@ public final class OrderEmailComposer {
                     .append(" — ").append(money.format(p.lineTotal()))
                     .append(" (unit ").append(money.format(p.unitFinal()));
 
+            // Append discount info only if a discount was actually applied
             if (p.discountPercent() > 0.0) {
                 sb.append(" - ").append(trimZeros(p.discountPercent()*100)).append("% off");
             }
@@ -87,37 +99,43 @@ public final class OrderEmailComposer {
 
     private static PriceBreakdown calculatePrices(OrderItem item, int qty) {
         double baseUnit = nullSafeDouble(item.getPriceAtPurchase());
-
         double discountPercent = item.getAppliedDiscount() != null ? item.getAppliedDiscount() : 0.0;
 
-        double unitFinal = baseUnit * (1.0 - discountPercent / 100.0);
-        unitFinal = Math.max(0.0, unitFinal);
+        // Calculate final unit price after discount (ensuring it doesn't go below 0)
+        double unitFinal = Math.max(0.0, baseUnit * (1.0 - discountPercent));
 
+        // Calculate subtotal for the line item
         double lineTotal = unitFinal * Math.max(0, qty);
 
         return new PriceBreakdown(baseUnit, discountPercent, unitFinal, lineTotal);
     }
 
+    // Internal data structure for calculated price components
     private record PriceBreakdown(double baseUnit, double discountPercent, double unitFinal, double lineTotal) {}
 
     private static String formatAddressBlock(OrderAddress a) {
+        // Return placeholder if address data is missing
         if (a == null) return "(not provided)";
 
         StringBuilder sb = new StringBuilder();
 
+        // Format Street and Number line
         String street = safe(a.getStreet(), "");
         String number = safe(a.getNumber(), "");
         String line1 = (street + " " + number).trim();
         if (!line1.isBlank()) sb.append(line1).append("\n");
 
+        // Format Postal Code and City line
         String postal = safe(a.getPostalCode(), "");
         String city = safe(a.getCity(), "");
         String line2 = (postal + " " + city).trim();
         if (!line2.isBlank()) sb.append(line2).append("\n");
 
+        // Append Country if provided
         String country = safe(a.getCountry(), "");
         if (!country.isBlank()) sb.append(country).append("\n");
 
+        // Append Extra info (e.g., apartment number, floor) if provided
         String extra = safe(a.getExtra(), "");
         if (!extra.isBlank()) sb.append(extra).append("\n");
 
@@ -126,18 +144,20 @@ public final class OrderEmailComposer {
     }
 
     private static String safe(String s, String fallback) {
+        // Returns trimmed string or the fallback if null/empty
         if (s == null) return fallback;
         String t = s.trim();
         return t.isEmpty() ? fallback : t;
     }
 
     private static double nullSafeDouble(Double d) {
+        // Prevents NullPointerExceptions during arithmetic
         return d != null ? d : 0.0;
     }
 
     private static String trimZeros(double v) {
+        // Removes decimal point for whole numbers (e.g. 10.0 -> 10)
         if (v == (long) v) return Long.toString((long) v);
         return Double.toString(v);
     }
-
 }

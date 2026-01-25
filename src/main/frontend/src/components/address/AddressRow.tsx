@@ -15,6 +15,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 
+import { toastApiError } from '@/lib/utils';
 import { AddressDeleteDialog } from './AddressDeleteDialog';
 import { AddressDialog } from './AddressDialog';
 
@@ -35,8 +36,8 @@ export function AddressRow({ address, onChanged }: TAddressRowProps) {
       toast.success('Address deleted');
       setDeleteOpen(false);
       onChanged();
-    } catch {
-      toast.error('Failed to delete address');
+    } catch (err) {
+      toastApiError(err);
     } finally {
       setLoading(false);
     }

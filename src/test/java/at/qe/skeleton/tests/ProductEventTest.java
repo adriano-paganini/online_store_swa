@@ -83,11 +83,11 @@ class ProductEventTest {
     }
     @Test
     void testProductDiscountUpdateEventSubjectLine() {
-        Product product = new Product();
-        product.setName("Summer Shoes");
+        Product testProduct = new Product();
+        testProduct.setName("Summer Shoes");
         Double oldDiscount = 5.0;
         Double newDiscount = 15.5;
-        ProductDiscountUpdateEvent event = new ProductDiscountUpdateEvent(product, oldDiscount, newDiscount);
+        ProductDiscountUpdateEvent event = new ProductDiscountUpdateEvent(testProduct, oldDiscount, newDiscount);
 
         String subject = event.getPayloadSubjectLine();
         String expectedDate = event.getTimestamp().format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm"));

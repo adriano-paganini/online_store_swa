@@ -10,7 +10,7 @@ type TOrdersTableProps = {
 };
 
 export function OrdersTable({ orders, loading }: TOrdersTableProps) {
-  if (loading) {
+  if (loading && !orders) {
     return (
       <div className="space-y-2 rounded-lg border">
         {Array.from({ length: 6 }).map((_, i) => (
@@ -28,7 +28,7 @@ export function OrdersTable({ orders, loading }: TOrdersTableProps) {
   }
 
   return (
-    <div className="overflow-hidden rounded-lg border">
+    <div className="overflow-hidden rounded-lg">
       {orders.map((order) => (
         <OrderRow
           key={order.orderNumber}

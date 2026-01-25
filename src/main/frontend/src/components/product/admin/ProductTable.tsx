@@ -11,6 +11,8 @@ import { Pagination } from '@/components/general/Pagination';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
+import { toastApiError } from '@/lib/utils';
+import { ProductFilters } from '../ProductFilters';
 import { ProductDeleteDialog } from './ProductDeleteDialog';
 import { ProductDialog } from './ProductDialog';
 import { ProductList } from './ProductList';
@@ -29,9 +31,20 @@ export const ProductTable = () => {
   const [loading, setLoading] = useState(true);
 
   const [page, setPage] = useState(0);
-  const [limit, setLimit] = useState(12);
+  const [limit, setLimit] = useState(10);
   const [totalPages, setTotalPages] = useState(0);
-  const [sort, setSort] = useState('id,asc');
+
+  const [draftPriceRange, setDraftPriceRange] = useState<[number, number | null]>([0, null]);
+  const [draftInStockOnly, setDraftInStockOnly] = useState(false);
+  const [draftMinRating, setDraftMinRating] = useState(0);
+  const [draftSort, setDraftSort] = useState('id,asc');
+
+  const [appliedSort, setAppliedSort] = useState('id,asc');
+  const [appliedFilters, setAppliedFilters] = useState({
+    priceRange: [0, null] as [number, number | null],
+    inStockOnly: false,
+    minRating: 0,
+  });
 
   const [search, setSearch] = useState('');
 
@@ -47,7 +60,11 @@ export const ProductTable = () => {
       const res = await ProductApi.fetchProducts({
         page,
         limit,
-        sort,
+        sort: appliedSort,
+        minPrice: appliedFilters.priceRange[0],
+        maxPrice: appliedFilters.priceRange[1],
+        inStock: appliedFilters.inStockOnly || undefined,
+        minRating: appliedFilters.minRating || undefined,
       });
 
       const filtered = search
@@ -60,12 +77,12 @@ export const ProductTable = () => {
 
       setProducts(filtered);
       setTotalPages(res.totalPages);
-    } catch {
-      toast.error('Failed to load products');
+    } catch (err) {
+      toastApiError(err);
     } finally {
       setLoading(false);
     }
-  }, [page, limit, sort, search]);
+  }, [page, limit, appliedFilters, appliedSort, search]);
 
   useEffect(() => {
     void loadProducts();
@@ -73,7 +90,17 @@ export const ProductTable = () => {
 
   useEffect(() => {
     setPage(0);
-  }, [search, sort, limit]);
+  }, [search, limit]);
+
+  const handleApplyFilters = () => {
+    setPage(0);
+    setAppliedFilters({
+      priceRange: draftPriceRange,
+      inStockOnly: draftInStockOnly,
+      minRating: draftMinRating,
+    });
+    setAppliedSort(draftSort);
+  };
 
   const openCreate = () => {
     setSelectedProduct(emptyProduct() as TProductDTO);
@@ -103,8 +130,8 @@ export const ProductTable = () => {
       }
       setDialogOpen(false);
       await loadProducts();
-    } catch {
-      toast.error('Failed to save product');
+    } catch (err) {
+      toastApiError(err);
     }
   };
 
@@ -114,8 +141,8 @@ export const ProductTable = () => {
       await ProductApi.deleteProduct(selectedProduct.id);
       toast.success('Product deleted');
       await loadProducts();
-    } catch {
-      toast.error('Failed to delete product');
+    } catch (err) {
+      toastApiError(err);
     } finally {
       setDeleteOpen(false);
     }
@@ -123,52 +150,53 @@ export const ProductTable = () => {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-wrap items-center gap-4">
-        <Input
-          placeholder="Search by name or description…"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="max-w-sm"
+      <div className="flex flex-col gap-8 lg:flex-row">
+        <ProductFilters
+          priceRange={draftPriceRange}
+          setPriceRange={setDraftPriceRange}
+          inStockOnly={draftInStockOnly}
+          setInStockOnly={setDraftInStockOnly}
+          minRating={draftMinRating}
+          setMinRating={setDraftMinRating}
+          sort={draftSort}
+          setSort={setDraftSort}
+          onApplyFilters={handleApplyFilters}
         />
 
-        <select
-          value={sort}
-          onChange={(e) => setSort(e.target.value)}
-          className="rounded-md border px-3 py-2 text-sm"
-        >
-          <option value="id,asc">Default</option>
-          <option value="name,asc">Name A–Z</option>
-          <option value="name,desc">Name Z–A</option>
-          <option value="price,asc">Price ↑</option>
-          <option value="price,desc">Price ↓</option>
-          <option value="stock,asc">Stock ↑</option>
-          <option value="stock,desc">Stock ↓</option>
-          <option value="discount,desc">Discount ↓</option>
-        </select>
+        <div className="flex-1 space-y-6">
+          <div className="flex flex-wrap items-center gap-4">
+            <Input
+              placeholder="Search by name or description…"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="max-w-sm"
+            />
 
-        <Button
-          className="ml-auto"
-          onClick={openCreate}
-        >
-          <Plus className="mr-2 h-4 w-4" />
-          Add Product
-        </Button>
+            <Button
+              className="ml-auto"
+              onClick={openCreate}
+            >
+              <Plus className="h-4 w-4" />
+              Add Product
+            </Button>
+          </div>
+
+          <ProductList
+            products={products}
+            loading={loading}
+            onEdit={openEdit}
+            onDelete={openDelete}
+          />
+
+          <Pagination
+            page={page}
+            limit={limit}
+            totalPages={totalPages}
+            onPageChange={setPage}
+            onLimitChange={setLimit}
+          />
+        </div>
       </div>
-
-      <ProductList
-        products={products}
-        loading={loading}
-        onEdit={openEdit}
-        onDelete={openDelete}
-      />
-
-      <Pagination
-        page={page}
-        limit={limit}
-        totalPages={totalPages}
-        onPageChange={setPage}
-        onLimitChange={setLimit}
-      />
 
       <ProductDialog
         open={dialogOpen}

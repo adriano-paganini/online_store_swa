@@ -4,7 +4,7 @@ import type { OrderStatus, TOrderCreateDTO, TOrderDTO } from '../DTO/order.types
 import type { TPageResponseDTO, TPaginationParams } from '../DTO/pagination.types';
 
 const fetchOrders = async (
-  params?: TPaginationParams & { status?: OrderStatus }
+  params?: TPaginationParams & { status?: OrderStatus[] }
 ): Promise<TPageResponseDTO<TOrderDTO>> => {
   try {
     const response = await axios.get<TPageResponseDTO<TOrderDTO>>('/orders', { params });
@@ -36,7 +36,7 @@ const cancelOrder = async (num: string): Promise<void> => {
   try {
     await axios.post<void>(`/orders/${num}/cancel`);
   } catch (err: unknown) {
-    throw new Error(`Error creating order: ${getErrorMessage(err)}`);
+    throw new Error(`Error cancelling order: ${getErrorMessage(err)}`);
   }
 };
 

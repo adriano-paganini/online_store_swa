@@ -31,6 +31,8 @@ export type TOrderDTO = {
   shippingAddress: TAddressDTO | null;
   billingAddress: TAddressDTO | null;
   shippingMethod: ShippingMethod;
+  transactionId: string;
+  paidAt: string;
 };
 
 export type TOrderCreateDTO = {

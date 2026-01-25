@@ -10,10 +10,14 @@ type TAuthMode = 'login' | 'register';
 
 export default function AuthPage() {
   const navigate = useNavigate();
+
+  // Auth mode is controlled by the route: /auth/:mode
   const { mode } = useParams<{ mode: TAuthMode }>();
 
+  // Fallback to "login" if the route param is missing or invalid
   const currentMode: TAuthMode = mode === 'register' ? 'register' : 'login';
 
+  // Switch mode by updating the URL (keeps state URL-driven)
   const switchMode = (next: TAuthMode) => {
     navigate(`/auth/${next}`);
   };

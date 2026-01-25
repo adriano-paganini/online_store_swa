@@ -6,8 +6,8 @@ import { Pagination } from '@/components/general/Pagination';
 import { ProductFilters } from '@/components/product/ProductFilters';
 import { ProductGrid } from '@/components/product/ProductGrid';
 
+import { toastApiError } from '@/lib/utils';
 import { ProductApi } from '@/utilities/productApi';
-import { toast } from 'sonner';
 import type { TProductDTO } from '../DTO/product.types';
 
 export default function ProductsPage() {
@@ -47,8 +47,7 @@ export default function ProductsPage() {
       setProducts(response.data);
       setTotalPages(response.totalPages);
     } catch (err) {
-      console.error('Failed to load products', err);
-      toast.error('Failed to load products. Please try again later.');
+      toastApiError(err);
     } finally {
       setLoading(false);
     }
