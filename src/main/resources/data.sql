@@ -60,7 +60,7 @@ UPDATE USERX SET CREATE_USER_ID = (SELECT ID FROM USERX WHERE USERNAME = 'adrian
 --Add Products
 
 INSERT INTO PRODUCT (CREATE_USER_ID, NAME, DESCRIPTION, PRICE, STOCK, DISCOUNT, DELETED, AVG_SCORE, CREATE_DATE)
-SELECT ID, 'DDR5 32GB', 'Standard RAM Kit', 1015.99, 13, 0.10, FALSE, 3.7, TIMESTAMP '2000-01-01 00:00:00'
+SELECT ID, 'DDR5 32GB', 'Standard RAM Kit', 695.99, 13, 0.10, FALSE, 3.7, TIMESTAMP '2000-01-01 00:00:00'
 FROM USERX WHERE USERNAME = 'elvis';
 -- ADD Image link
 INSERT INTO PRODUCT_IMAGES
@@ -74,7 +74,7 @@ INSERT INTO PRODUCT_IMAGES
 VALUES((SELECT ID FROM PRODUCT WHERE NAME = 'Aerondight Silver Sword'), 'https://imgs.search.brave.com/-hRbsdcQiyinkXE7P9aDa2ODhSEsV3J8sBUN83nqHPE/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9tLm1l/ZGlhLWFtYXpvbi5j/b20vaW1hZ2VzL0kv/NTF1VVB3T1BXTUwu/anBn');
 
 INSERT INTO PRODUCT (CREATE_USER_ID, NAME, DESCRIPTION, PRICE, STOCK, DISCOUNT, DELETED, AVG_SCORE, CREATE_DATE)
-SELECT ID, 'Guardian Angel', 'Upon taking lethal damage, restores 50% of base health. Perfect for a Last Stand.', 3000.00, 2, 0.0, FALSE, 4.8, CURRENT_TIMESTAMP
+SELECT ID, 'Guardian Angel', 'Upon taking lethal damage, restores 50% of base health. Perfect for a Last Stand.', 3200.00, 2, 0.0, FALSE, 4.8, CURRENT_TIMESTAMP
 FROM USERX WHERE USERNAME = 'elvis';
 -- ADD Image link
 INSERT INTO PRODUCT_IMAGES
@@ -95,7 +95,7 @@ INSERT INTO PRODUCT_IMAGES
 VALUES((SELECT ID FROM PRODUCT WHERE NAME = 'Pip-Boy 3000'), 'https://store.ign.com/cdn/shop/files/Fallout-Pip-Boy-3000-Replica.jpg?v=1763232682&width=990');
 
 INSERT INTO PRODUCT (CREATE_USER_ID, NAME, DESCRIPTION, PRICE, STOCK, DISCOUNT, DELETED, AVG_SCORE, CREATE_DATE)
-SELECT ID, 'Non-Stop Energy Drink', 'A favorite among Stalkers in the Zone. Restores stamina, but watch out for anomalies.', 15.50, 50, 0.00, FALSE, 4.7, CURRENT_TIMESTAMP
+SELECT ID, 'Non-Stop Energy Drink', 'A favorite among Stalkers in the Zone. Restores stamina, but watch out for anomalies.', 3.76, 50, 0.00, FALSE, 4.7, CURRENT_TIMESTAMP
 FROM USERX WHERE USERNAME = 'elvis';
 -- ADD Image link
 INSERT INTO PRODUCT_IMAGES
