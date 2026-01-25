@@ -61,11 +61,26 @@ public class OrderService {
     public Page<Order> getCurrentUserOrders(
             OrderStatus status,
             int page,
-            int limit
+            int limit,
+            String sort
     ) {
-        Userx user = authenticatedUserService.requireAuthenticatedUser();
-        Pageable pageable = PageRequest.of(page, limit, Sort.by("timestamp").descending());
+        Sort.Direction direction = Sort.Direction.DESC; // default
 
+        if (sort != null) {
+            String[] parts = sort.split(",");
+            if (parts.length > 1) {
+                direction = Sort.Direction.fromOptionalString(parts[1].toLowerCase())
+                        .orElse(Sort.Direction.DESC);
+            }
+        }
+
+        Userx user = authenticatedUserService.requireAuthenticatedUser();
+
+        Pageable pageable = PageRequest.of(
+                page,
+                limit,
+                Sort.by(direction, "timestamp")
+        );
         Page<Order> pageResult;
 
         if (status != null) {
