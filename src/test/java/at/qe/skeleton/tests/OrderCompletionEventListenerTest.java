@@ -17,6 +17,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
@@ -98,19 +99,20 @@ public class OrderCompletionEventListenerTest {
         mockNotification.setChannel(NotificationType.EMAIL);
 
         when(notificationService.createNotification(
-                eq(testUser.getId()),
-                eq(NotificationType.EMAIL),
-                eq(event)
+                testUser.getId(),
+                NotificationType.EMAIL,
+                event
         )).thenReturn(mockNotification);
 
         listener.handleOrderCompleteEvent(event);
 
         verify(notificationService, times(1)).createNotification(
-                eq(testUser.getId()),
-                eq(NotificationType.EMAIL),
-                eq(event)
+                testUser.getId(),
+                NotificationType.EMAIL,
+                event
         );
     }
+
 
     @Test
     void handleOrderCompleteEventPublishesEmailNotificationEvent() {
@@ -156,6 +158,7 @@ public class OrderCompletionEventListenerTest {
         });
     }
 
+
     @Test
     void handleOrderCompleteEventVerifiesNotificationServiceCall() {
         OrderCompletionEvent event = new OrderCompletionEvent(testOrder);
@@ -170,13 +173,23 @@ public class OrderCompletionEventListenerTest {
 
         listener.handleOrderCompleteEvent(event);
 
+        ArgumentCaptor<Long> userIdCaptor = ArgumentCaptor.forClass(Long.class);
+        ArgumentCaptor<NotificationType> typeCaptor = ArgumentCaptor.forClass(NotificationType.class);
+        ArgumentCaptor<OrderCompletionEvent> eventCaptor = ArgumentCaptor.forClass(OrderCompletionEvent.class);
+
         verify(notificationService, times(1)).createNotification(
-                eq(1L),
-                eq(NotificationType.EMAIL),
-                eq(event)
+                userIdCaptor.capture(),
+                typeCaptor.capture(),
+                eventCaptor.capture()
         );
+
+        assertThat(userIdCaptor.getValue()).isEqualTo(testUser.getId());
+        assertThat(typeCaptor.getValue()).isEqualTo(NotificationType.EMAIL);
+        assertThat(eventCaptor.getValue()).isSameAs(event);
+
         verifyNoMoreInteractions(notificationService);
     }
+
 
     @Test
     void handleOrderCompleteEventVerifiesEventPublisherCall() {

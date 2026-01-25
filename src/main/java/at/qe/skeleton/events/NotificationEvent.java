@@ -17,7 +17,7 @@ public class NotificationEvent<T extends PayloadInterface> {
         this.payload = payload;
     }
 
-    public Payload<?> getPayload() {
+    public Payload<? extends PayloadInterface> getPayload() {
         return payload;
     }
 

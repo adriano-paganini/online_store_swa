@@ -89,8 +89,10 @@ class SubscriptionNotificationListenerTest {
         verify(applicationEventPublisher, times(4)).publishEvent(publishedEvents.capture());
 
         List<Object> allPublished = publishedEvents.getAllValues();
-        assertThat(allPublished).hasSize(4);
-        assertThat(allPublished).allSatisfy(e -> assertThat(e).isNotNull());
+        assertThat(allPublished)
+                .hasSize(4)
+                .allSatisfy(e -> assertThat(e).isNotNull());
+
 
         verifyNoMoreInteractions(subscriptionRepository, notificationService, applicationEventPublisher);
     }

@@ -27,23 +27,22 @@ public class UserxMapper {
             return null;
         }
         Userx creator = user.getCreateUser();
-        UserxDTO dto = new UserxDTO(
-                user.getId(), 
+
+        return new UserxDTO(
+                user.getId(),
                 creator != null ? creator.getId() : null,
-                user.getCreateDate(), 
-                user.getUpdateUser() != null ? user.getUpdateUser().getId() : null, 
+                user.getCreateDate(),
+                user.getUpdateUser() != null ? user.getUpdateUser().getId() : null,
                 user.getUpdateDate(),
-                user.getUsername(), 
-                user.getFirstName(), 
-                user.getLastName(), 
-                user.getEmail(), 
-                user.getPhone(), 
+                user.getUsername(),
+                user.getFirstName(),
+                user.getLastName(),
+                user.getEmail(),
+                user.getPhone(),
                 user.isEnabled(),
                 user.isDeleted(),
                 user.getRoles()
         );
-        
-        return dto;
     }
 
     public void apply(Userx user, UserxUpdateDTO dto) {

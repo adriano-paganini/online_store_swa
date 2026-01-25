@@ -3,7 +3,6 @@ package at.qe.skeleton.tests;
 import at.qe.skeleton.dtos.UserxMeUpdateDTO;
 import at.qe.skeleton.dtos.UserxRegistrationDTO;
 import at.qe.skeleton.mappers.UserxRegistrationMapper;
-import at.qe.skeleton.model.NotificationType;
 import at.qe.skeleton.model.Userx;
 import at.qe.skeleton.model.UserxRole;
 import at.qe.skeleton.services.UserxService;
@@ -21,7 +20,6 @@ import java.util.Optional;
 
 /**
  * Some very basic tests for {@link UserxService}.
- *
  * This class is part of the skeleton project provided for students of the courses "Software
  * Architecture" and "Software Engineering" offered by the University of Innsbruck.
  */
@@ -227,15 +225,18 @@ public class UserxServiceTest {
     @Test
     @WithMockUser(username = "admin", authorities = {"ADMIN"})
     public void testExceptionForEmptyUser() {
-        Assertions.assertThrows(IllegalArgumentException.class, () -> {
-            Optional<Userx> adminUser = userService.loadUser(1000L);
-            Assertions.assertFalse(adminUser.isEmpty(),
-                    "Admin user could not be loaded from test data source");
 
-            Userx toBeCreatedUser = new Userx();
-            userService.saveUser(toBeCreatedUser);
-        });
+        Optional<Userx> adminUser = userService.loadUser(1000L);
+        Assertions.assertFalse(adminUser.isEmpty(),
+                "Admin user could not be loaded from test data source");
+
+        Userx toBeCreatedUser = new Userx();
+
+        Assertions.assertThrows(IllegalArgumentException.class, () ->
+                userService.saveUser(toBeCreatedUser)
+        );
     }
+
 
     @Test
     public void testUnauthenticatedLoadUsers() {

@@ -1,9 +1,6 @@
 package at.qe.skeleton.model;
 
-import at.qe.skeleton.events.EmailNotificationEvent;
-import at.qe.skeleton.events.NotificationEvent;
-import at.qe.skeleton.events.Payload;
-import at.qe.skeleton.events.SmsNotificationEvent;
+import at.qe.skeleton.events.*;
 
 import java.util.function.BiFunction;
 
@@ -19,13 +16,13 @@ public enum NotificationType {
     SMS(SmsNotificationEvent::new);
 
     // Functional interface used to store the constructor reference for the specific event type
-    private final BiFunction<Notification, Payload<?>, NotificationEvent<?>> eventConstructor;
+    private final BiFunction<Notification, Payload<? extends PayloadInterface>, NotificationEvent<? extends PayloadInterface>> eventConstructor;
 
-    NotificationType(BiFunction<Notification, Payload<?>, NotificationEvent<?>> eventConstructor) {
+    NotificationType(BiFunction<Notification, Payload<? extends PayloadInterface>, NotificationEvent<? extends PayloadInterface>> eventConstructor) {
         this.eventConstructor = eventConstructor;
     }
 
-    public NotificationEvent<?> createEvent(Notification notification, Payload<?> payload) {
+    public NotificationEvent<?> createEvent(Notification notification, Payload<? extends PayloadInterface> payload) {
         // Executes the stored strategy to produce the relevant class instance
         return eventConstructor.apply(notification, payload);
     }

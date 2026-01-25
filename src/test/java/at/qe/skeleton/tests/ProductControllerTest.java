@@ -256,7 +256,9 @@ public class ProductControllerTest {
     @Test
     @WithMockUser(username = "admin", authorities = {"ADMIN"})
     void getProductByIdWithAdminFields() throws Exception {
-        Collection<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ADMIN"));
+        Collection<GrantedAuthority> authorities =
+                List.of(new SimpleGrantedAuthority("ADMIN"));
+
         ProductDTO adminProductDTO = new ProductDTO(
                 testProductId,
                 "Test Product",
@@ -275,7 +277,8 @@ public class ProductControllerTest {
 
         Mockito.when(productService.getProductById(testProductId))
                 .thenReturn(Optional.of(testProduct));
-        Mockito.when(productMapper.mapTo(Mockito.eq(testProduct), Mockito.eq(authorities)))
+
+        Mockito.when(productMapper.mapTo(testProduct, authorities))
                 .thenReturn(adminProductDTO);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/products/{id}", testProductId))
@@ -284,6 +287,7 @@ public class ProductControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.createdByName").exists())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.createdAt").exists());
     }
+
 
     @Test
     @WithMockUser(username = "admin", authorities = {"ADMIN"})
