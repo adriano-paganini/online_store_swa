@@ -26,7 +26,8 @@ public class UserxAdminCreateMapper implements DTOMapper<Userx, UserxAdminCreate
         user.setEmail(dto.email());
         user.setPassword(dto.password());
         user.setPhone(dto.phone());
-        user.setEnabled(dto.enabled());
+        //TODO: REMOVE ENABLED COMPLETELY
+        user.setEnabled(false);
         user.setRoles(dto.roles());
 
         return user;

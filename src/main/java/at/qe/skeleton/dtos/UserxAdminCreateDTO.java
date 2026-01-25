@@ -56,7 +56,6 @@ public record UserxAdminCreateDTO(
         )
         String phone,
 
-        @NotNull(message = "Enabled flag must be provided")
         Boolean enabled,
 
         @NotEmpty(message = "At least one role must be assigned to the user")
