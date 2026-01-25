@@ -17,8 +17,10 @@ import io.jsonwebtoken.Jws;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -104,12 +106,14 @@ public class AdminControllerTest {
         user1.setLastName("Last");
 
         Page<Userx> page = new PageImpl<>(List.of(user1));
-        Mockito.when(userService.getAllUsers(
+        Mockito.when(userService.getUsers(
                 Mockito.anyInt(),
                 Mockito.anyInt(),
                 Mockito.isNull(),
-                Mockito.isNull()
+                Mockito.isNull(),
+                Mockito.anyString()
         )).thenReturn(page);
+
 
         Mockito.when(userMapper.mapTo(Mockito.any(Userx.class))).thenReturn(new UserxDTO(
                 id, null, null, null, null, "testUser", "First", "Last", null, null, false, false,null));
@@ -208,5 +212,125 @@ public class AdminControllerTest {
                         .with(SecurityMockMvcRequestPostProcessors.csrf()))
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
     }
+
+    @Test
+    @WithMockUser(username = "admin", authorities = {"ADMIN"})
+    void getAllUsersSortAscendingByUsername() throws Exception {
+
+        Page<Userx> page = new PageImpl<>(List.of(new Userx()));
+        Mockito.when(userService.getUsers(
+                Mockito.anyInt(),
+                Mockito.anyInt(),
+                Mockito.any(),
+                Mockito.any(),
+                Mockito.anyString()
+        )).thenReturn(page);
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/admin/users")
+                        .param("sort", "username,asc"))
+                .andExpect(MockMvcResultMatchers.status().isOk());
+
+        ArgumentCaptor<String> sortCaptor = ArgumentCaptor.forClass(String.class);
+
+        Mockito.verify(userService).getUsers(
+                Mockito.anyInt(),
+                Mockito.anyInt(),
+                Mockito.any(),
+                Mockito.any(),
+                sortCaptor.capture()
+        );
+
+        Assertions.assertEquals("username,asc", sortCaptor.getValue());
+    }
+
+    @Test
+    @WithMockUser(username = "admin", authorities = {"ADMIN"})
+    void getAllUsersSortDescendingByUsername() throws Exception {
+
+        Page<Userx> page = new PageImpl<>(List.of(new Userx()));
+        Mockito.when(userService.getUsers(
+                Mockito.anyInt(),
+                Mockito.anyInt(),
+                Mockito.any(),
+                Mockito.any(),
+                Mockito.anyString()
+        )).thenReturn(page);
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/admin/users")
+                        .param("sort", "username,desc"))
+                .andExpect(MockMvcResultMatchers.status().isOk());
+
+        ArgumentCaptor<String> sortCaptor = ArgumentCaptor.forClass(String.class);
+
+        Mockito.verify(userService).getUsers(
+                Mockito.anyInt(),
+                Mockito.anyInt(),
+                Mockito.any(),
+                Mockito.any(),
+                sortCaptor.capture()
+        );
+
+        Assertions.assertEquals("username,desc", sortCaptor.getValue());
+    }
+    @Test
+    @WithMockUser(username = "admin", authorities = {"ADMIN"})
+    void getAllUsersInvalidSortFieldFallsBackToDefault() throws Exception {
+
+        Page<Userx> page = new PageImpl<>(List.of(new Userx()));
+        Mockito.when(userService.getUsers(
+                Mockito.anyInt(),
+                Mockito.anyInt(),
+                Mockito.any(),
+                Mockito.any(),
+                Mockito.anyString()
+        )).thenReturn(page);
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/admin/users")
+                        .param("sort", "holla,asc"))
+                .andExpect(MockMvcResultMatchers.status().isOk());
+
+        ArgumentCaptor<String> sortCaptor = ArgumentCaptor.forClass(String.class);
+
+        Mockito.verify(userService).getUsers(
+                Mockito.anyInt(),
+                Mockito.anyInt(),
+                Mockito.any(),
+                Mockito.any(),
+                sortCaptor.capture()
+        );
+
+        // controller passes it through, service must handle fallback
+        Assertions.assertEquals("holla,asc", sortCaptor.getValue());
+    }
+
+    @Test
+    @WithMockUser(username = "admin", authorities = {"ADMIN"})
+    void getAllUsersUsesDefaultSortWhenNotProvided() throws Exception {
+
+        Page<Userx> page = new PageImpl<>(List.of(new Userx()));
+        Mockito.when(userService.getUsers(
+                Mockito.anyInt(),
+                Mockito.anyInt(),
+                Mockito.any(),
+                Mockito.any(),
+                Mockito.anyString()
+        )).thenReturn(page);
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/admin/users"))
+                .andExpect(MockMvcResultMatchers.status().isOk());
+
+        ArgumentCaptor<String> sortCaptor = ArgumentCaptor.forClass(String.class);
+
+        Mockito.verify(userService).getUsers(
+                Mockito.anyInt(),
+                Mockito.anyInt(),
+                Mockito.any(),
+                Mockito.any(),
+                sortCaptor.capture()
+        );
+
+        Assertions.assertEquals("id,desc", sortCaptor.getValue());
+    }
+
 
 }
