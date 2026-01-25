@@ -4,7 +4,6 @@
  */
 import { useUser } from '@/Contexts/authenticatedUserContext';
 import { TUserDTO, UserxRole } from '@/DTO/userx.types';
-import { CheckedState } from '@radix-ui/react-checkbox';
 import React from 'react';
 import { Checkbox } from '../ui/checkbox';
 import { Input } from '../ui/input';
@@ -16,20 +15,12 @@ type TUserFormProps = {
   fieldErrors?: Partial<Record<keyof TUserDTO, string>>;
   onInputChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onRolesChange: (event: { value: string[] }) => void;
-  onUserEnabledChange: (checked: CheckedState, fieldName: string) => void;
 };
 
 /**
  * Form for creating or editing a user.
  */
-export const UserForm: React.FC<TUserFormProps> = ({
-  user,
-  isNewUser,
-  fieldErrors,
-  onInputChange,
-  onRolesChange,
-  onUserEnabledChange,
-}) => {
+export const UserForm: React.FC<TUserFormProps> = ({ user, isNewUser, fieldErrors, onInputChange, onRolesChange }) => {
   const { currentUser } = useUser();
   const roleSet = new Set(user.roles ?? []);
 
@@ -159,21 +150,6 @@ export const UserForm: React.FC<TUserFormProps> = ({
           })}
         </div>
         {fieldErrors?.roles && <p className="mt-1 text-sm text-red-600">{fieldErrors.roles}</p>}
-      </div>
-
-      <div className="mt-2 flex flex-row items-center gap-2">
-        <Checkbox
-          id="enabled"
-          name="enabled"
-          checked={user.enabled ?? false}
-          onCheckedChange={(checked) => onUserEnabledChange(checked, 'enabled')}
-        />
-        <Label
-          htmlFor="enabled"
-          className="block font-bold"
-        >
-          Enabled
-        </Label>
       </div>
     </div>
   );

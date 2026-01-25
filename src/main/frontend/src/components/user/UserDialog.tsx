@@ -13,10 +13,8 @@ import {
 } from '@/components/ui/dialog';
 import { TUserDTO } from '@/DTO/userx.types';
 import { TUserxValidationResult } from '@/utilities/userxUtilities';
-import { CheckedState } from '@radix-ui/react-checkbox';
-import { AlertTriangle, Check, X } from 'lucide-react';
+import { Check, X } from 'lucide-react';
 import React from 'react';
-import { Alert, AlertDescription, AlertTitle } from '../ui/alert';
 import { Button } from '../ui/button';
 import { UserForm } from './UserForm';
 
@@ -29,7 +27,6 @@ type TUserDialogProps = {
   onSubmit: () => void;
   onInputChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onRolesChange: (event: { value: string[] }) => void;
-  onUserEnabledChange: (checked: CheckedState, fieldName: string) => void;
 };
 
 /**
@@ -44,7 +41,6 @@ export const UserDialog: React.FC<TUserDialogProps> = ({
   onSubmit,
   onInputChange,
   onRolesChange,
-  onUserEnabledChange,
 }) => {
   return (
     <Dialog
@@ -61,17 +57,6 @@ export const UserDialog: React.FC<TUserDialogProps> = ({
           </DialogDescription>
         </DialogHeader>
 
-        {validation.message && (
-          <Alert
-            variant="destructive"
-            className="mb-4"
-          >
-            <AlertTriangle className="h-5 w-5" />
-            <AlertTitle>Error</AlertTitle>
-            <AlertDescription>{validation.message}</AlertDescription>
-          </Alert>
-        )}
-
         {user && (
           <UserForm
             user={user}
@@ -79,7 +64,6 @@ export const UserDialog: React.FC<TUserDialogProps> = ({
             fieldErrors={validation.fieldErrors}
             onInputChange={onInputChange}
             onRolesChange={onRolesChange}
-            onUserEnabledChange={onUserEnabledChange}
           />
         )}
 

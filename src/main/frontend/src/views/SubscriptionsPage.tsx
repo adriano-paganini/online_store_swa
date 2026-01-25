@@ -16,7 +16,7 @@ export default function SubscriptionsPage() {
   const [loading, setLoading] = useState(true);
 
   const [page, setPage] = useState(0);
-  const [limit, setLimit] = useState(12);
+  const [limit, setLimit] = useState(10);
   const [totalPages, setTotalPages] = useState(0);
 
   const [draftTypes, setDraftTypes] = useState<SubscriptionType[]>([]);

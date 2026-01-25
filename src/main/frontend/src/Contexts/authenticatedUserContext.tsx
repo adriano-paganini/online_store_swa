@@ -31,7 +31,7 @@ type TUserContextType = {
 };
 
 // Create a new context object
-export const UserContext = createContext<TUserContextType | null>(null);
+const UserContext = createContext<TUserContextType | null>(null);
 
 type TCustomJwtPayload = JwtPayload & {
   roles: string[];
@@ -119,7 +119,6 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
         lastName,
         email: '',
         phone: '',
-        enabled: true,
         roles: roles.map((role) => role as UserxRole),
       };
     } catch {

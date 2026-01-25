@@ -26,16 +26,19 @@ public interface UserxRepository extends AbstractRepository<Userx, Long> {
     List<Userx> findByWholeNameConcat(@Param("wholeName") String wholeName);
 
     @Query("SELECT u FROM Userx u WHERE :role MEMBER OF u.roles")
-    Page<Userx> findByRolesContaining(@Param("role") UserxRole role,  Pageable pageable);
+    Page<Userx> findByRolesContaining(@Param("role") UserxRole role, Pageable pageable);
 
     boolean existsByUsername(String username);
+
     Page<Userx> findAll(Pageable pageable);
+
     Page<Userx> findByDeleted(boolean deleted, Pageable pageable);
+
     Page<Userx> findByRolesContainingAndDeleted(UserxRole role, boolean deleted, Pageable pageable);
 
     Optional<Userx> findById(Long id);
 
-    @Query("""
+    @Query(""" 
     SELECT DISTINCT u
     FROM Userx u
     LEFT JOIN u.roles r
@@ -47,3 +50,4 @@ public interface UserxRepository extends AbstractRepository<Userx, Long> {
             @Param("deleted") Boolean deleted,
             Pageable pageable);
 }
+

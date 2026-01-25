@@ -1,5 +1,6 @@
 package at.qe.skeleton.services;
 
+import at.qe.skeleton.Helpers.SortHelper;
 import at.qe.skeleton.dtos.*;
 import at.qe.skeleton.exceptions.UsernameDuplicateException;
 import at.qe.skeleton.mappers.AddressMapper;
@@ -28,7 +29,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-import static at.qe.skeleton.Helpers.SortHelper.parseSort;
 
 /**
  * Service for accessing and manipulating user data.
@@ -45,9 +45,11 @@ public class UserxService implements UserDetailsService {
     private final AddressMapper addressMapper;
     private final UserxMapper userxMapper;
     private final UserxMeMapper userxMeMapper;
+    private final SortHelper sortHelper;
+
 
     @Autowired
-    public UserxService(UserxRepository userRepository, PasswordEncoder passwordEncoder, AuthenticatedUserService authenticatedUserService, SubscriptionService subscriptionService, AddressMapper addressMapper, UserxMapper userxMapper, UserxMeMapper userxMeMapper) {
+    public UserxService(UserxRepository userRepository, PasswordEncoder passwordEncoder, AuthenticatedUserService authenticatedUserService, SubscriptionService subscriptionService, AddressMapper addressMapper, UserxMapper userxMapper, UserxMeMapper userxMeMapper, SortHelper sortHelper) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.authenticatedUserService = authenticatedUserService;
@@ -55,6 +57,7 @@ public class UserxService implements UserDetailsService {
         this.addressMapper = addressMapper;
         this.userxMapper = userxMapper;
         this.userxMeMapper = userxMeMapper;
+        this.sortHelper = sortHelper;
     }
     
     /**
@@ -157,7 +160,6 @@ public class UserxService implements UserDetailsService {
             }
             // only soft delete users
             userToDelete.setDeleted(true);
-            userToDelete.setEnabled(false);
             userRepository.save(userToDelete);
         });
     }
@@ -257,7 +259,6 @@ public class UserxService implements UserDetailsService {
         // enforced defaults
         user.setRoles(Set.of(UserxRole.CUSTOMER));
         user.setChannels(Set.of(NotificationType.EMAIL));
-        user.setEnabled(true);
         user.setDeleted(false);
 
         return userRepository.save(user);
@@ -288,9 +289,10 @@ public class UserxService implements UserDetailsService {
             Boolean deleted,
             String sort) {
 
-        Sort sortObj = parseSort(sort,
-                field -> List.of("username","firstname","lastname").contains(field),
+        Sort sortObj = sortHelper.parseSort(sort,Userx.class,
+                field -> List.of("username","firstName","lastName").contains(field),
                 "id");
+
 
         Pageable pageable = PageRequest.of(page,limit,sortObj);
         return userRepository.findWithPaginationFilters(role,deleted,pageable);

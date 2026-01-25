@@ -40,7 +40,6 @@ export type TUserDTO = {
   lastName: string;
   email: string;
   phone: string;
-  enabled: boolean;
   roles: UserxRole[];
 };
 
@@ -59,7 +58,6 @@ export class UserxTypes implements TUserDTO {
   lastName: string;
   email: string;
   phone: string;
-  enabled = true;
   roles: UserxRole[];
 
   /**
@@ -78,7 +76,6 @@ export class UserxTypes implements TUserDTO {
     this.lastName = data.lastName;
     this.email = data.email;
     this.phone = data.phone;
-    this.enabled = data.enabled;
     this.roles = data.roles;
   }
 
@@ -107,7 +104,6 @@ export class UserxTypes implements TUserDTO {
       lastName: this.lastName,
       email: this.email,
       phone: this.phone,
-      enabled: this.enabled,
       roles: this.roles,
     };
   }
@@ -116,10 +112,7 @@ export class UserxTypes implements TUserDTO {
    * Serialize the User instance to JSON for creating a new user
    * @returns JSON object with the fields required for creating a new user
    */
-  toCreateJSON(): Pick<
-    TUserDTO,
-    'username' | 'password' | 'firstName' | 'lastName' | 'email' | 'phone' | 'roles' | 'enabled'
-  > {
+  toCreateJSON(): Pick<TUserDTO, 'username' | 'password' | 'firstName' | 'lastName' | 'email' | 'phone' | 'roles'> {
     return {
       username: this.username,
       password: this.password,
@@ -127,7 +120,6 @@ export class UserxTypes implements TUserDTO {
       lastName: this.lastName,
       email: this.email,
       phone: this.phone,
-      enabled: this.enabled,
       roles: this.roles,
     };
   }
@@ -136,14 +128,13 @@ export class UserxTypes implements TUserDTO {
    * Serialize the User instance to JSON for updating an existing user
    * @returns JSON object with the fields required for updating a user
    */
-  toUpdateJSON(): Pick<TUserDTO, 'id' | 'firstName' | 'lastName' | 'email' | 'phone' | 'roles' | 'enabled'> {
+  toUpdateJSON(): Pick<TUserDTO, 'id' | 'firstName' | 'lastName' | 'email' | 'phone' | 'roles'> {
     return {
       id: this.id,
       firstName: this.firstName,
       lastName: this.lastName,
       email: this.email,
       phone: this.phone,
-      enabled: this.enabled,
       roles: this.roles,
     };
   }
@@ -165,7 +156,6 @@ export class UserxTypes implements TUserDTO {
       lastName: '',
       email: '',
       phone: '',
-      enabled: true,
       roles: [],
     });
   }

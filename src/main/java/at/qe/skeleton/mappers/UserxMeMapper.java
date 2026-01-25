@@ -31,7 +31,6 @@ public class UserxMeMapper {
     }
 
     public void apply(Userx user, UserxMeUpdateDTO dto) {
-        if (dto.username() != null) user.setUsername(dto.username());
         if (dto.firstName() != null) user.setFirstName(dto.firstName());
         if (dto.lastName() != null) user.setLastName(dto.lastName());
         if (dto.email() != null) user.setEmail(dto.email());

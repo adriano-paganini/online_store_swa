@@ -10,7 +10,6 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.Set;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
@@ -43,10 +42,10 @@ public class UserxControllerTest {
     public void testUpdateMe() throws Exception {
 
         UserxUpdateDTO dto = new UserxUpdateDTO(
-                null,
+                "unchanged",
                 null,
                 "HttpUpdated",
-                null,
+                "unchanged",
                 "http@update.at",
                 null,
                 null

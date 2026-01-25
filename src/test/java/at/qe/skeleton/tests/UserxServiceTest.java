@@ -170,7 +170,6 @@ public class UserxServiceTest {
         Userx toBeCreatedUser = new Userx();
         toBeCreatedUser.setUsername(username);
         toBeCreatedUser.setPassword(password);
-        toBeCreatedUser.setEnabled(true);
         toBeCreatedUser.setFirstName(fName);
         toBeCreatedUser.setLastName(lName);
         toBeCreatedUser.setEmail(email);
@@ -343,7 +342,6 @@ public class UserxServiceTest {
     public void testUpdateCurrentUserSelfService() {
 
         UserxMeUpdateDTO dto = new UserxMeUpdateDTO(
-                null,
                 "NewStrongPass1",
                 "UpdatedFirst",
                 "UpdatedLast",
@@ -375,8 +373,5 @@ public class UserxServiceTest {
                 () -> userService.loadUser(1000L) // admin
         );
     }
-
-
-
 
 }

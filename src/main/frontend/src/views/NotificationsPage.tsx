@@ -16,7 +16,7 @@ export default function NotificationsPage() {
   const [loading, setLoading] = useState(true);
 
   const [page, setPage] = useState(0);
-  const [limit, setLimit] = useState(12);
+  const [limit, setLimit] = useState(10);
   const [totalPages, setTotalPages] = useState(0);
 
   const [draftStatus, setDraftStatus] = useState<NotificationStatus | null>(null);

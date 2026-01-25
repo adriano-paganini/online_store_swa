@@ -1,6 +1,6 @@
 import { ShippingMethod } from '@/DTO/order.types';
 
-export type TShippingMethodConfig = {
+type TShippingMethodConfig = {
   key: ShippingMethod;
   label: string;
   description: string;

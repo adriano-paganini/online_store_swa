@@ -17,11 +17,7 @@ export function UserLine({ isMe, user, onEditUser, onDeleteUser }: TUserLineProp
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
-    <div
-      className={`flex items-center gap-3 border-b px-4 py-3 text-sm transition-opacity hover:bg-muted ${
-        user.enabled ? '' : 'opacity-50'
-      }`}
-    >
+    <div className="flex items-center gap-3 border-b px-4 py-3 text-sm transition-opacity hover:bg-muted">
       <div className="flex-1">
         <div className="font-medium">@{user.username}</div>
         <div className="text-muted-foreground">{fullName}</div>
