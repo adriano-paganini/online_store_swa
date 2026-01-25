@@ -128,8 +128,7 @@ public class ProductServiceImpl implements ProductService {
         // Apply DTO changes via mapper
         productMapper.apply(product, updateDTO);
         
-        // Publish events if values changed (service can access DTO for event logic)
-        //TODO:ADD MORE EVENT TYPES
+
         if (updateDTO.name() != null && !oldName.equals(updateDTO.name())) {
             applicationEventPublisher.publishEvent(new ProductNameUpdateEvent(
                     product, oldName, updateDTO.name()));

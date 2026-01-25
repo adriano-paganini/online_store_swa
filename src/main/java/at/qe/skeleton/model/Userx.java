@@ -147,6 +147,7 @@ public class Userx implements Persistable<Long>, Serializable, Comparable<Userx>
     this.phone = phone;
   }
 
+  @Override
   public boolean isEnabled() {
     return enabled;
   }

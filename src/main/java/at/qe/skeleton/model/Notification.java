@@ -105,10 +105,15 @@ public class Notification implements Persistable<Long>, Serializable, Comparable
 
     @Override
     public int compareTo(Notification n) {
-        // Compare notifications based on their database ID
-        assert n.getId() != null;
+        if (n == null) {
+            throw new NullPointerException("Notification to compare must not be null");
+        }
+        if (this.id == null || n.getId() == null) {
+            throw new IllegalStateException("Cannot compare Notifications with null id");
+        }
         return this.id.compareTo(n.getId());
     }
+
 
     @Nullable
     @Override
