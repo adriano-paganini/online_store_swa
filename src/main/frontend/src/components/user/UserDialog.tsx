@@ -13,7 +13,6 @@ import {
 } from '@/components/ui/dialog';
 import { TUserDTO } from '@/DTO/userx.types';
 import { TUserxValidationResult } from '@/utilities/userxUtilities';
-import { CheckedState } from '@radix-ui/react-checkbox';
 import { Check, X } from 'lucide-react';
 import React from 'react';
 import { Button } from '../ui/button';
@@ -28,7 +27,6 @@ type TUserDialogProps = {
   onSubmit: () => void;
   onInputChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onRolesChange: (event: { value: string[] }) => void;
-  onUserEnabledChange: (checked: CheckedState, fieldName: string) => void;
 };
 
 /**
@@ -43,7 +41,6 @@ export const UserDialog: React.FC<TUserDialogProps> = ({
   onSubmit,
   onInputChange,
   onRolesChange,
-  onUserEnabledChange,
 }) => {
   return (
     <Dialog
@@ -67,7 +64,6 @@ export const UserDialog: React.FC<TUserDialogProps> = ({
             fieldErrors={validation.fieldErrors}
             onInputChange={onInputChange}
             onRolesChange={onRolesChange}
-            onUserEnabledChange={onUserEnabledChange}
           />
         )}
 

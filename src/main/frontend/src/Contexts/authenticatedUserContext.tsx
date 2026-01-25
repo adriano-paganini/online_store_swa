@@ -119,7 +119,6 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
         lastName,
         email: '',
         phone: '',
-        enabled: true,
         roles: roles.map((role) => role as UserxRole),
       };
     } catch {

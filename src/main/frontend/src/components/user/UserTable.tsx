@@ -5,7 +5,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 
 import { toastApiError } from '@/lib/utils';
-import { CheckedState } from '@radix-ui/react-checkbox';
 import { ChevronDown, Plus } from 'lucide-react';
 import { toast } from 'sonner';
 import { TUserDTO, UserxRole, UserxTypes } from '../../DTO/userx.types';
@@ -246,20 +245,6 @@ const UserTable = () => {
   };
 
   /**
-   * Handle user enabled change for the user dialog.
-   * @param event
-   */
-  const handleUserEnabledChange = (checked: CheckedState, fieldName: string) => {
-    if (!selectedUser || checked === 'indeterminate') return;
-
-    const value = checked === true;
-
-    setSelectedUser({
-      ...selectedUser,
-      [fieldName]: value,
-    });
-  };
-  /**
    * Handle roles change for the user dialog.
    * @param event
    */
@@ -361,7 +346,6 @@ const UserTable = () => {
         }}
         onInputChange={handleInputChange}
         onRolesChange={handleRolesChange}
-        onUserEnabledChange={handleUserEnabledChange}
       />
 
       <UserDeleteDialog
