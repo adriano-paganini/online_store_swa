@@ -310,10 +310,10 @@ const UserTable = () => {
             <SelectItem value="id,asc">Oldest</SelectItem>
             <SelectItem value="username,asc">Username A–Z</SelectItem>
             <SelectItem value="username,desc">Username Z–A</SelectItem>
-            <SelectItem value="firstname,asc">First name A–Z</SelectItem>
-            <SelectItem value="firstname,desc">First name Z–A</SelectItem>
-            <SelectItem value="lastname,asc">Last name A–Z</SelectItem>
-            <SelectItem value="lastname,desc">Last name Z–A</SelectItem>
+            <SelectItem value="firstName,asc">First name A–Z</SelectItem>
+            <SelectItem value="firstName,desc">First name Z–A</SelectItem>
+            <SelectItem value="lastName,asc">Last name A–Z</SelectItem>
+            <SelectItem value="lastName,desc">Last name Z–A</SelectItem>
           </SelectContent>
         </Select>
 

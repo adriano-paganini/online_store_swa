@@ -69,14 +69,14 @@ export function ProductFilters({
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="id,asc">Default</SelectItem>
-                <SelectItem value="price,asc">Price: Ascending</SelectItem>
-                <SelectItem value="price,desc">Price: Descending</SelectItem>
-                <SelectItem value="avgScore,asc">Rating: Ascending</SelectItem>
-                <SelectItem value="avgScore,desc">Rating: Descending</SelectItem>
-                <SelectItem value="discount,asc">Discount: Ascending</SelectItem>
-                <SelectItem value="discount,desc">Discount: Descending</SelectItem>
-                <SelectItem value="name,asc">Name: A to Z</SelectItem>
-                <SelectItem value="name,desc">Name: Z to A</SelectItem>
+                <SelectItem value="price,asc">Price Ascending</SelectItem>
+                <SelectItem value="price,desc">Price Descending</SelectItem>
+                <SelectItem value="avgScore,asc">Rating Ascending</SelectItem>
+                <SelectItem value="avgScore,desc">Rating Descending</SelectItem>
+                <SelectItem value="discount,asc">Discount Ascending</SelectItem>
+                <SelectItem value="discount,desc">Discount Descending</SelectItem>
+                <SelectItem value="name,asc">Name A-Z</SelectItem>
+                <SelectItem value="name,desc">Name Z-A</SelectItem>
               </SelectContent>
             </Select>
           </div>
