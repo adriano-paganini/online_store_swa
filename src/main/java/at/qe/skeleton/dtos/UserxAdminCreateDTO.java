@@ -56,8 +56,6 @@ public record UserxAdminCreateDTO(
         )
         String phone,
 
-        Boolean enabled,
-
         @NotEmpty(message = "At least one role must be assigned to the user")
         Set<UserxRole> roles
 ) {}

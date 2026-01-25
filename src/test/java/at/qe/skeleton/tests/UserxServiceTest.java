@@ -170,7 +170,6 @@ public class UserxServiceTest {
         Userx toBeCreatedUser = new Userx();
         toBeCreatedUser.setUsername(username);
         toBeCreatedUser.setPassword(password);
-        toBeCreatedUser.setEnabled(true);
         toBeCreatedUser.setFirstName(fName);
         toBeCreatedUser.setLastName(lName);
         toBeCreatedUser.setEmail(email);

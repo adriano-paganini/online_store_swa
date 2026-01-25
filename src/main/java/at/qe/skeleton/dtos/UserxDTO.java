@@ -21,7 +21,6 @@ public record UserxDTO(
         String lastName,
         String email,
         String phone,
-        boolean enabled,
         boolean deleted,
         Set<UserxRole> roles
 ) {

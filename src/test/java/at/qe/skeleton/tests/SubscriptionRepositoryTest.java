@@ -33,7 +33,6 @@ public class SubscriptionRepositoryTest {
         testUser = new Userx();
         testUser.setUsername("repoUser");
         testUser.setPassword("password");
-        testUser.setEnabled(true);
         testUser = userRepository.save(testUser);
 
         testProduct = new Product();

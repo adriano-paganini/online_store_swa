@@ -39,8 +39,7 @@ public class UserxMapper {
                 user.getLastName(),
                 user.getEmail(),
                 user.getPhone(),
-                user.isEnabled(),
-                user.isDeleted(),
+                !user.isEnabled(),
                 user.getRoles()
         );
     }

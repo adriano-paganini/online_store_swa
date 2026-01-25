@@ -71,10 +71,6 @@ public class Userx implements Persistable<Long>, Serializable, Comparable<Userx>
   @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<Address> addresses = new ArrayList<>();
 
-  // user is allowed to authenticate
-  @Column(nullable = false)
-  private boolean enabled;
-
   // user is soft deleted
   @Column(nullable = false)
   private boolean deleted = false;
@@ -149,11 +145,7 @@ public class Userx implements Persistable<Long>, Serializable, Comparable<Userx>
 
   @Override
   public boolean isEnabled() {
-    return enabled;
-  }
-
-  public void setEnabled(boolean enabled) {
-    this.enabled = enabled;
+    return !deleted;
   }
 
   public boolean isDeleted() {

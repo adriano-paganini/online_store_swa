@@ -116,7 +116,7 @@ public class AdminControllerTest {
 
 
         Mockito.when(userMapper.mapTo(Mockito.any(Userx.class))).thenReturn(new UserxDTO(
-                id, null, null, null, null, "testUser", "First", "Last", null, null, false, false,null));
+                id, null, null, null, null, "testUser", "First", "Last", null, null, false, null));
 
 
         mockMvc.perform(MockMvcRequestBuilders.get("/admin/users"))
@@ -136,7 +136,7 @@ public class AdminControllerTest {
         user1.setFirstName("First");
         user1.setLastName("Last");
         Mockito.when(userService.loadUser(id)).thenReturn(Optional.of(user1));
-        Mockito.when(userMapper.mapTo(user1)).thenReturn(new UserxDTO(id, null, null, null, null, username, "First", "Last", null, null, false, false, null));
+        Mockito.when(userMapper.mapTo(user1)).thenReturn(new UserxDTO(id, null, null, null, null, username, "First", "Last", null, null, false,  null));
 
         mockMvc.perform(MockMvcRequestBuilders.get("/admin/users/{id}", id))
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -165,17 +165,16 @@ public class AdminControllerTest {
         Set<UserxRole> roles = Set.of(UserxRole.ADMIN);
         boolean isEnabled = true;
 
-        UserxAdminCreateDTO newUser = new UserxAdminCreateDTO(username, password, firstName, lastName, email, "", true, roles);
+        UserxAdminCreateDTO newUser = new UserxAdminCreateDTO(username, password, firstName, lastName, email, "",  roles);
         Userx user = new Userx();
         user.setId(id);
         user.setUsername(username);
         user.setPassword(password);
         user.setEmail(email);
-        user.setEnabled(isEnabled);
 
         Mockito.when(userCreateMapper.mapFrom(newUser)).thenReturn(user);
         Mockito.when(userService.saveUser(user)).thenReturn(user);
-        Mockito.when(userMapper.mapTo(user)).thenReturn(new UserxDTO(id, null, null, null, null, username, firstName, lastName, email, "", isEnabled, false, roles));
+        Mockito.when(userMapper.mapTo(user)).thenReturn(new UserxDTO(id, null, null, null, null, username, firstName, lastName, email, "", isEnabled,  roles));
 
         mockMvc.perform(MockMvcRequestBuilders.post("/admin/users")
                         .with(SecurityMockMvcRequestPostProcessors.csrf())
