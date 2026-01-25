@@ -49,25 +49,33 @@ public class AdminController {
     public ResponseEntity<PageResponseDTO<UserxDTO>> getAllUsers(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int limit,
-            @RequestParam(required = false) UserxRole role,
-            @RequestParam(required = false) Boolean deleted
+            @RequestParam(required = false) List<UserxRole> role,
+            @RequestParam(required = false) Boolean deleted,
+            @RequestParam(required = false, defaultValue = "id,desc") String sort
     ) {
-        Page<Userx> userPage = userService.getAllUsers(page, limit, role, deleted);
 
-        List<UserxDTO> userDTOs = userPage.getContent().stream()
-                .map(userMapper::mapTo)
-                .toList();
+        try{
+            Page<Userx> userxPage = userService.getUsers(page,limit,role,deleted,sort);
+            List<UserxDTO> userDTOs = userxPage.getContent().stream()
+                    .map(userMapper::mapTo)
+                    .toList();
 
-        PageResponseDTO<UserxDTO> response = new PageResponseDTO<>(
-                userDTOs,
-                page,
-                limit,
-                userPage.getTotalElements(),
-                userPage.getTotalPages()
-        );
-
-        return ResponseEntity.ok(response);
+            PageResponseDTO<UserxDTO> response = new PageResponseDTO<>(
+                    userDTOs,
+                    page,
+                    limit,
+                    userxPage.getTotalElements(),
+                    userxPage.getTotalPages()
+            );
+            return ResponseEntity.ok(response);
+        }catch(Exception e){
+            throw new ResponseStatusException(
+                    HttpStatus.INTERNAL_SERVER_ERROR,
+                    "Error fetching Users: " + e.getMessage());
+        }
     }
+
+
 
     /**
      * GET one User

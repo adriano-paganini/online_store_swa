@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -26,6 +27,8 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+
+import static at.qe.skeleton.Helpers.SortHelper.parseSort;
 
 /**
  * Service for accessing and manipulating user data.
@@ -276,4 +279,21 @@ public class UserxService implements UserDetailsService {
     public Userx getUserById(Long userId) {
         return userRepository.findById(userId).orElse(null);
     }
+
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public Page<Userx> getUsers(
+            Integer page,
+            Integer limit,
+            List<UserxRole> role,
+            Boolean deleted,
+            String sort) {
+
+        Sort sortObj = parseSort(sort,
+                field -> List.of("username","firstname","lastname").contains(field),
+                "id");
+
+        Pageable pageable = PageRequest.of(page,limit,sortObj);
+        return userRepository.findWithPaginationFilters(role,deleted,pageable);
+    }
+
 }
