@@ -1,15 +1,17 @@
 import { getErrorMessage } from '@/config/config';
-import { TPageResponseDTO } from '@/DTO/pagination.types';
+import { TPageResponseDTO, TPaginationParams } from '@/DTO/pagination.types';
 import axios from 'axios';
-import { TUserDTO, TUserMeDTO, TUserMeUpdateDTO, UserxTypes } from '../DTO/userx.types';
+import { TUserDTO, TUserMeDTO, TUserMeUpdateDTO, UserxRole, UserxTypes } from '../DTO/userx.types';
 import { createUserxFromInterfaces } from './userxUtilities';
 
 /**
  * Fetch all users from the backend
  */
-const fetchAllUsers = async (): Promise<TPageResponseDTO<TUserDTO>> => {
+const fetchAllUsers = async (
+  params: TPaginationParams & { role?: UserxRole[]; deleted?: boolean }
+): Promise<TPageResponseDTO<TUserDTO>> => {
   try {
-    const response = await axios.get<TPageResponseDTO<TUserDTO>>('/admin/users');
+    const response = await axios.get<TPageResponseDTO<TUserDTO>>('/admin/users', { params });
     return response.data;
   } catch (err: unknown) {
     throw new Error(`Error fetching users: ${getErrorMessage(err)}`);

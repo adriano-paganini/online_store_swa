@@ -2,7 +2,7 @@
  * This code is part of the skeleton project provided for students of the course "Software
  * Architecture" offered by Innsbruck University.
  */
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 import { toastApiError } from '@/lib/utils';
 import { CheckedState } from '@radix-ui/react-checkbox';
@@ -15,8 +15,12 @@ import {
   createUserxRoleArrayFromStrings,
   TUserxValidationResult,
 } from '../../utilities/userxUtilities';
+import { Pagination } from '../general/Pagination';
 import { Button } from '../ui/button';
+import { Checkbox } from '../ui/checkbox';
 import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuTrigger } from '../ui/dropdown-menu';
+import { Label } from '../ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { UserDeleteDialog } from './UserDeleteDialog';
 import { UserDialog } from './UserDialog';
 import { UserList } from './UserList';
@@ -37,26 +41,44 @@ const UserTable = () => {
     valid: true,
   });
 
-  const [selectedRoles, setSelectedRoles] = useState<string[]>(allRoles);
-  const [filteredUsers, setFilteredUsers] = useState<UserxTypes[]>(users);
+  const [page, setPage] = useState(0);
+  const [limit, setLimit] = useState(10);
+  const [totalPages, setTotalPages] = useState(0);
+  const [sort, setSort] = useState('id,desc');
+  const [showDeleted, setShowDeleted] = useState(false);
 
-  /**
-   * Fetch all users from the backend on mount once.
-   */
+  const [selectedRoles, setSelectedRoles] = useState<UserxRole[]>(allRoles);
+
+  const loadUsers = useCallback(async () => {
+    try {
+      setLoading(true);
+
+      const res = await UserxApi.fetchAllUsers({
+        page,
+        limit,
+        sort,
+        role: selectedRoles.length > 0 ? selectedRoles : undefined,
+        deleted: showDeleted ? true : undefined,
+      });
+
+      const userxInstances = res.data.map((user: TUserDTO) => createUserxFromInterfaces(user));
+
+      setUsers(userxInstances);
+      setTotalPages(res.totalPages);
+    } catch (err: unknown) {
+      toastApiError(err);
+    } finally {
+      setLoading(false);
+    }
+  }, [page, limit, sort, selectedRoles, showDeleted]);
+
   useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const userxData = await UserxApi.fetchAllUsers();
-        const userxInstances = userxData.data.map((user: TUserDTO) => createUserxFromInterfaces(user));
-        setUsers(userxInstances);
-      } catch (err: unknown) {
-        toastApiError(err);
-      } finally {
-        setLoading(false); // Set loading to false regardless of success or failure
-      }
-    };
-    void fetchUsers(); // ignore the returned promise; void explicit so ESLint doesn’t complain
-  }, []); // empty dependency array means this effect will only run once on mount
+    void loadUsers();
+  }, [loadUsers]);
+
+  useEffect(() => {
+    setPage(0);
+  }, [limit, sort, selectedRoles, showDeleted]);
 
   /**
    * Validate the user object.
@@ -249,23 +271,13 @@ const UserTable = () => {
     setSelectedUser({ ...selectedUser, roles: roles });
   };
 
-  useEffect(() => {
-    if (selectedRoles.length === 0) {
-      setFilteredUsers([]);
-    } else {
-      setFilteredUsers(
-        users.filter((user) => user.roles && [...user.roles].some((role) => selectedRoles.includes(role)))
-      );
-    }
-  }, [selectedRoles, users]);
-
-  const toggleRole = (role: string, checked: boolean) => {
+  const toggleRole = (role: UserxRole, checked: boolean) => {
     setSelectedRoles((prev) => (checked ? [...prev, role] : prev.filter((r) => r !== role)));
   };
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex flex-row items-center justify-between">
+      <div className="flex flex-wrap items-center gap-4">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline">
@@ -286,8 +298,35 @@ const UserTable = () => {
           </DropdownMenuContent>
         </DropdownMenu>
 
+        <Select
+          value={sort}
+          onValueChange={setSort}
+        >
+          <SelectTrigger className="w-[220px]">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="id,desc">Newest</SelectItem>
+            <SelectItem value="id,asc">Oldest</SelectItem>
+            <SelectItem value="username,asc">Username A–Z</SelectItem>
+            <SelectItem value="username,desc">Username Z–A</SelectItem>
+            <SelectItem value="firstname,asc">First name A–Z</SelectItem>
+            <SelectItem value="firstname,desc">First name Z–A</SelectItem>
+            <SelectItem value="lastname,asc">Last name A–Z</SelectItem>
+            <SelectItem value="lastname,desc">Last name Z–A</SelectItem>
+          </SelectContent>
+        </Select>
+
+        <div className="flex items-center gap-2">
+          <Checkbox
+            checked={showDeleted}
+            onCheckedChange={(checked) => setShowDeleted(checked === true)}
+          />
+          <Label>Deleted</Label>
+        </div>
+
         <Button
-          className="w-fit"
+          className="ml-auto"
           onClick={openNewUserDialog}
         >
           <Plus />
@@ -296,10 +335,18 @@ const UserTable = () => {
       </div>
 
       <UserList
-        users={filteredUsers}
+        users={users}
         loading={loading}
         onEditUser={openEditDialog}
         onDeleteUser={openDeleteDialog}
+      />
+
+      <Pagination
+        page={page}
+        limit={limit}
+        totalPages={totalPages}
+        onPageChange={setPage}
+        onLimitChange={setLimit}
       />
 
       {/* Dialog for creating or editing a user */}
