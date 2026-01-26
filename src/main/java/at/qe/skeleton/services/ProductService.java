@@ -22,7 +22,8 @@ public interface ProductService {
             Double maxPrice,
             Boolean inStock,
             Double minRating,
-            String sort
+            String sort,
+            String search
     );
     
     Optional<Product> getProductById(Long id);

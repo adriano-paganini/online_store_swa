@@ -86,13 +86,14 @@ public class ProductServiceImpl implements ProductService {
             Double maxPrice,
             Boolean inStock,
             Double minRating,
-            String sort) {
+            String sort,
+            String search) {
 
         Sort sortObj = parseSort(sort);
         Pageable pageable = PageRequest.of(page, limit, sortObj);
 
         return productRepository.findAllWithFilters(
-                minPrice, maxPrice, inStock, minRating, pageable);
+                minPrice, maxPrice, inStock, minRating, search,pageable);
     }
 
     @Override

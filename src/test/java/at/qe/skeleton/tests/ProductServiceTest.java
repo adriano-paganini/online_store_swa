@@ -1,6 +1,5 @@
 package at.qe.skeleton.tests;
 
-import at.qe.skeleton.dtos.ProductCreateDTO;
 import at.qe.skeleton.dtos.ProductUpdateDTO;
 import at.qe.skeleton.model.Product;
 import at.qe.skeleton.model.Userx;
@@ -70,12 +69,12 @@ public class ProductServiceTest {
         Page<Product> productPage = new PageImpl<>(products, PageRequest.of(page, limit), 2);
 
         Mockito.when(productRepository.findAllWithFilters(
-                Mockito.isNull(), Mockito.isNull(), Mockito.isNull(), Mockito.isNull(),
+                Mockito.isNull(), Mockito.isNull(), Mockito.isNull(), Mockito.isNull(),Mockito.isNull(),
                 ArgumentMatchers.any(Pageable.class)))
                 .thenReturn(productPage);
 
         Page<Product> result = productService.getAllProducts(
-                page, limit, null, null, null, null, null);
+                page, limit, null, null, null, null, null,null);
 
         Assertions.assertNotNull(result, "Result should not be null");
         Assertions.assertEquals(2, result.getTotalElements(), "Should have 2 products");
@@ -93,17 +92,17 @@ public class ProductServiceTest {
         Page<Product> productPage = new PageImpl<>(List.of(product), PageRequest.of(page, limit), 1);
 
         Mockito.when(productRepository.findAllWithFilters(
-                Mockito.eq(minPrice), Mockito.isNull(), Mockito.isNull(), Mockito.isNull(),
+                Mockito.eq(minPrice), Mockito.isNull(), Mockito.isNull(), Mockito.isNull(),Mockito.isNull(),
                 ArgumentMatchers.any(Pageable.class)))
                 .thenReturn(productPage);
 
         Page<Product> result = productService.getAllProducts(
-                page, limit, minPrice, null, null, null, null);
+                page, limit, minPrice, null, null, null, null,null);
 
         Assertions.assertNotNull(result, "Result should not be null");
         Assertions.assertEquals(1, result.getTotalElements(), "Should have 1 product");
         Mockito.verify(productRepository).findAllWithFilters(
-                Mockito.eq(minPrice), Mockito.isNull(), Mockito.isNull(), Mockito.isNull(),
+                Mockito.eq(minPrice), Mockito.isNull(), Mockito.isNull(), Mockito.isNull(),Mockito.isNull(),
                 ArgumentMatchers.any(Pageable.class));
     }
 
@@ -118,12 +117,12 @@ public class ProductServiceTest {
         Page<Product> productPage = new PageImpl<>(List.of(product), PageRequest.of(page, limit), 1);
 
         Mockito.when(productRepository.findAllWithFilters(
-                Mockito.isNull(), Mockito.eq(maxPrice), Mockito.isNull(), Mockito.isNull(),
+                Mockito.isNull(), Mockito.eq(maxPrice), Mockito.isNull(), Mockito.isNull(),Mockito.isNull(),
                 ArgumentMatchers.any(Pageable.class)))
                 .thenReturn(productPage);
 
         Page<Product> result = productService.getAllProducts(
-                page, limit, null, maxPrice, null, null, null);
+                page, limit, null, maxPrice, null, null, null,null);
 
         Assertions.assertNotNull(result, "Result should not be null");
         Assertions.assertEquals(1, result.getTotalElements(), "Should have 1 product");
@@ -140,12 +139,12 @@ public class ProductServiceTest {
         Page<Product> productPage = new PageImpl<>(List.of(product), PageRequest.of(page, limit), 1);
 
         Mockito.when(productRepository.findAllWithFilters(
-                Mockito.isNull(), Mockito.isNull(), Mockito.eq(inStock), Mockito.isNull(),
+                Mockito.isNull(), Mockito.isNull(), Mockito.eq(inStock), Mockito.isNull(),Mockito.isNull(),
                 ArgumentMatchers.any(Pageable.class)))
                 .thenReturn(productPage);
 
         Page<Product> result = productService.getAllProducts(
-                page, limit, null, null, inStock, null, null);
+                page, limit, null, null, inStock, null, null,null);
 
         Assertions.assertNotNull(result, "Result should not be null");
         Assertions.assertEquals(1, result.getTotalElements(), "Should have 1 product");
@@ -162,12 +161,12 @@ public class ProductServiceTest {
         Page<Product> productPage = new PageImpl<>(List.of(product), PageRequest.of(page, limit), 1);
 
         Mockito.when(productRepository.findAllWithFilters(
-                Mockito.isNull(), Mockito.isNull(), Mockito.isNull(), Mockito.eq(minRating),
+                Mockito.isNull(), Mockito.isNull(), Mockito.isNull(), Mockito.eq(minRating),Mockito.isNull(),
                 ArgumentMatchers.any(Pageable.class)))
                 .thenReturn(productPage);
 
         Page<Product> result = productService.getAllProducts(
-                page, limit, null, null, null, minRating, null);
+                page, limit, null, null, null, minRating, null,null);
 
         Assertions.assertNotNull(result, "Result should not be null");
         Assertions.assertEquals(1, result.getTotalElements(), "Should have 1 product");
@@ -185,16 +184,16 @@ public class ProductServiceTest {
         Page<Product> productPage = new PageImpl<>(List.of(product1, product2), PageRequest.of(page, limit), 2);
 
         Mockito.when(productRepository.findAllWithFilters(
-                Mockito.isNull(), Mockito.isNull(), Mockito.isNull(), Mockito.isNull(),
+                Mockito.isNull(), Mockito.isNull(), Mockito.isNull(), Mockito.isNull(),Mockito.isNull(),
                 ArgumentMatchers.any(Pageable.class)))
                 .thenReturn(productPage);
 
         Page<Product> result = productService.getAllProducts(
-                page, limit, null, null, null, null, sort);
+                page, limit, null, null, null, null, sort,null);
 
         Assertions.assertNotNull(result, "Result should not be null");
         Mockito.verify(productRepository).findAllWithFilters(
-                Mockito.isNull(), Mockito.isNull(), Mockito.isNull(), Mockito.isNull(),
+                Mockito.isNull(), Mockito.isNull(), Mockito.isNull(), Mockito.isNull(),Mockito.isNull(),
                 ArgumentMatchers.any(Pageable.class));
     }
 
@@ -209,12 +208,12 @@ public class ProductServiceTest {
         Page<Product> productPage = new PageImpl<>(List.of(product), PageRequest.of(page, limit), 1);
 
         Mockito.when(productRepository.findAllWithFilters(
-                Mockito.isNull(), Mockito.isNull(), Mockito.isNull(), Mockito.isNull(),
+                Mockito.isNull(), Mockito.isNull(), Mockito.isNull(), Mockito.isNull(),Mockito.isNull(),
                 ArgumentMatchers.any(Pageable.class)))
                 .thenReturn(productPage);
 
         Page<Product> result = productService.getAllProducts(
-                page, limit, null, null, null, null, sort);
+                page, limit, null, null, null, null, sort,null);
 
         Assertions.assertNotNull(result, "Result should not be null");
     }
