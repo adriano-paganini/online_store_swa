@@ -54,11 +54,12 @@ public class ProductController {
             @RequestParam(required = false) Double maxPrice,
             @RequestParam(required = false) Boolean inStock,
             @RequestParam(required = false) Double minRating,
-            @RequestParam(required = false) String sort) {
+            @RequestParam(required = false) String sort,
+            @RequestParam(required = false) String search) {
 
         try {
             Page<Product> productPage = productService.getAllProducts(
-                    page, limit, minPrice, maxPrice, inStock, minRating, sort);
+                    page, limit, minPrice, maxPrice, inStock, minRating, sort, search);
 
             final Collection<? extends GrantedAuthority> authorities = getAuthorities();
 

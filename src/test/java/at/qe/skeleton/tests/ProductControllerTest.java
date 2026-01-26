@@ -142,7 +142,7 @@ public class ProductControllerTest {
         PageRequest pageable = PageRequest.of(page, limit);
         Page<Product> productPage = new PageImpl<>(List.of(testProduct), pageable, 1);
 
-        Mockito.when(productService.getAllProducts(page, limit, null, null, null, null, null))
+        Mockito.when(productService.getAllProducts(page, limit, null, null, null, null, null,null))
                 .thenReturn(productPage);
         Mockito.when(productMapper.mapTo(Mockito.any(Product.class), Mockito.any()))
                 .thenReturn(testProductDTO);
@@ -173,7 +173,7 @@ public class ProductControllerTest {
         PageRequest pageable = PageRequest.of(page, limit);
         Page<Product> productPage = new PageImpl<>(List.of(testProduct), pageable, 1);
 
-        Mockito.when(productService.getAllProducts(page, limit, minPrice, maxPrice, inStock, minRating, sort))
+        Mockito.when(productService.getAllProducts(page, limit, minPrice, maxPrice, inStock, minRating, sort,null))
                 .thenReturn(productPage);
         Mockito.when(productMapper.mapTo(Mockito.any(Product.class), Mockito.any()))
                 .thenReturn(testProductDTO);
@@ -196,7 +196,7 @@ public class ProductControllerTest {
         PageRequest pageable = PageRequest.of(page, limit);
         Page<Product> productPage = new PageImpl<>(List.of(), pageable, 0);
 
-        Mockito.when(productService.getAllProducts(page, limit, null, null, null, null, null))
+        Mockito.when(productService.getAllProducts(page, limit, null, null, null, null, null,null))
                 .thenReturn(productPage);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/products")
@@ -216,7 +216,7 @@ public class ProductControllerTest {
         PageRequest pageable = PageRequest.of(page, limit);
         Page<Product> productPage = new PageImpl<>(List.of(), pageable, 0);
 
-        Mockito.when(productService.getAllProducts(page, limit, null, null, null, null, null))
+        Mockito.when(productService.getAllProducts(page, limit, null, null, null, null, null,null))
                 .thenReturn(productPage);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/products"))
@@ -612,7 +612,7 @@ public class ProductControllerTest {
                 LocalDateTime.now()
         );
 
-        Mockito.when(productService.getAllProducts(page, limit, null, null, null, null, null))
+        Mockito.when(productService.getAllProducts(page, limit, null, null, null, null, null,null))
                 .thenReturn(productPage);
         Mockito.when(productMapper.mapTo(Mockito.any(Product.class), Mockito.eq(authorities)))
                 .thenReturn(adminProductDTO);

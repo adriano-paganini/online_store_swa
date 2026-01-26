@@ -868,3 +868,90 @@ VALUES (
            1,
            1015.99
        );
+
+-- =========================
+-- Add Products (extra)
+-- =========================
+
+-- Full Netherite Armor (Minecraft) - each armor piece is its own item
+
+-- Netherite Helmet
+INSERT INTO PRODUCT (CREATE_USER_ID, NAME, DESCRIPTION, PRICE, STOCK, DISCOUNT, DELETED, AVG_SCORE, CREATE_DATE)
+SELECT ID, 'Netherite Helmet', 'Minecraft: Netherite armor helmet piece.', 40.00, 10, 0.00, FALSE, 4.8, CURRENT_TIMESTAMP
+FROM USERX WHERE USERNAME = 'elvis';
+
+-- Netherite Chestplate
+INSERT INTO PRODUCT (CREATE_USER_ID, NAME, DESCRIPTION, PRICE, STOCK, DISCOUNT, DELETED, AVG_SCORE, CREATE_DATE)
+SELECT ID, 'Netherite Chestplate', 'Minecraft: Netherite armor chestplate piece.', 80.00, 10, 0.00, FALSE, 4.8, CURRENT_TIMESTAMP
+FROM USERX WHERE USERNAME = 'elvis';
+
+-- Netherite Leggings
+INSERT INTO PRODUCT (CREATE_USER_ID, NAME, DESCRIPTION, PRICE, STOCK, DISCOUNT, DELETED, AVG_SCORE, CREATE_DATE)
+SELECT ID, 'Netherite Leggings', 'Minecraft: Netherite armor leggings piece.', 70.00, 10, 0.00, FALSE, 4.8, CURRENT_TIMESTAMP
+FROM USERX WHERE USERNAME = 'elvis';
+
+-- Netherite Boots
+INSERT INTO PRODUCT (CREATE_USER_ID, NAME, DESCRIPTION, PRICE, STOCK, DISCOUNT, DELETED, AVG_SCORE, CREATE_DATE)
+SELECT ID, 'Netherite Boots', 'Minecraft: Netherite armor boots piece.', 35.00, 10, 0.00, FALSE, 4.8, CURRENT_TIMESTAMP
+FROM USERX WHERE USERNAME = 'elvis';
+
+-- Golden Sword
+INSERT INTO PRODUCT (CREATE_USER_ID, NAME, DESCRIPTION, PRICE, STOCK, DISCOUNT, DELETED, AVG_SCORE, CREATE_DATE)
+SELECT ID, 'Golden Sword', 'Minecraft: Gold sword tool.', 15.00, 20, 0.00, FALSE, 3.5, CURRENT_TIMESTAMP
+FROM USERX WHERE USERNAME = 'elvis';
+
+-- Golden Pickaxe
+INSERT INTO PRODUCT (CREATE_USER_ID, NAME, DESCRIPTION, PRICE, STOCK, DISCOUNT, DELETED, AVG_SCORE, CREATE_DATE)
+SELECT ID, 'Golden Pickaxe', 'Minecraft: Gold pickaxe tool.', 18.00, 20, 0.00, FALSE, 3.6, CURRENT_TIMESTAMP
+FROM USERX WHERE USERNAME = 'elvis';
+
+-- Golden Axe
+INSERT INTO PRODUCT (CREATE_USER_ID, NAME, DESCRIPTION, PRICE, STOCK, DISCOUNT, DELETED, AVG_SCORE, CREATE_DATE)
+SELECT ID, 'Golden Axe', 'Minecraft: Gold axe tool.', 17.00, 20, 0.00, FALSE, 3.6, CURRENT_TIMESTAMP
+FROM USERX WHERE USERNAME = 'elvis';
+
+-- Golden Shovel
+INSERT INTO PRODUCT (CREATE_USER_ID, NAME, DESCRIPTION, PRICE, STOCK, DISCOUNT, DELETED, AVG_SCORE, CREATE_DATE)
+SELECT ID, 'Golden Shovel', 'Minecraft: Gold shovel tool.', 12.00, 20, 0.00, FALSE, 3.4, CURRENT_TIMESTAMP
+FROM USERX WHERE USERNAME = 'elvis';
+
+-- Golden Hoe
+INSERT INTO PRODUCT (CREATE_USER_ID, NAME, DESCRIPTION, PRICE, STOCK, DISCOUNT, DELETED, AVG_SCORE, CREATE_DATE)
+SELECT ID, 'Golden Hoe', 'Minecraft: Gold hoe tool.', 10.00, 20, 0.00, FALSE, 3.3, CURRENT_TIMESTAMP
+FROM USERX WHERE USERNAME = 'elvis';
+
+
+-- =========================
+-- Add empty product images
+-- =========================
+
+
+
+-- Netherite Armor
+INSERT INTO PRODUCT_IMAGES
+VALUES ((SELECT ID FROM PRODUCT WHERE NAME = 'Netherite Helmet'), 'https://minecraft.wiki/images/thumb/Netherite_Helmet_JE2_BE1.png/160px-Netherite_Helmet_JE2_BE1.png?92a86');
+
+INSERT INTO PRODUCT_IMAGES
+VALUES ((SELECT ID FROM PRODUCT WHERE NAME = 'Netherite Chestplate'), 'https://minecraft.wiki/images/thumb/Netherite_Chestplate_JE2_BE1.png/160px-Netherite_Chestplate_JE2_BE1.png?53943');
+
+INSERT INTO PRODUCT_IMAGES
+VALUES ((SELECT ID FROM PRODUCT WHERE NAME = 'Netherite Leggings'), 'https://minecraft.wiki/images/thumb/Netherite_Leggings_JE3_BE2.png/160px-Netherite_Leggings_JE3_BE2.png?2dd97');
+
+INSERT INTO PRODUCT_IMAGES
+VALUES ((SELECT ID FROM PRODUCT WHERE NAME = 'Netherite Boots'), 'https://minecraft.wiki/images/thumb/Netherite_Boots_JE2_BE1.png/160px-Netherite_Boots_JE2_BE1.png?ae7d9');
+
+-- Gold Tools
+INSERT INTO PRODUCT_IMAGES
+VALUES ((SELECT ID FROM PRODUCT WHERE NAME = 'Golden Sword'), 'https://minecraft.wiki/images/Golden_Sword_JE3_BE2.png?0ea76');
+
+INSERT INTO PRODUCT_IMAGES
+VALUES ((SELECT ID FROM PRODUCT WHERE NAME = 'Golden Pickaxe'), 'https://minecraft.wiki/images/Golden_Pickaxe_JE4_BE3.png?f9470');
+
+INSERT INTO PRODUCT_IMAGES
+VALUES ((SELECT ID FROM PRODUCT WHERE NAME = 'Golden Axe'), 'https://minecraft.wiki/images/Golden_Axe_JE3_BE2.png?2e133');
+
+INSERT INTO PRODUCT_IMAGES
+VALUES ((SELECT ID FROM PRODUCT WHERE NAME = 'Golden Shovel'), 'https://minecraft.wiki/images/Golden_Shovel_JE3_BE2.png?1c3a9');
+
+INSERT INTO PRODUCT_IMAGES
+VALUES ((SELECT ID FROM PRODUCT WHERE NAME = 'Golden Hoe'), 'https://minecraft.wiki/images/Golden_Hoe_JE3_BE3.png?d6884');
