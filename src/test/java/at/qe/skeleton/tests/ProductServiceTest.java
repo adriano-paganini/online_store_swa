@@ -1,6 +1,5 @@
 package at.qe.skeleton.tests;
 
-import at.qe.skeleton.dtos.ProductCreateDTO;
 import at.qe.skeleton.dtos.ProductUpdateDTO;
 import at.qe.skeleton.model.Product;
 import at.qe.skeleton.model.Userx;
