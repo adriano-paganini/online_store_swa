@@ -9,7 +9,6 @@ import { ProductApi } from '@/utilities/productApi';
 
 import { Pagination } from '@/components/general/Pagination';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 
 import { toastApiError } from '@/lib/utils';
 import { ProductFilters } from '../ProductFilters';
@@ -38,6 +37,8 @@ export const ProductTable = () => {
   const [draftInStockOnly, setDraftInStockOnly] = useState(false);
   const [draftMinRating, setDraftMinRating] = useState(0);
   const [draftSort, setDraftSort] = useState('id,asc');
+  const [draftSearch, setDraftSearch] = useState('');
+  const [appliedSearch, setAppliedSearch] = useState('');
 
   const [appliedSort, setAppliedSort] = useState('id,asc');
   const [appliedFilters, setAppliedFilters] = useState({
@@ -45,8 +46,6 @@ export const ProductTable = () => {
     inStockOnly: false,
     minRating: 0,
   });
-
-  const [search, setSearch] = useState('');
 
   const [selectedProduct, setSelectedProduct] = useState<TProductDTO | null>(null);
   const [isNew, setIsNew] = useState(false);
@@ -65,24 +64,17 @@ export const ProductTable = () => {
         maxPrice: appliedFilters.priceRange[1],
         inStock: appliedFilters.inStockOnly || undefined,
         minRating: appliedFilters.minRating || undefined,
+        search: appliedSearch || undefined,
       });
 
-      const filtered = search
-        ? res.data.filter(
-            (p) =>
-              p.name.toLowerCase().includes(search.toLowerCase()) ||
-              p.description.toLowerCase().includes(search.toLowerCase())
-          )
-        : res.data;
-
-      setProducts(filtered);
+      setProducts(res.data);
       setTotalPages(res.totalPages);
     } catch (err) {
       toastApiError(err);
     } finally {
       setLoading(false);
     }
-  }, [page, limit, appliedFilters, appliedSort, search]);
+  }, [page, limit, appliedFilters, appliedSort, appliedSearch]);
 
   useEffect(() => {
     void loadProducts();
@@ -90,16 +82,19 @@ export const ProductTable = () => {
 
   useEffect(() => {
     setPage(0);
-  }, [search, limit]);
+  }, [limit]);
 
   const handleApplyFilters = () => {
     setPage(0);
+
     setAppliedFilters({
       priceRange: draftPriceRange,
       inStockOnly: draftInStockOnly,
       minRating: draftMinRating,
     });
+
     setAppliedSort(draftSort);
+    setAppliedSearch(draftSearch);
   };
 
   const openCreate = () => {
@@ -160,18 +155,13 @@ export const ProductTable = () => {
           setMinRating={setDraftMinRating}
           sort={draftSort}
           setSort={setDraftSort}
+          search={draftSearch}
+          setSearch={setDraftSearch}
           onApplyFilters={handleApplyFilters}
         />
 
         <div className="flex-1 space-y-6">
           <div className="flex flex-wrap items-center gap-4">
-            <Input
-              placeholder="Search by name or description…"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="max-w-sm"
-            />
-
             <Button
               className="ml-auto"
               onClick={openCreate}

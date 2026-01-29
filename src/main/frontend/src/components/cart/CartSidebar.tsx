@@ -49,7 +49,7 @@ export function CartSidebar() {
       <Separator className="my-4" />
 
       <div className="space-y-3 px-4">
-        <div className="flex items-center justify-between text-sm font-medium">
+        <div className="mb-3 flex items-center justify-between text-sm font-medium">
           <span>Subtotal</span>
           <span>${subtotal.toFixed(2)}</span>
         </div>

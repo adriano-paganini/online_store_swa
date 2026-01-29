@@ -16,6 +16,8 @@ type TProductFiltersProps = {
   setMinRating: (value: number) => void;
   sort: string;
   setSort: (value: string) => void;
+  search: string;
+  setSearch: (value: string) => void;
   onApplyFilters: () => void;
 };
 
@@ -30,12 +32,23 @@ export function ProductFilters({
   setMinRating,
   sort,
   setSort,
+  search,
+  setSearch,
   onApplyFilters,
 }: TProductFiltersProps) {
   return (
     <aside className="w-full space-y-6 lg:w-64">
       <div className="rounded-lg border p-4">
         <div className="space-y-3">
+          <div>
+            <Label className="mb-2 block">Search</Label>
+            <Input
+              placeholder="Search products…"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+          </div>
+
           <div>
             <Label className="mb-3 block">Price Range</Label>
 

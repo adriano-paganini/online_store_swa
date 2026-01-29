@@ -22,6 +22,8 @@ export default function ProductsPage() {
   const [draftInStockOnly, setDraftInStockOnly] = useState(false);
   const [draftMinRating, setDraftMinRating] = useState(0);
   const [draftSort, setDraftSort] = useState('id,asc');
+  const [draftSearch, setDraftSearch] = useState('');
+  const [appliedSearch, setAppliedSearch] = useState('');
 
   const [appliedSort, setAppliedSort] = useState('id,asc');
   const [appliedFilters, setAppliedFilters] = useState({
@@ -42,6 +44,7 @@ export default function ProductsPage() {
         maxPrice: appliedFilters.priceRange[1],
         inStock: appliedFilters.inStockOnly || undefined,
         minRating: appliedFilters.minRating || undefined,
+        search: appliedSearch || undefined,
       });
 
       setProducts(response.data);
@@ -51,7 +54,7 @@ export default function ProductsPage() {
     } finally {
       setLoading(false);
     }
-  }, [page, limit, appliedFilters, appliedSort]);
+  }, [page, limit, appliedFilters, appliedSort, appliedSearch]);
 
   useEffect(() => {
     void loadProducts();
@@ -59,12 +62,15 @@ export default function ProductsPage() {
 
   const handleApplyFilters = () => {
     setPage(0);
+
     setAppliedFilters({
       priceRange: draftPriceRange,
       inStockOnly: draftInStockOnly,
       minRating: draftMinRating,
     });
+
     setAppliedSort(draftSort);
+    setAppliedSearch(draftSearch);
   };
 
   useEffect(() => {
@@ -85,6 +91,8 @@ export default function ProductsPage() {
           setMinRating={setDraftMinRating}
           sort={draftSort}
           setSort={setDraftSort}
+          search={draftSearch}
+          setSearch={setDraftSearch}
           onApplyFilters={handleApplyFilters}
         />
 
