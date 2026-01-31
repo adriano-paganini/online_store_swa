@@ -7,7 +7,7 @@ import { calculateOrderTotal } from '@/utilities/orderUtils';
 import { PaymentApi } from '@/utilities/paymentApi';
 
 import type { TOrderDTO } from '@/DTO/order.types';
-import type { TPaymentRequestDTO } from '@/DTO/payment.types';
+import type { TPaymentErrors, TPaymentFormValues, TPaymentRequestDTO } from '@/DTO/payment.types';
 import type { TPaymentMethodKey } from '@/utilities/paymentUtils';
 
 import { Button } from '@/components/ui/button';
@@ -30,11 +30,20 @@ export default function PaymentPage() {
 
   const [method, setMethod] = useState<TPaymentMethodKey>('credit_card');
 
-  const [cardNumber, setCardNumber] = useState('');
-  const [cardHolderName, setCardHolderName] = useState('');
-  const [expiryMonth, setExpiryMonth] = useState('');
-  const [expiryYear, setExpiryYear] = useState('');
-  const [cvv, setCvv] = useState('');
+  const [values, setValues] = useState<TPaymentFormValues>({
+    cardNumber: '',
+    cardHolderName: '',
+    expiryMonth: '',
+    expiryYear: '',
+    cvv: '',
+  });
+
+  const [errors, setErrors] = useState<TPaymentErrors>({});
+
+  const setField = (field: keyof TPaymentFormValues, value: string) => {
+    setValues((prev) => ({ ...prev, [field]: value }));
+    setErrors((prev) => ({ ...prev, [field]: undefined }));
+  };
 
   useEffect(() => {
     if (!orderNumber) return;
@@ -44,6 +53,35 @@ export default function PaymentPage() {
       .catch((err) => toastApiError(err))
       .finally(() => setLoading(false));
   }, [orderNumber]);
+
+  const validate = (): boolean => {
+    const nextErrors: TPaymentErrors = {};
+
+    if (method === 'credit_card') {
+      const digits = values.cardNumber.replace(/\s/g, '');
+      if (!digits) nextErrors.cardNumber = 'Card number is required';
+      else if (digits.length !== 16) nextErrors.cardNumber = 'Card number must be 16 digits';
+
+      if (!values.cardHolderName.trim()) nextErrors.cardHolderName = 'Card holder name is required';
+
+      if (!values.expiryMonth || !values.expiryYear) nextErrors.expiryMonth = 'Expiration date is required';
+
+      if (!values.cvv) nextErrors.cvv = 'CVC is required';
+      else if (values.cvv.length !== 3) nextErrors.cvv = 'CVC must be 3 digits';
+    }
+
+    if (method === 'netflix_password') {
+      if (!values.cardNumber.trim()) nextErrors.cardNumber = 'Netflix password is required';
+    }
+
+    if (method === 'dad_joke') {
+      if (!values.cardHolderName.trim()) nextErrors.cardHolderName = 'A dad joke is required';
+      else if (values.cardHolderName.length < 10) nextErrors.cardHolderName = 'That joke is… too short';
+    }
+
+    setErrors(nextErrors);
+    return Object.keys(nextErrors).length === 0;
+  };
 
   if (loading) return <p>Loading payment details…</p>;
   if (!order) return <p>Order not found.</p>;
@@ -56,11 +94,7 @@ export default function PaymentPage() {
       return;
     }
 
-    // Basic validation for credit card number: 16 digits required
-    if (method === 'credit_card' && cardNumber.replace(/\s/g, '').length !== 16) {
-      toast.error('Invalid card details');
-      return;
-    }
+    if (!validate()) return;
 
     try {
       setSubmitting(true);
@@ -68,11 +102,11 @@ export default function PaymentPage() {
       const payload: TPaymentRequestDTO = {
         amount: total,
         paymentMethod: method,
-        orderNumber: orderNumber,
-        cardNumber: method === 'credit_card' || method === 'netflix_password' ? cardNumber : undefined,
-        cardHolderName: method === 'credit_card' || method === 'dad_joke' ? cardHolderName : undefined,
-        expiryDate: method === 'credit_card' ? `${expiryMonth}/${expiryYear}` : undefined,
-        cvv: method === 'credit_card' ? cvv : undefined,
+        orderNumber,
+        cardNumber: method === 'credit_card' || method === 'netflix_password' ? values.cardNumber : undefined,
+        cardHolderName: method === 'credit_card' || method === 'dad_joke' ? values.cardHolderName : undefined,
+        expiryDate: method === 'credit_card' ? `${values.expiryMonth}/${values.expiryYear}` : undefined,
+        cvv: method === 'credit_card' ? values.cvv : undefined,
       };
 
       const res = await PaymentApi.processPayment(payload);
@@ -80,9 +114,9 @@ export default function PaymentPage() {
       if (res.success) {
         toast.success(res.message);
         navigate(`/payment/success/${order.orderNumber}`, { replace: true });
-      } else {
-        toast.error(res.message);
       }
+    } catch (err) {
+      toastApiError(err);
     } finally {
       setSubmitting(false);
     }
@@ -129,32 +163,25 @@ export default function PaymentPage() {
 
       {method === 'credit_card' && (
         <CreditCardMethod
-          cardNumber={cardNumber}
-          cardHolderName={cardHolderName}
-          expiryMonth={expiryMonth}
-          expiryYear={expiryYear}
-          cvv={cvv}
-          onChange={(f, v) => {
-            if (f === 'cardNumber') setCardNumber(v);
-            if (f === 'cardHolderName') setCardHolderName(v);
-            if (f === 'expiryMonth') setExpiryMonth(v);
-            if (f === 'expiryYear') setExpiryYear(v);
-            if (f === 'cvv') setCvv(v);
-          }}
+          values={values}
+          errors={errors}
+          onChange={setField}
         />
       )}
 
       {method === 'netflix_password' && (
         <NetflixPasswordMethod
-          value={cardNumber}
-          onChange={setCardNumber}
+          value={values.cardNumber}
+          error={errors.cardNumber}
+          onChange={(v) => setField('cardNumber', v)}
         />
       )}
 
       {method === 'dad_joke' && (
         <DadJokeMethod
-          value={cardHolderName}
-          onChange={setCardHolderName}
+          value={values.cardHolderName}
+          error={errors.cardHolderName}
+          onChange={(v) => setField('cardHolderName', v)}
         />
       )}
 
