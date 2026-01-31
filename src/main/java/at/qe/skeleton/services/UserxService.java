@@ -258,7 +258,6 @@ public class UserxService implements UserDetailsService {
 
         // enforced defaults
         user.setRoles(Set.of(UserxRole.CUSTOMER));
-        user.setChannels(Set.of(NotificationType.EMAIL));
         user.setDeleted(false);
 
         return userRepository.save(user);
