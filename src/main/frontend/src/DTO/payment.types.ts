@@ -14,3 +14,14 @@ export type TPaymentResponseDTO = {
   message: string;
   timestamp: string;
 };
+
+// ui only
+export type TPaymentFormValues = {
+  cardNumber: string;
+  cardHolderName: string;
+  expiryMonth: string;
+  expiryYear: string;
+  cvv: string;
+};
+
+export type TPaymentErrors = Partial<Record<keyof TPaymentFormValues, string>>;
