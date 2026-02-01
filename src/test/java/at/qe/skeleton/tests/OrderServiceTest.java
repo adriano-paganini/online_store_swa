@@ -724,9 +724,12 @@ class OrderServiceTest {
                 BILLING_ADDRESS_ID,
                 ShippingMethod.FAIRY_DUST_DISPATCH
         );
-        Assertions.assertThrows(IllegalArgumentException.class, () -> {
-            orderService.createOrder(dto);
-        });
+        ResponseStatusException ex = Assertions.assertThrows(
+                ResponseStatusException.class,
+                () -> orderService.createOrder(dto)
+        );
+
+        Assertions.assertEquals(HttpStatus.BAD_REQUEST, ex.getStatusCode());
     }
 
     @Test
@@ -749,9 +752,12 @@ class OrderServiceTest {
                 ShippingMethod.FAIRY_DUST_DISPATCH
         );
 
-        Assertions.assertThrows(IllegalArgumentException.class, () -> {
-            orderService.createOrder(dto);
-        });
+        ResponseStatusException ex = Assertions.assertThrows(
+                ResponseStatusException.class,
+                () -> orderService.createOrder(dto)
+        );
+
+        Assertions.assertEquals(HttpStatus.BAD_REQUEST, ex.getStatusCode());
     }
 
     @Test

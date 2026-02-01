@@ -341,13 +341,14 @@ public class OrderService {
      * @param rawDiscount discount that should be applied
      * @param productId the id of the product the discount should be applied
      * @return unboxed discount to guarantee discount being not {@code Null}
-     * @throws IllegalArgumentException if discount is out of bounds
+     * @throws ResponseStatusException 400 if discount is less than 0.0 or more than 1.0
      */
     private double normalizeAndValidateDiscount(Double rawDiscount, Long productId) {
         double discount = rawDiscount != null ? rawDiscount : 0.0;
 
         if (discount < 0.0 || discount > 1.0) {
-            throw new IllegalArgumentException(
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
                     "Invalid discount on cart item for product " + productId
             );
         }
