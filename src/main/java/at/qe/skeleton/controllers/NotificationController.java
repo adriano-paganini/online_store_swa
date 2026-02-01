@@ -33,6 +33,19 @@ public class NotificationController {
         this.notificationResponseMapper = notificationResponseMapper;
     }
 
+    /**
+     * Retrieves a paginated list of notifications for the authenticated user.
+     *
+     * <p>Supports optional filtering by notification status and channel.</p>
+     *
+     * <p>Possible responses:</p>
+     * <ul>
+     *   <li>200 OK - notifications successfully retrieved</li>
+     *   <li>400 Bad Request - invalid query parameters</li>
+     * </ul>
+     *
+     * @return paginated list of notifications
+     */
     @GetMapping("")
     public ResponseEntity<PageResponseDTO<NotificationResponseDTO>> getUserNotifications(
             @AuthenticationPrincipal Userx user,

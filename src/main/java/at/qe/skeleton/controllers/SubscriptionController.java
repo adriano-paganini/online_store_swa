@@ -16,17 +16,13 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.List;
 
 /**
- * REST controller acting as the API interface for the Frontend to manage Subscriptions.
- * * <p>It provides functionality to:</p>
- * <ul>
- * <li>Retrieve a user's subscription for a specific product</li>
- * <li>Retrieve all subscriptions belonging to the authenticated user</li>
- * <li>Create a new subscription for a user</li>
- * <li>Update an existing subscription</li>
- * <li>Delete a specific subscription</li>
- * </ul>
+ * REST controller for managing user subscriptions.
+ *
+ * <p>
+ * Provides endpoints to retrieve, create, update, and delete subscriptions
+ * associated with the authenticated user.
+ * </p>
  */
-
 @RestController
 @RequestMapping("/subscriptions")
 public class SubscriptionController {
@@ -35,12 +31,27 @@ public class SubscriptionController {
     private final SubscriptionService subscriptionService;
     private final SubscriptionCreateMapper subscriptionCreateMapper;
 
-    public SubscriptionController(SubscriptionMapper subscriptionMapper, SubscriptionService subscriptionService, SubscriptionCreateMapper subscriptionCreateMapper) {
+    public SubscriptionController(SubscriptionMapper subscriptionMapper,
+                                  SubscriptionService subscriptionService,
+                                  SubscriptionCreateMapper subscriptionCreateMapper
+    ) {
         this.subscriptionMapper = subscriptionMapper;
         this.subscriptionService = subscriptionService;
         this.subscriptionCreateMapper = subscriptionCreateMapper;
     }
 
+    /**
+     * Retrieves the subscription of the authenticated user for a specific product.
+     *
+     * <p>Possible responses:</p>
+     * <ul>
+     *   <li>200 OK - subscription successfully retrieved</li>
+     *   <li>404 Not Found - no subscription exists for the product</li>
+     * </ul>
+     *
+     * @param id identifier of the product
+     * @return the subscription for the given product
+     */
     @GetMapping("/product/{id}")
     public ResponseEntity<SubscriptionDTO> getSubscriptionByProductId(
             @AuthenticationPrincipal Userx user,
@@ -54,6 +65,19 @@ public class SubscriptionController {
         return ResponseEntity.ok(subscriptionMapper.mapTo(subscription));
     }
 
+    /**
+     * Retrieves a paginated list of subscriptions of the authenticated user.
+     *
+     * <p>Supports optional filtering by subscription type and notification channel.</p>
+     *
+     * <p>Possible responses:</p>
+     * <ul>
+     *   <li>200 OK - subscriptions successfully retrieved</li>
+     *   <li>400 Bad Request - invalid query parameters</li>
+     * </ul>
+     *
+     * @return paginated list of subscriptions
+     */
     @GetMapping("")
     public ResponseEntity<PageResponseDTO<SubscriptionDTO>> getUserSubscriptions(
             @AuthenticationPrincipal Userx user,
@@ -90,6 +114,18 @@ public class SubscriptionController {
         }
     }
 
+    /**
+     * Creates a new subscription for the authenticated user.
+     *
+     * <p>Possible responses:</p>
+     * <ul>
+     *   <li>201 Created - subscription successfully created</li>
+     *   <li>400 Bad Request - invalid subscription data</li>
+     * </ul>
+     *
+     * @param createDTO subscription data to create
+     * @return the newly created subscription
+     */
     @PostMapping("")
     public ResponseEntity<SubscriptionDTO> createSubscription(
             @AuthenticationPrincipal Userx user,
@@ -105,6 +141,20 @@ public class SubscriptionController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
+    /**
+     * Updates an existing subscription.
+     *
+     * <p>Possible responses:</p>
+     * <ul>
+     *   <li>200 OK - subscription successfully updated</li>
+     *   <li>400 Bad Request - invalid update data</li>
+     *   <li>404 Not Found - subscription does not exist</li>
+     * </ul>
+     *
+     * @param id identifier of the subscription
+     * @param updateDTO updated subscription data
+     * @return the updated subscription
+     */
     @PatchMapping("/{id}")
     public ResponseEntity<SubscriptionDTO> updateSubscription(
             @PathVariable Long id,
@@ -117,6 +167,17 @@ public class SubscriptionController {
         return ResponseEntity.ok(response);
     }
 
+    /**
+     * Deletes an existing subscription.
+     *
+     * <p>Possible responses:</p>
+     * <ul>
+     *   <li>204 No Content - subscription successfully deleted</li>
+     *   <li>404 Not Found - subscription does not exist</li>
+     * </ul>
+     *
+     * @param id identifier of the subscription
+     */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteSubscription(@PathVariable Long id) {
         // Remove the subscription via the service layer.

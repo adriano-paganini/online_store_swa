@@ -14,8 +14,12 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 /**
- * Userx endpoints exposed by the server.
+ * REST controller for accessing and managing the authenticated user's profile.
  *
+ * <p>
+ * Provides endpoints to retrieve and update the currently authenticated user's
+ * personal data.
+ * </p>
  * This class is part of the skeleton project provided for students of the
  * course "Software Architecture" offered by Innsbruck University.
  */
@@ -34,13 +38,34 @@ public class UserxController {
         this.authenticatedUserService = authenticatedUserService;
     }
 
-
+    /**
+     * Retrieves the profile of the authenticated user.
+     *
+     * <p>Possible responses:</p>
+     * <ul>
+     *   <li>200 OK - user profile successfully retrieved</li>
+     * </ul>
+     *
+     * @return the authenticated user's profile
+     */
     @GetMapping("/me")
     public ResponseEntity<UserxMeDTO> getMe() {
         Userx user = authenticatedUserService.requireAuthenticatedUser();
         return ResponseEntity.ok(userxMeMapper.mapTo(user));
     }
 
+    /**
+     * Updates the profile of the authenticated user.
+     *
+     * <p>Possible responses:</p>
+     * <ul>
+     *   <li>200 OK - user profile successfully updated</li>
+     *   <li>400 Bad Request - invalid update data</li>
+     * </ul>
+     *
+     * @param dto updated user data
+     * @return the updated user profile
+     */
     @PatchMapping("/me")
     public ResponseEntity<UserxMeDTO> updateMe(
             @Valid @RequestBody UserxMeUpdateDTO dto
@@ -48,7 +73,20 @@ public class UserxController {
         Userx updated = userxService.updateCurrentUser(dto);
         return ResponseEntity.ok(userxMeMapper.mapTo(updated));
     }
-     
+
+    /**
+     * Checks whether the current request is authenticated.
+     *
+     * <p>This endpoint is intended for diagnostic purposes.</p>
+     *
+     * <p>Possible responses:</p>
+     * <ul>
+     *   <li>200 OK - user is authenticated</li>
+     *   <li>401 Unauthorized - user is not authenticated</li>
+     * </ul>
+     *
+     * @return authentication status message
+     */
     @GetMapping("/authenticated")
     public ResponseEntity<String> isAuthenticated(@AuthenticationPrincipal UserDetails userDetails) {
         if (userDetails == null) {

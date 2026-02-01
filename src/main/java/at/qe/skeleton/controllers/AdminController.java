@@ -21,7 +21,13 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 /**
- * REST controllers for admin users.
+ * REST controller for administrative user management.
+ *
+ * <p>
+ * All endpoints are restricted to users with administrative privileges
+ * and allow managing user accounts, including listing, creating,
+ * updating, and deleting users.
+ * </p>
  *
  * This class is part of the skeleton project provided for students of the
  * course "Software Architecture" offered by Innsbruck University.
@@ -39,11 +45,20 @@ public class AdminController {
         this.userMapper = userMapper;
         this.userService = userService;
     }
-    
+
     /**
-     * GET all existing Users
+     * Retrieves a paginated list of users.
      *
-     * @return {@link ResponseEntity} with status {@code 200 (OK)} with a collection of all existing users in the body
+     * <p>Supports optional filtering by role and deletion status, as well
+     * as pagination and sorting.</p>
+     *
+     * <p>Possible responses:</p>
+     * <ul>
+     *   <li>200 OK - users successfully retrieved</li>
+     *   <li>400 Bad Request - invalid query parameters</li>
+     * </ul>
+     *
+     * @return paginated list of users
      */
     @GetMapping("")
     public ResponseEntity<PageResponseDTO<UserxDTO>> getAllUsers(
@@ -78,10 +93,16 @@ public class AdminController {
 
 
     /**
-     * GET one User
+     * Retrieves a single user by its identifier.
      *
-     * @param id the id to search for
-     * @return {@link ResponseEntity} with status {@code 200 (OK)} with the user of given id in the body, or with status {@code 404} if no such user exists
+     * <p>Possible responses:</p>
+     * <ul>
+     *   <li>200 OK - user successfully retrieved</li>
+     *   <li>404 Not Found - user does not exist</li>
+     * </ul>
+     *
+     * @param id identifier of the user
+     * @return the requested user
      */
     @GetMapping("/{id}")
     public ResponseEntity<UserxDTO> getUser(@PathVariable Long id) {
@@ -94,25 +115,39 @@ public class AdminController {
     }
 
     /**
-     * Creates a user if the username is not yet used.
+     * Creates a new user.
      *
-     * @param userxDto the user tb created
-     * @return {@link ResponseEntity} with status {@code 201 (Created)} with the newly created user in the body, or with status {@code 409 (Conflict)} if the username is already in use
+     * <p>Possible responses:</p>
+     * <ul>
+     *   <li>201 Created - user successfully created</li>
+     *   <li>400 Bad Request - validation failed</li>
+     *   <li>409 Conflict - username already exists</li>
+     * </ul>
+     *
+     * @param userxDto user data to create
+     * @return the newly created user
      */
     @PostMapping("")
     public ResponseEntity<UserxDTO> createUser(@Valid @RequestBody UserxAdminCreateDTO userxDto) {
         Userx user = userService.saveUser(userCreateMapper.mapFrom(userxDto));
         return ResponseEntity.status(HttpStatus.CREATED).body(userMapper.mapTo(user));
     }
-    
+
     /**
-     * Partially updates user of given id.
+     * Partially updates an existing user.
      *
-     * The update is partial because only a select subset of user fields can be modified after create.
-     * 
-     * @param id the id of the user tb updated
-     * @param dto the updated user information
-     * @return {@link ResponseEntity} with status {@code 201 (Created)} with the updated user in the body, or with status {@code 404 (Not Found)} if no user with this id exists
+     * <p>Only a subset of user fields can be modified after creation.</p>
+     *
+     * <p>Possible responses:</p>
+     * <ul>
+     *   <li>200 OK - user successfully updated</li>
+     *   <li>400 Bad Request - invalid update data</li>
+     *   <li>404 Not Found - user does not exist</li>
+     * </ul>
+     *
+     * @param id identifier of the user to update
+     * @param dto updated user data
+     * @return the updated user
      */
     @PatchMapping("/{id}")
     public ResponseEntity<UserxDTO> updateUser(
@@ -122,12 +157,17 @@ public class AdminController {
         Userx updatedUser = userService.updateUser(id, dto);
         return ResponseEntity.ok(userMapper.mapTo(updatedUser));
     }
-    
+
     /**
-     * Deletes user of given id.
+     * Deletes a user.
      *
-     * @param id the id of the user tb deleted
-     * @return {@link ResponseEntity} with status {@code 204 (No Content)} on successful delete, or with status {@code 404 (Not Found)} if no user with this id exists
+     * <p>Possible responses:</p>
+     * <ul>
+     *   <li>204 No Content - user successfully deleted</li>
+     *   <li>404 Not Found - user does not exist</li>
+     * </ul>
+     *
+     * @param id identifier of the user to delete
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
