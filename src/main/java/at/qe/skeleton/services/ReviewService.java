@@ -131,8 +131,6 @@ public class ReviewService {
     private void updateProductAverageScore(Long productId) {
         Double averageScore = reviewRepository.getAverageScoreByProductId(productId);
         if (averageScore != null) {
-            // TODO: Update Product entity's avgScore when Product entity is implemented
-            // For now, this is a placeholder
             productService.updateProductAverageScore(productId, averageScore);
         }
     }
