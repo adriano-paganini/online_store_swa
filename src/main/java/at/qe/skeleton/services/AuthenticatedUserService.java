@@ -42,6 +42,7 @@ public class AuthenticatedUserService {
      * helper method to verify user where attributes are requested is not null
      *
      * @return authenticated user
+     * @throws ResponseStatusException 409 if user is not authenticated
      */
     public Userx requireAuthenticatedUser() {
         Userx user = getAuthenticatedUser();

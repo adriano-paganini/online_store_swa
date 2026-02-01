@@ -14,6 +14,14 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * REST controller for managing orders of the authenticated user.
+ *
+ * <p>
+ * Provides endpoints to list, retrieve, create, and cancel orders
+ * associated with the currently authenticated user.
+ * </p>
+ */
 @RestController
 @RequestMapping("/orders")
 public class OrderController {
@@ -27,7 +35,17 @@ public class OrderController {
     }
 
     /**
-     * Get orders of the currently authenticated user.
+     * Retrieves a paginated list of orders for the authenticated user.
+     *
+     * <p>Supports optional filtering by order status and sorting.</p>
+     *
+     * <p>Possible responses:</p>
+     * <ul>
+     *   <li>200 OK - orders successfully retrieved</li>
+     *   <li>400 Bad Request - invalid query parameters</li>
+     * </ul>
+     *
+     * @return paginated list of orders
      */
     @GetMapping
     public ResponseEntity<PageResponseDTO<OrderDTO>> getCurrentUserOrders(
@@ -59,7 +77,16 @@ public class OrderController {
     }
 
     /**
-     * Get a single order by order number.
+     * Retrieves a single order by its order number.
+     *
+     * <p>Possible responses:</p>
+     * <ul>
+     *   <li>200 OK - order successfully retrieved</li>
+     *   <li>404 Not Found - order does not exist</li>
+     * </ul>
+     *
+     * @param orderNumber unique order identifier
+     * @return the requested order
      */
     @GetMapping("/{orderNumber}")
     public OrderDTO getOrderByNumber(@PathVariable String orderNumber) {
@@ -67,7 +94,21 @@ public class OrderController {
         return orderMapper.toDto(order);
     }
 
-
+    /**
+     * Cancels an existing order.
+     *
+     * <p>An order can only be cancelled if it is in a cancellable state.</p>
+     *
+     * <p>Possible responses:</p>
+     * <ul>
+     *   <li>200 OK - order successfully cancelled</li>
+     *   <li>400 Bad Request - order cannot be cancelled in its current state</li>
+     *   <li>404 Not Found - order does not exist</li>
+     * </ul>
+     *
+     * @param orderNumber unique order identifier
+     * @return the updated order
+     */
     @PostMapping("/{orderNumber}/cancel")
     @ResponseStatus(HttpStatus.OK)
     public OrderDTO cancelOrder(@PathVariable String orderNumber) {
@@ -77,7 +118,16 @@ public class OrderController {
     }
 
     /**
-     * Create a new order from the current cart.
+     * Creates a new order from the current cart.
+     *
+     * <p>Possible responses:</p>
+     * <ul>
+     *   <li>201 Created - order successfully created</li>
+     *   <li>400 Bad Request - cart is empty or invalid</li>
+     * </ul>
+     *
+     * @param dto order creation data
+     * @return the newly created order
      */
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
