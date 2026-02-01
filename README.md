@@ -31,8 +31,8 @@ mvn spring-boot:run
 
 ```bash
 cd src/main/frontend
-cp .env.example .env
-npm run dev
+cp ./env/.env.example .env
+npm start
 ```
 
 The `.env` should include `VITE_BACKEND_SERVER_URL=http://localhost:8080`.
