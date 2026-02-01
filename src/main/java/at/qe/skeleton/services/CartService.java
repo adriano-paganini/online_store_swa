@@ -15,7 +15,12 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.List;
 import java.util.Optional;
 
-
+/**
+ * Service for managing carts.
+ * <p>
+ * This service handles the core business logic for carts, including
+ * creation and updates.
+ */
 @Service
 public class CartService {
 
@@ -38,6 +43,12 @@ public class CartService {
         this.cartMapper = cartMapper;
     }
 
+    /**
+     * Get cart of current user or create a new one.
+     *
+     * @return the cart of the current user
+     * @throws ResponseStatusException 409 if user is not authenticated
+     */
     @Transactional
     public Cart getOrCreateCart() {
         Userx user = authenticatedUserService.getAuthenticatedUser();
@@ -55,6 +66,12 @@ public class CartService {
         return cartRepository.save(cart);
     }
 
+    /**
+     * Get the cart of the authenticated user
+     *
+     * @return the cart of the authenticated user
+     * @throws ResponseStatusException 409 if the user is not authenticated
+     */
     @Transactional(readOnly = true)
     public Cart getCart() {
         Userx user = authenticatedUserService.getAuthenticatedUser();
@@ -71,6 +88,15 @@ public class CartService {
                 });
     }
 
+    /**
+     * Add an item to the cart of the current user.
+     *
+     * @param cartItem the new item to add to the cart
+     * @return the updated cart of the user
+     * @throws ResponseStatusException
+     *                 400 if the product is not available or the stock is lower than the requested quantity,
+     *                 404 if the product does not exist
+     */
     @Transactional
     public Cart addItemToCart(CartItem cartItem) {
         if (!productService.isProductAvailable(cartItem.getProductId(), cartItem.getQuantity())) {
@@ -109,6 +135,12 @@ public class CartService {
         return cartRepository.save(cart);
     }
 
+    /**
+     * Validate if applied discount is valid
+     *
+     * @param discount to validate
+     * @throws ResponseStatusException 400 if the discount is less than 0.0 or more than 1.0
+     */
     private void validateDiscount(Double discount) {
         if (discount == null) return;
 
@@ -120,6 +152,16 @@ public class CartService {
         }
     }
 
+    /**
+     * Update an item of the current user's cart.
+     *
+     * @param itemId the id of the item to update
+     * @param updateDTO the UpdateDTO with the fields to update
+     * @return the updated cart
+     * @throws ResponseStatusException
+     *                  403 if the item does not belong to the authenticated user's cart,
+     *                  400 if the quantity is less than 1 or the quantity is higher than the available stock
+     */
     @Transactional
     public Cart updateCartItem(Long itemId, CartItemUpdateDTO updateDTO) {
         Cart cart = getCart();
@@ -147,6 +189,14 @@ public class CartService {
         return cartRepository.save(cart);
     }
 
+    /**
+     * Remove item from current user's cart.
+     *
+     * @param itemId the id of the item to remove
+     * @throws ResponseStatusException
+     *                  404 if the cart item does not exist,
+     *                  403 if the item does not belong to the authenticated user's cart
+     */
     @Transactional
     public void removeCartItem(Long itemId) {
         Cart cart = getCart();
@@ -162,6 +212,9 @@ public class CartService {
         cartRepository.save(cart);
     }
 
+    /**
+     * Removes all items from current user's cart.
+     */
     @Transactional
     public void clearCart() {
         Cart cart = getCart();

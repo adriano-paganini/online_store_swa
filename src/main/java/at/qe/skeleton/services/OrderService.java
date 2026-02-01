@@ -20,6 +20,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+/**
+ * Service for managing orders.
+ * <p>
+ * This service handles the core business logic for orders, including
+ * creation, updates and filtered retrieval.
+ */
 @Service
 public class OrderService {
 
@@ -46,6 +52,10 @@ public class OrderService {
         this.applicationEventPublisher = applicationEventPublisher;
     }
 
+    /**
+     * Updates the OrderStatus.
+     * @param orders the paginated orders to apply the updates to
+     */
     @Transactional
     protected void applyLifecycleUpdates(Page<Order> orders) {
         LocalDateTime now = LocalDateTime.now();
@@ -57,7 +67,16 @@ public class OrderService {
         });
     }
 
-
+    /**
+     * Retrieves the current authenticated users paginated orders with optional filtering and sorting.
+     *
+     * @param status optional filter by OrderStatus
+     * @param page the page index
+     * @param limit the maximum number of orders per page
+     * @param sort sort specification
+     * @return a page of orders matching the given criteria
+     */
+    @Transactional
     public Page<Order> getCurrentUserOrders(
             OrderStatus status,
             int page,
@@ -93,8 +112,13 @@ public class OrderService {
         return pageResult;
     }
 
-
-
+    /**
+     * Retrieves an order by OrderNumber.
+     *
+     * @param orderNumber the OrderNumber of the order
+     * @return the order
+     * @throws ResponseStatusException 404 if the order does not exist or does not belong to the authenticated user
+     */
     public Order getOrderByNumber(String orderNumber) {
         Userx user = authenticatedUserService.requireAuthenticatedUser();
 
@@ -113,7 +137,17 @@ public class OrderService {
         return order;
     }
 
-
+    /**
+     * Creates a new order.
+     *
+     * @param orderCreateDTO the OrderCreateDTO with the fields to update
+     * @return the updated order
+     * @throws ResponseStatusException
+     *                  400 if the cart is empty,
+     *                  400 if the billing address is {@code null},
+     *                  400 if the shipping address is {@code null},
+     *                  400 if the shipping method is {@code null}
+     */
     @Transactional
     public Order createOrder(OrderCreateDTO orderCreateDTO) {
 
@@ -162,6 +196,14 @@ public class OrderService {
         return savedOrder;
     }
 
+    /**
+     * Creates an OrderAddress from an Address.
+     *
+     * @param user the user the address is assigned to
+     * @param addressId the id of the address to snapshot
+     * @return the snapshot of the address as OrderAddress
+     * @throws ResponseStatusException 404 if the address does not exist
+     */
     private OrderAddress snapshotAddress(Userx user, Long addressId) {
         Address address = user.getAddresses().stream()
                 .filter(a -> a.getId().equals(addressId))
@@ -179,6 +221,14 @@ public class OrderService {
         );
     }
 
+    /**
+     * Updates the order on successful payment with transaction id and OrderStatus.
+     *
+     * @param orderNumber the order number of the order to update
+     * @param transactionId the successful transaction id to store in the order
+     * @return the updated order
+     * @throws ResponseStatusException 404 if order does not exist
+     */
     @Transactional
     public Order confirmPayment(String orderNumber, String transactionId) {
         Order order = getOrderByNumber(orderNumber);
@@ -190,14 +240,20 @@ public class OrderService {
         orderRepository.save(order);
         //load order with items, to avoid lazy-loading exception
         Order fullOrder = orderRepository.findByOrderNumberWithItems(order.getOrderNumber())
-                .orElseThrow();
-
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Order not found"));
 
         applicationEventPublisher.publishEvent(new OrderCompletionEvent(fullOrder));
 
         return order;
     }
 
+    /**
+     * Updates the OrderStatus of an order.
+     *
+     * @param status the new OrderStatus
+     * @param orderNumber the order number of the order to update
+     * @return the updated order
+     */
     @Transactional
     public Order updateOrderStatus(OrderStatus status, String orderNumber){
         Order order = getOrderByNumber(orderNumber);
@@ -206,6 +262,18 @@ public class OrderService {
         return order;
     }
 
+    /**
+     * Cancels an order.
+     * <p>
+     * The OrderStatus is set to status CANCELED.
+     * The stock is updated to include the already withdrawn quantity again.
+     *
+     * @param orderNumber the order number of the order to cancel
+     * @return the updated order
+     * @throws ResponseStatusException
+     *                  400 if the order is already in status SHIPPING or DELIVERED
+     *                  and cannot be canceled anymore
+     */
     @Transactional
     public Order cancelOrder(String orderNumber) {
         Order order = getOrderByNumber(orderNumber);
@@ -222,17 +290,24 @@ public class OrderService {
             return order;
         }
 
-        Map<Long,Integer> productIdQuanityMap = new HashMap<>();
+        Map<Long,Integer> productIdQuantityMap = new HashMap<>();
 
         for (OrderItem item: order.getItems()){
-            productIdQuanityMap.put(item.getProductId(),-1*item.getQuantity());
+            productIdQuantityMap.put(item.getProductId(),-1*item.getQuantity());
         }
-        productService.adjustProductStockWithMap(productIdQuanityMap);
+        productService.adjustProductStockWithMap(productIdQuantityMap);
 
         order.setStatus(OrderStatus.CANCELED);
         return orderRepository.save(order);
     }
 
+    /**
+     * Creates OrderItems from a cart.
+     *
+     * @param cart the cart to create the OrderItems from
+     * @return a list of OrderItems
+     * @throws ResponseStatusException 404 if the product does not exist
+     */
     private List<OrderItem> createOrderItemsFromCart(Cart cart) {
         return cart.getItems().stream()
                 .map(cartItem -> {
@@ -257,11 +332,23 @@ public class OrderService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Checks if discount is within bounds and makes sure it is a number.
+     * <p>
+     * Normalizes the discount to be a {@code double} primitive and not {@code Null}.
+     * Check if discount is greater than 0.0 (0%) and less than 1.0 (100%).
+     *
+     * @param rawDiscount discount that should be applied
+     * @param productId the id of the product the discount should be applied
+     * @return unboxed discount to guarantee discount being not {@code Null}
+     * @throws ResponseStatusException 400 if discount is less than 0.0 or more than 1.0
+     */
     private double normalizeAndValidateDiscount(Double rawDiscount, Long productId) {
         double discount = rawDiscount != null ? rawDiscount : 0.0;
 
         if (discount < 0.0 || discount > 1.0) {
-            throw new IllegalArgumentException(
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
                     "Invalid discount on cart item for product " + productId
             );
         }
@@ -269,6 +356,12 @@ public class OrderService {
         return discount;
     }
 
+    /**
+     * Calculate order total price.
+     *
+     * @param items a complete list of OrderItems of an order
+     * @return the total price of the order based on the list of OrderItems
+     */
     private double calculateTotal(List<OrderItem> items) {
         return items.stream()
                 .mapToDouble(item -> {

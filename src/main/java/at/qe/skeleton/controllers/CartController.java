@@ -18,7 +18,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-
+/**
+ * REST controller for managing the authenticated user's shopping cart.
+ *
+ * <p>
+ * All endpoints operate on the cart of the currently authenticated user
+ * and allow adding, updating, and removing cart items.
+ * </p>
+ */
 @RestController
 @RequestMapping("/cart")
 public class CartController {
@@ -34,7 +41,14 @@ public class CartController {
     }
 
     /**
-     * Get the current user's cart
+     * Retrieves the current user's shopping cart.
+     *
+     * <p>Possible responses:</p>
+     * <ul>
+     *   <li>200 OK - cart successfully retrieved</li>
+     * </ul>
+     *
+     * @return the current cart
      */
     @GetMapping("")
     public ResponseEntity<CartDTO> getCart() {
@@ -44,7 +58,17 @@ public class CartController {
     }
 
     /**
-     * Add item to cart
+     * Adds an item to the current user's cart.
+     *
+     * <p>Possible responses:</p>
+     * <ul>
+     *   <li>200 OK - item added to cart</li>
+     *   <li>400 Bad Request - product unavailable or insufficient stock</li>
+     *   <li>404 Not Found - product does not exist</li>
+     * </ul>
+     *
+     * @param createDTO item data to add
+     * @return the updated cart
      */
     @PostMapping("/items")
     public ResponseEntity<CartDTO> addItemToCart(@Valid @RequestBody CartItemCreateDTO createDTO) {
@@ -55,7 +79,18 @@ public class CartController {
     }
 
     /**
-     * Update cart item
+     * Updates the quantity or discount of a cart item.
+     *
+     * <p>Possible responses:</p>
+     * <ul>
+     *   <li>200 OK - cart item updated</li>
+     *   <li>400 Bad Request - invalid quantity or insufficient stock</li>
+     *   <li>404 Not Found - cart item does not exist</li>
+     * </ul>
+     *
+     * @param id identifier of the cart item
+     * @param updateDTO updated cart item data
+     * @return the updated cart
      */
     @PatchMapping("/items/{id}")
     public ResponseEntity<CartDTO> updateCartItem(
@@ -67,7 +102,15 @@ public class CartController {
     }
 
     /**
-     * Remove item from cart
+     * Removes an item from the cart.
+     *
+     * <p>Possible responses:</p>
+     * <ul>
+     *   <li>204 No Content - item removed</li>
+     *   <li>404 Not Found - cart item does not exist</li>
+     * </ul>
+     *
+     * @param id identifier of the cart item
      */
     @DeleteMapping("/items/{id}")
     public ResponseEntity<Void> removeCartItem(@PathVariable Long id) {
@@ -76,7 +119,12 @@ public class CartController {
     }
 
     /**
-     * Clear all items from cart
+     * Removes all items from the cart.
+     *
+     * <p>Possible responses:</p>
+     * <ul>
+     *   <li>204 No Content - cart cleared</li>
+     * </ul>
      */
     @DeleteMapping("/items")
     public ResponseEntity<Void> clearCart() {
