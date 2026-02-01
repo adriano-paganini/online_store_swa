@@ -34,11 +34,22 @@ public class NotificationService {
         this.sortHelper = sortHelper;
     }
 
-    // Fetches a specific Notification by its unique identifier
+    /**
+     * Fetches a specific Notification by its unique identifier.
+     *
+     * @param id the id of the notification
+     * @return the notification
+     */
     public Notification getNotificationById(Long id){
         return notificationRepository.getNotificationById(id);
     }
 
+    /**
+     * Updates the notification status of a notification.
+     *
+     * @param status the new status
+     * @param notification the notification to update
+     */
     @Transactional
     public void updateNotificationStatus(NotificationStatus status, Notification notification){
         // Persist the new status (e.g., SENT, FAILED) to the database
@@ -46,6 +57,14 @@ public class NotificationService {
         notificationRepository.save(notification);
     }
 
+    /**
+     * Creates a new notification.
+     *
+     * @param userId the id of the recipient user
+     * @param channel the channel via which the notification is delivered
+     * @param event the event of the notification to get the payload from
+     * @return the new notification
+     */
     @Transactional
     public Notification createNotification(Long userId, NotificationType channel, Payload<?> event) {
         // Instantiate a new notification based on user, delivery channel, and event subject information
@@ -57,6 +76,17 @@ public class NotificationService {
         return notification;
     }
 
+    /**
+     * Retrieves a paginated list of notifications with optional filtering and sorting.
+     *
+     * @param user the recipient user
+     * @param page the page index
+     * @param limit the maximum number of notifications per page
+     * @param status optional filter by status
+     * @param channel optional filter by channel
+     * @param sort sort specification
+     * @return a page of notifications matching the given criteria
+     */
     public Page<Notification> getUserNotifications(
             Userx user, int page, int limit, NotificationStatus status, NotificationType channel, String sort) {
 

@@ -17,6 +17,16 @@ import org.springframework.web.bind.annotation.RestController;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+/**
+ * REST controller for processing payments for orders.
+ *
+ * <p>
+ * This controller provides a mock payment endpoint used to simulate
+ * different payment scenarios during checkout. It validates payment
+ * requests, applies basic business rules, and confirms orders upon
+ * successful payment.
+ * </p>
+ */
 @RestController
 @RequestMapping("/cart/payment")
 public class PaymentController {
@@ -28,6 +38,21 @@ public class PaymentController {
         this.orderService = orderService;
     }
 
+    /**
+     * Processes a payment for an existing order.
+     *
+     * <p>The payment is validated against the order state and total amount.
+     * On successful payment, the order is confirmed.</p>
+     *
+     * <p>Possible responses:</p>
+     * <ul>
+     *   <li>200 OK - payment processed successfully</li>
+     *   <li>400 Bad Request - payment failed due to invalid data or order state</li>
+     * </ul>
+     *
+     * @param paymentRequest payment request data
+     * @return result of the payment attempt
+     */
     @PostMapping
     public ResponseEntity<PaymentResponseDTO> processPayment(
             @Valid @RequestBody PaymentRequestDTO paymentRequest
@@ -78,6 +103,7 @@ public class PaymentController {
                 .body(result);
     }
 
+    // helper methods
 
     private PaymentResponseDTO fail(String message) {
         return new PaymentResponseDTO(false, null, message, LocalDateTime.now());
@@ -87,6 +113,7 @@ public class PaymentController {
         return new PaymentResponseDTO(true, txId, message, LocalDateTime.now());
     }
 
+    // stub helper methods - would be handled in a payment service if we did actual payment processing
 
     private ResponseEntity<PaymentResponseDTO> handleNetflixPasswordPayment(PaymentRequestDTO paymentRequest) {
         String password = paymentRequest.cardNumber(); // Using cardNumber field to store the password

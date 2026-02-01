@@ -30,21 +30,14 @@ VALUES ((SELECT ID FROM USERX WHERE USERNAME = 'adriano'), 'ADMIN');
 INSERT INTO USERX_USERX_ROLE (USERX_ID, ROLES)
 VALUES ((SELECT ID FROM USERX WHERE USERNAME = 'adriano'), 'CUSTOMER');
 
-
 INSERT INTO USERX_USERX_ROLE (USERX_ID, ROLES)
 VALUES ((SELECT ID FROM USERX WHERE USERNAME = 'user1'), 'MANAGER');
-
-INSERT INTO USERX_USERX_ROLE (USERX_ID, ROLES)
-VALUES ((SELECT ID FROM USERX WHERE USERNAME = 'user1'), 'CUSTOMER');
 
 INSERT INTO USERX_USERX_ROLE (USERX_ID, ROLES)
 VALUES ((SELECT ID FROM USERX WHERE USERNAME = 'user2'), 'CUSTOMER');
 
 INSERT INTO USERX_USERX_ROLE (USERX_ID, ROLES)
 VALUES ((SELECT ID FROM USERX WHERE USERNAME = 'elvis'), 'ADMIN');
-
-INSERT INTO USERX_USERX_ROLE (USERX_ID, ROLES)
-VALUES ((SELECT ID FROM USERX WHERE USERNAME = 'elvis'), 'CUSTOMER');
 
 -- Update CREATE_USER_ID fields after the initial insert
 UPDATE USERX SET CREATE_USER_ID = (SELECT ID FROM USERX WHERE USERNAME = 'admin') WHERE USERNAME = 'admin';
@@ -60,42 +53,42 @@ UPDATE USERX SET CREATE_USER_ID = (SELECT ID FROM USERX WHERE USERNAME = 'adrian
 --Add Products
 
 INSERT INTO PRODUCT (CREATE_USER_ID, NAME, DESCRIPTION, PRICE, STOCK, DISCOUNT, DELETED, AVG_SCORE, CREATE_DATE)
-SELECT ID, 'DDR5 32GB', 'Standard RAM Kit', 695.99, 13, 0.10, FALSE, 3.7, TIMESTAMP '2000-01-01 00:00:00'
+SELECT ID, 'DDR5 32GB', 'Standard RAM Kit', 695.99, 13, 0.10, FALSE, 4.0, TIMESTAMP '2000-01-01 00:00:00'
 FROM USERX WHERE USERNAME = 'elvis';
 -- ADD Image link
 INSERT INTO PRODUCT_IMAGES
 VALUES((SELECT ID FROM PRODUCT WHERE NAME = 'DDR5 32GB'), 'https://imgs.search.brave.com/i_ObPlbE274H-SU6P7WojePHmrw0YRayTHKsHxuy4N8/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9nemhs/cy5hdC9vY3RyaS9t/ZWRpdW1fTGFyaV9C/YXRfc2h1dHRlcnN0/b2NrX2E1ZDk2MTY4/YWEuanBn');
 
 INSERT INTO PRODUCT (CREATE_USER_ID, NAME, DESCRIPTION, PRICE, STOCK, DISCOUNT, DELETED, AVG_SCORE, CREATE_DATE)
-SELECT ID, 'Aerondight Silver Sword', 'Lady of the Lake approved. Better for monsters than for humans.', 1273.00, 1, 0.0, FALSE, 5.0, CURRENT_TIMESTAMP
+SELECT ID, 'Aerondight Silver Sword', 'Lady of the Lake approved. Better for monsters than for humans.', 1273.00, 1, 0.0, FALSE, 4.5, CURRENT_TIMESTAMP
 FROM USERX WHERE USERNAME = 'elvis';
 -- ADD Image link
 INSERT INTO PRODUCT_IMAGES
 VALUES((SELECT ID FROM PRODUCT WHERE NAME = 'Aerondight Silver Sword'), 'https://imgs.search.brave.com/-hRbsdcQiyinkXE7P9aDa2ODhSEsV3J8sBUN83nqHPE/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9tLm1l/ZGlhLWFtYXpvbi5j/b20vaW1hZ2VzL0kv/NTF1VVB3T1BXTUwu/anBn');
 
 INSERT INTO PRODUCT (CREATE_USER_ID, NAME, DESCRIPTION, PRICE, STOCK, DISCOUNT, DELETED, AVG_SCORE, CREATE_DATE)
-SELECT ID, 'Guardian Angel', 'Upon taking lethal damage, restores 50% of base health. Perfect for a Last Stand.', 3200.00, 2, 0.0, FALSE, 4.8, CURRENT_TIMESTAMP
+SELECT ID, 'Guardian Angel', 'Upon taking lethal damage, restores 50% of base health. Perfect for a Last Stand.', 3200.00, 2, 0.0, FALSE, 4.5, CURRENT_TIMESTAMP
 FROM USERX WHERE USERNAME = 'elvis';
 -- ADD Image link
 INSERT INTO PRODUCT_IMAGES
 VALUES((SELECT ID FROM PRODUCT WHERE NAME = 'Guardian Angel'), 'https://wiki.leagueoflegends.com/en-us/images/Guardian_Angel_item.png?da4ce');
 
 INSERT INTO PRODUCT (CREATE_USER_ID, NAME, DESCRIPTION, PRICE, STOCK, DISCOUNT, DELETED, AVG_SCORE, CREATE_DATE)
-SELECT ID, 'Schrödinger’s Laptop', 'Simultaneously the best and worst laptop until you open it.', 500.00, 2, 0.00, FALSE, 2.5, CURRENT_TIMESTAMP
+SELECT ID, 'Schrödinger’s Laptop', 'Simultaneously the best and worst laptop until you open it.', 500.00, 2, 0.00, FALSE, 3.0, CURRENT_TIMESTAMP
 FROM USERX WHERE USERNAME = 'elvis';
 -- ADD Image link
 INSERT INTO PRODUCT_IMAGES
 VALUES((SELECT ID FROM PRODUCT WHERE NAME = 'Schrödinger’s Laptop'), 'https://imgs.search.brave.com/Ukn9qJDe_Q0ZXy7ZrrA-gQ538aREJNyLP_EFgzca1hU/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9jZG4u/bW9zLmNtcy5mdXR1/cmVjZG4ubmV0L3BR/aHNiNmJqa29yckNa/RjNwWUd0eEouanBn');
 
 INSERT INTO PRODUCT (CREATE_USER_ID, NAME, DESCRIPTION, PRICE, STOCK, DISCOUNT, DELETED, AVG_SCORE, CREATE_DATE)
-SELECT ID, 'Pip-Boy 3000', 'Essential for vault life. Radiation sensor not included.', 3000.00, 13, 0.11, FALSE, 4.5, CURRENT_TIMESTAMP
+SELECT ID, 'Pip-Boy 3000', 'Essential for vault life. Radiation sensor not included.', 3000.00, 13, 0.11, FALSE, 3.5, CURRENT_TIMESTAMP
 FROM USERX WHERE USERNAME = 'elvis';
 -- ADD Image link
 INSERT INTO PRODUCT_IMAGES
 VALUES((SELECT ID FROM PRODUCT WHERE NAME = 'Pip-Boy 3000'), 'https://store.ign.com/cdn/shop/files/Fallout-Pip-Boy-3000-Replica.jpg?v=1763232682&width=990');
 
 INSERT INTO PRODUCT (CREATE_USER_ID, NAME, DESCRIPTION, PRICE, STOCK, DISCOUNT, DELETED, AVG_SCORE, CREATE_DATE)
-SELECT ID, 'Non-Stop Energy Drink', 'A favorite among Stalkers in the Zone. Restores stamina, but watch out for anomalies.', 3.76, 50, 0.00, FALSE, 4.7, CURRENT_TIMESTAMP
+SELECT ID, 'Non-Stop Energy Drink', 'A favorite among Stalkers in the Zone. Restores stamina, but watch out for anomalies.', 3.76, 50, 0.00, FALSE, 4.5, CURRENT_TIMESTAMP
 FROM USERX WHERE USERNAME = 'elvis';
 -- ADD Image link
 INSERT INTO PRODUCT_IMAGES
@@ -868,3 +861,90 @@ VALUES (
            1,
            1015.99
        );
+
+-- =========================
+-- Add Products (extra)
+-- =========================
+
+-- Full Netherite Armor (Minecraft) - each armor piece is its own item
+
+-- Netherite Helmet
+INSERT INTO PRODUCT (CREATE_USER_ID, NAME, DESCRIPTION, PRICE, STOCK, DISCOUNT, DELETED, AVG_SCORE, CREATE_DATE)
+SELECT ID, 'Netherite Helmet', 'Minecraft: Netherite armor helmet piece.', 40.00, 10, 0.00, FALSE, 0, CURRENT_TIMESTAMP
+FROM USERX WHERE USERNAME = 'elvis';
+
+-- Netherite Chestplate
+INSERT INTO PRODUCT (CREATE_USER_ID, NAME, DESCRIPTION, PRICE, STOCK, DISCOUNT, DELETED, AVG_SCORE, CREATE_DATE)
+SELECT ID, 'Netherite Chestplate', 'Minecraft: Netherite armor chestplate piece.', 80.00, 10, 0.00, FALSE, 0, CURRENT_TIMESTAMP
+FROM USERX WHERE USERNAME = 'elvis';
+
+-- Netherite Leggings
+INSERT INTO PRODUCT (CREATE_USER_ID, NAME, DESCRIPTION, PRICE, STOCK, DISCOUNT, DELETED, AVG_SCORE, CREATE_DATE)
+SELECT ID, 'Netherite Leggings', 'Minecraft: Netherite armor leggings piece.', 70.00, 10, 0.00, FALSE, 0, CURRENT_TIMESTAMP
+FROM USERX WHERE USERNAME = 'elvis';
+
+-- Netherite Boots
+INSERT INTO PRODUCT (CREATE_USER_ID, NAME, DESCRIPTION, PRICE, STOCK, DISCOUNT, DELETED, AVG_SCORE, CREATE_DATE)
+SELECT ID, 'Netherite Boots', 'Minecraft: Netherite armor boots piece.', 35.00, 10, 0.00, FALSE, 0, CURRENT_TIMESTAMP
+FROM USERX WHERE USERNAME = 'elvis';
+
+-- Golden Sword
+INSERT INTO PRODUCT (CREATE_USER_ID, NAME, DESCRIPTION, PRICE, STOCK, DISCOUNT, DELETED, AVG_SCORE, CREATE_DATE)
+SELECT ID, 'Golden Sword', 'Minecraft: Gold sword tool.', 15.00, 20, 0.00, FALSE, 0, CURRENT_TIMESTAMP
+FROM USERX WHERE USERNAME = 'elvis';
+
+-- Golden Pickaxe
+INSERT INTO PRODUCT (CREATE_USER_ID, NAME, DESCRIPTION, PRICE, STOCK, DISCOUNT, DELETED, AVG_SCORE, CREATE_DATE)
+SELECT ID, 'Golden Pickaxe', 'Minecraft: Gold pickaxe tool.', 18.00, 20, 0.00, FALSE, 0, CURRENT_TIMESTAMP
+FROM USERX WHERE USERNAME = 'elvis';
+
+-- Golden Axe
+INSERT INTO PRODUCT (CREATE_USER_ID, NAME, DESCRIPTION, PRICE, STOCK, DISCOUNT, DELETED, AVG_SCORE, CREATE_DATE)
+SELECT ID, 'Golden Axe', 'Minecraft: Gold axe tool.', 17.00, 20, 0.00, FALSE, 0, CURRENT_TIMESTAMP
+FROM USERX WHERE USERNAME = 'elvis';
+
+-- Golden Shovel
+INSERT INTO PRODUCT (CREATE_USER_ID, NAME, DESCRIPTION, PRICE, STOCK, DISCOUNT, DELETED, AVG_SCORE, CREATE_DATE)
+SELECT ID, 'Golden Shovel', 'Minecraft: Gold shovel tool.', 12.00, 20, 0.00, FALSE, 0, CURRENT_TIMESTAMP
+FROM USERX WHERE USERNAME = 'elvis';
+
+-- Golden Hoe
+INSERT INTO PRODUCT (CREATE_USER_ID, NAME, DESCRIPTION, PRICE, STOCK, DISCOUNT, DELETED, AVG_SCORE, CREATE_DATE)
+SELECT ID, 'Golden Hoe', 'Minecraft: Gold hoe tool.', 10.00, 20, 0.00, FALSE, 0, CURRENT_TIMESTAMP
+FROM USERX WHERE USERNAME = 'elvis';
+
+
+-- =========================
+-- Add empty product images
+-- =========================
+
+
+
+-- Netherite Armor
+INSERT INTO PRODUCT_IMAGES
+VALUES ((SELECT ID FROM PRODUCT WHERE NAME = 'Netherite Helmet'), 'https://minecraft.wiki/images/thumb/Netherite_Helmet_JE2_BE1.png/160px-Netherite_Helmet_JE2_BE1.png?92a86');
+
+INSERT INTO PRODUCT_IMAGES
+VALUES ((SELECT ID FROM PRODUCT WHERE NAME = 'Netherite Chestplate'), 'https://minecraft.wiki/images/thumb/Netherite_Chestplate_JE2_BE1.png/160px-Netherite_Chestplate_JE2_BE1.png?53943');
+
+INSERT INTO PRODUCT_IMAGES
+VALUES ((SELECT ID FROM PRODUCT WHERE NAME = 'Netherite Leggings'), 'https://minecraft.wiki/images/thumb/Netherite_Leggings_JE3_BE2.png/160px-Netherite_Leggings_JE3_BE2.png?2dd97');
+
+INSERT INTO PRODUCT_IMAGES
+VALUES ((SELECT ID FROM PRODUCT WHERE NAME = 'Netherite Boots'), 'https://minecraft.wiki/images/thumb/Netherite_Boots_JE2_BE1.png/160px-Netherite_Boots_JE2_BE1.png?ae7d9');
+
+-- Gold Tools
+INSERT INTO PRODUCT_IMAGES
+VALUES ((SELECT ID FROM PRODUCT WHERE NAME = 'Golden Sword'), 'https://minecraft.wiki/images/Golden_Sword_JE3_BE2.png?0ea76');
+
+INSERT INTO PRODUCT_IMAGES
+VALUES ((SELECT ID FROM PRODUCT WHERE NAME = 'Golden Pickaxe'), 'https://minecraft.wiki/images/Golden_Pickaxe_JE4_BE3.png?f9470');
+
+INSERT INTO PRODUCT_IMAGES
+VALUES ((SELECT ID FROM PRODUCT WHERE NAME = 'Golden Axe'), 'https://minecraft.wiki/images/Golden_Axe_JE3_BE2.png?2e133');
+
+INSERT INTO PRODUCT_IMAGES
+VALUES ((SELECT ID FROM PRODUCT WHERE NAME = 'Golden Shovel'), 'https://minecraft.wiki/images/Golden_Shovel_JE3_BE2.png?1c3a9');
+
+INSERT INTO PRODUCT_IMAGES
+VALUES ((SELECT ID FROM PRODUCT WHERE NAME = 'Golden Hoe'), 'https://minecraft.wiki/images/Golden_Hoe_JE3_BE3.png?d6884');

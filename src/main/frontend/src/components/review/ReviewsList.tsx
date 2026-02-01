@@ -18,7 +18,7 @@ type TProductReviewsProps = {
 
 export function ReviewsList({ productId }: TProductReviewsProps) {
   const [page, setPage] = useState(0);
-  const [limit, setLimit] = useState(6);
+  const [limit, setLimit] = useState(10);
   const [totalPages, setTotalPages] = useState(0);
 
   const [minRating, setMinRating] = useState<number | undefined>(0);

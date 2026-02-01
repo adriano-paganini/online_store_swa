@@ -14,18 +14,20 @@ This project is based on the official **SWA Skeleton Project** provided by the c
 - Java 21
 - Maven
 - Node.js / npm
+- Free ports: `8080`, `3000`
+- internet connection (for SMPT)
 
 ## Running the application
 
-### Backend
+### Startup
+
+#### Backend
 
 ```bash
 mvn spring-boot:run
 ```
 
-### frontend
-
-Ensure backend URL is `localhost:8080`:
+#### Frontend
 
 ```bash
 cd src/main/frontend
@@ -33,17 +35,38 @@ cp .env.example .env
 npm run dev
 ```
 
+The `.env` should include `VITE_BACKEND_SERVER_URL=http://localhost:8080`.
+
+For more details on frontend see: `src/main/frontend/README.md`
+
+### Usage
+
 Frontend runs at: <http://localhost:3000/>
 
 You can log in with:
 
 - "admin" and "passwd"
+  - roles: ADMIN, CUSTOMER
 - "user1" and "passwd"
+  - roles: MANAGER
 - "user2" and "passwd"
+  - role: CUSTOMER
 - "elvis" and "passwd"
+  - role: ADMIN
+- "adriano" and "passwd"
+  - roles: ADMIN, CUSTOMER
 
-See also: `src/main/frontend/README.md`
+We recommend to use user `adriano` for exploring features,
+since he has already predefined orders, subscriptions and notifications which can be inspected.
+
+To receive notifications at your own email address, update the current user’s email to the desired address.
+
+Email delivery depends on external SMTP service. Failures are handled gracefully.
 
 ## Documentation
 
-Documentation for the Software Requirements can be found in `docs/` and the Gitlab Wiki.
+Documentation, Gen-AI statement and other information can be found in `docs/` or the Gitlab Wiki.
+
+---
+
+If there are any problems, feel free to contact us via email.

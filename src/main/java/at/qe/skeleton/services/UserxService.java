@@ -131,6 +131,7 @@ public class UserxService implements UserDetailsService {
      * @param id the id of the user to update
      * @param dto the updated user data
      * @return the updated user
+     * @throws ResponseStatusException 404 if the user does not exist
      */
     @PreAuthorize("hasAuthority('ADMIN')")
     public Userx updateUser(Long id, UserxUpdateDTO dto) {
@@ -164,6 +165,12 @@ public class UserxService implements UserDetailsService {
         });
     }
 
+    /**
+     * Gets user by username.
+     *
+     * @param username the username
+     * @return the user
+     */
     public Userx getUserByUsername(String username) {
         return userRepository.findFirstByUsername(username).orElse(null);
     }
@@ -174,7 +181,7 @@ public class UserxService implements UserDetailsService {
      *
      * @param username the username identifying the user whose data is required.
      * @return the user with the given username and their details.
-     * @throws UsernameNotFoundException
+     * @throws UsernameNotFoundException if the user cannot be found by username
      */
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -195,6 +202,7 @@ public class UserxService implements UserDetailsService {
      *
      * @param id the id of the address
      * @return address
+     * @throws ResponseStatusException 404 if the address does not exist
      */
     public Address getAddressOfCurrentUserById(Long id) {
         return getAddressesOfCurrentUser().stream()
@@ -248,6 +256,13 @@ public class UserxService implements UserDetailsService {
         user.getAddresses().removeIf(a -> addressId.equals(a.getId()));
     }
 
+    /**
+     * create a new user with role customer, no authentication required
+     *
+     * @param user the new user
+     * @return the saved new user
+     * @throws UsernameDuplicateException if the username is already taken
+     */
     @Transactional
     public Userx registerCustomer(Userx user) {
 
@@ -258,16 +273,25 @@ public class UserxService implements UserDetailsService {
 
         // enforced defaults
         user.setRoles(Set.of(UserxRole.CUSTOMER));
-        user.setChannels(Set.of(NotificationType.EMAIL));
         user.setDeleted(false);
 
         return userRepository.save(user);
     }
 
+    /**
+     * get the currently authenticated user
+     * @return the current authenticated user
+     */
     public Userx getCurrentUser() {
         return authenticatedUserService.requireAuthenticatedUser();
     }
 
+    /**
+     * update the currently authenticated user (patch)
+     *
+     * @param dto the UserxMeUpdateDTO with the fields to patch
+     * @return the updated user
+     */
     @Transactional
     public Userx updateCurrentUser(UserxMeUpdateDTO dto) {
         Userx user = authenticatedUserService.requireAuthenticatedUser();
@@ -277,10 +301,28 @@ public class UserxService implements UserDetailsService {
         return userRepository.save(user);
     }
 
+    /**
+     * get user by id
+     *
+     * @param userId the id of the user
+     * @return the user
+     */
     public Userx getUserById(Long userId) {
         return userRepository.findById(userId).orElse(null);
     }
 
+    /**
+     * Retrieves a paginated list of users with optional filtering and sorting.
+     *
+     * Access is restricted to administrators.
+     *
+     * @param page the page index
+     * @param limit the maximum number of users per page
+     * @param role optional filter by user roles
+     * @param deleted optional filter by deleted status
+     * @param sort sort specification
+     * @return a page of users matching the given criteria
+     */
     @PreAuthorize("hasAuthority('ADMIN')")
     public Page<Userx> getUsers(
             Integer page,

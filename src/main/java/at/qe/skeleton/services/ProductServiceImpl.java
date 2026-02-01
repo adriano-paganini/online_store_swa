@@ -21,7 +21,10 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
- * Service implementation for product operations.
+ * Service implementation of the product service interface.
+ * <p>
+ * Handles core business logic for products, including creation, update,
+ * deletion, and filtered retrieval.
  */
 @Service
 public class ProductServiceImpl implements ProductService {
@@ -46,18 +49,37 @@ public class ProductServiceImpl implements ProductService {
         this.productMapper = productMapper;
     }
 
+    /**
+     * Retrieves the price of a product.
+     *
+     * @param productId the id of the product
+     * @return the price of the product or an empty {@code Optional}
+     */
     @Override
     public Optional<Double> getProductPrice(Long productId) {
         return productRepository.findById(productId)
                 .map(Product::getPrice);
     }
 
+    /**
+     * Retrieves the discount of a product.
+     *
+     * @param productId the id of the product
+     * @return the discount of the product or an empty {@code Optional}
+     */
     @Override
     public Optional<Double> getProductDiscount(Long productId) {
         return productRepository.findById(productId)
                 .map(Product::getDiscount);
     }
 
+    /**
+     * Checks whether the requested quantity of a product is available in stock.
+     *
+     * @param productId the id of the product to check
+     * @param quantity the required quantity
+     * @return {@code true} if sufficient stock is available, {@code false} otherwise
+     */
     @Override
     public boolean isProductAvailable(Long productId, Integer quantity) {
         if (quantity == null || quantity <= 0) {
@@ -68,6 +90,12 @@ public class ProductServiceImpl implements ProductService {
                 .orElse(false);
     }
 
+    /**
+     * Updates the product's average score.
+     *
+     * @param productId the id of the product to update
+     * @param averageScore the new average score
+     */
     @Override
     @Transactional
     public void updateProductAverageScore(Long productId, Double averageScore) {
@@ -78,6 +106,19 @@ public class ProductServiceImpl implements ProductService {
         productRepository.save(product);
     }
 
+    /**
+     * Retrieves a paginated list of all products with optional filtering and sorting.
+     *
+     * @param page the page index
+     * @param limit the maximum number of products per page
+     * @param minPrice optional filter by minimum price
+     * @param maxPrice optional filter by maximum price
+     * @param inStock optional filter if the product is in stock
+     * @param minRating optional filter by minimum rating
+     * @param sort sort specification
+     * @param search search specification
+     * @return a page of products matching the given criteria
+     */
     @Override
     public Page<Product> getAllProducts(
             int page,
@@ -86,20 +127,35 @@ public class ProductServiceImpl implements ProductService {
             Double maxPrice,
             Boolean inStock,
             Double minRating,
-            String sort) {
+            String sort,
+            String search) {
 
         Sort sortObj = parseSort(sort);
         Pageable pageable = PageRequest.of(page, limit, sortObj);
 
         return productRepository.findAllWithFilters(
-                minPrice, maxPrice, inStock, minRating, pageable);
+                minPrice, maxPrice, inStock, minRating, search,pageable);
     }
 
+    /**
+     * Retrieves a product by id.
+     *
+     * @param id the id of the product
+     * @return the product or an empty {@code Optional}
+     */
     @Override
     public Optional<Product> getProductById(Long id) {
         return productRepository.findByIdAndNotDeleted(id);
     }
 
+    /**
+     * Creates a new product.
+     * <p>
+     * If an authenticated user is present, the creator is stored on the product.
+     *
+     * @param product the new product
+     * @return the saved product
+     */
     @Override
     @Transactional
     public Product createProduct(Product product) {
@@ -111,6 +167,14 @@ public class ProductServiceImpl implements ProductService {
         return productRepository.save(product);
     }
 
+    /**
+     * Updates a product.
+     *
+     * @param id the id of the product to update
+     * @param updateDTO the UpdateDTO with the updated fields
+     * @return the updated product
+     * @throws ResponseStatusException 404 if the product does not exist
+     */
     @Override
     @Transactional
     public Product updateProduct(Long id, ProductUpdateDTO updateDTO) {
@@ -161,6 +225,13 @@ public class ProductServiceImpl implements ProductService {
         return productRepository.save(product);
     }
 
+    /**
+     * Deletes a product (soft delete).
+     * <p>
+     * All subscriptions associated with the product are removed.
+     *
+     * @param id the id of the product to delete
+     */
     @Override
     @Transactional
     public void softDeleteProduct(Long id) {
@@ -178,7 +249,10 @@ public class ProductServiceImpl implements ProductService {
     }
 
     /**
-     * Parses sort string (e.g., "name,asc" or "price,desc") into Sort object.
+     * Parses sort string into Sort object.
+     *
+     * @param sort the string to sort by (e.g., "name,asc" or "price,desc")
+     * @return parsed Sort object of given string
      */
     private Sort parseSort(String sort) {
         if (sort == null || sort.isBlank()) {
@@ -212,6 +286,9 @@ public class ProductServiceImpl implements ProductService {
 
     /**
      * Validates that the sort field is a valid Product entity field.
+     *
+     * @param field the sort field to validate
+     * @return {@code Boolean}
      */
     private boolean isValidSortField(String field) {
         return field.matches("^[a-zA-Z]+$") &&
@@ -220,7 +297,14 @@ public class ProductServiceImpl implements ProductService {
                         field.equals("createDate") || field.equals("updateDate"));
     }
 
-
+    /**
+     * Adjusts product stock levels based on the given product–quantity map.
+     *
+     * @param items map of product IDs to required quantities
+     * @throws ResponseStatusException
+     *         404 if a product does not exist
+     *         400 if insufficient stock is available
+     */
     @Override
     @Transactional
     public void adjustProductStockWithMap(Map<Long,Integer> items) {

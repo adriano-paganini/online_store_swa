@@ -31,6 +31,16 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+/**
+ * REST controller for accessing and managing products.
+ *
+ * <p>
+ * Provides public endpoints for retrieving product information, as well as
+ * restricted endpoints for creating, updating, and deleting products.
+ * The level of detail in product representations may vary depending on
+ * the authentication state and user authorities.
+ * </p>
+ */
 @RestController
 @RequestMapping("/products")
 public class ProductController {
@@ -45,7 +55,20 @@ public class ProductController {
         this.productCreateMapper = productCreateMapper;
     }
 
-
+    /**
+     * Retrieves a paginated list of products.
+     *
+     * <p>Supports filtering by price range, stock availability, rating, and
+     * full-text search, as well as pagination and sorting.</p>
+     *
+     * <p>Possible responses:</p>
+     * <ul>
+     *   <li>200 OK - products successfully retrieved</li>
+     *   <li>400 Bad Request - invalid query parameters</li>
+     * </ul>
+     *
+     * @return paginated list of products
+     */
     @GetMapping("")
     public ResponseEntity<PageResponseDTO<ProductDTO>> getAllProducts(
             @RequestParam(defaultValue = "0") int page,
@@ -54,11 +77,12 @@ public class ProductController {
             @RequestParam(required = false) Double maxPrice,
             @RequestParam(required = false) Boolean inStock,
             @RequestParam(required = false) Double minRating,
-            @RequestParam(required = false) String sort) {
+            @RequestParam(required = false) String sort,
+            @RequestParam(required = false) String search) {
 
         try {
             Page<Product> productPage = productService.getAllProducts(
-                    page, limit, minPrice, maxPrice, inStock, minRating, sort);
+                    page, limit, minPrice, maxPrice, inStock, minRating, sort, search);
 
             final Collection<? extends GrantedAuthority> authorities = getAuthorities();
 
@@ -82,7 +106,18 @@ public class ProductController {
         }
     }
 
-
+    /**
+     * Retrieves a single product by its identifier.
+     *
+     * <p>Possible responses:</p>
+     * <ul>
+     *   <li>200 OK - product successfully retrieved</li>
+     *   <li>404 Not Found - product does not exist</li>
+     * </ul>
+     *
+     * @param id identifier of the product
+     * @return the requested product
+     */
     @GetMapping("/{id}")
     public ResponseEntity<ProductDTO> getProductById(@PathVariable Long id) {
         try {
@@ -103,7 +138,16 @@ public class ProductController {
 
 
     /**
-     * Create a new product
+     * Creates a new product.
+     *
+     * <p>Possible responses:</p>
+     * <ul>
+     *   <li>201 Created - product successfully created</li>
+     *   <li>400 Bad Request - validation failed</li>
+     * </ul>
+     *
+     * @param createDTO product data to create
+     * @return the newly created product
      */
     @PostMapping("")
     public ResponseEntity<ProductDTO> createProduct(
@@ -124,7 +168,20 @@ public class ProductController {
         }
     }
 
-
+    /**
+     * Updates an existing product.
+     *
+     * <p>Possible responses:</p>
+     * <ul>
+     *   <li>200 OK - product successfully updated</li>
+     *   <li>400 Bad Request - invalid update data</li>
+     *   <li>404 Not Found - product does not exist</li>
+     * </ul>
+     *
+     * @param id identifier of the product
+     * @param updateDTO updated product data
+     * @return the updated product
+     */
     @PutMapping("/{id}")
     public ResponseEntity<ProductDTO> updateProduct(
             @PathVariable Long id,
@@ -144,7 +201,19 @@ public class ProductController {
         }
     }
 
-
+    /**
+     * Deletes a product.
+     *
+     * <p>The product is soft-deleted and will no longer be visible to users.</p>
+     *
+     * <p>Possible responses:</p>
+     * <ul>
+     *   <li>204 No Content - product successfully deleted</li>
+     *   <li>404 Not Found - product does not exist</li>
+     * </ul>
+     *
+     * @param id identifier of the product to delete
+     */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {
         try {

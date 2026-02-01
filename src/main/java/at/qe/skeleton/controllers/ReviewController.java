@@ -23,7 +23,14 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.List;
 import java.util.stream.Collectors;
 
-
+/**
+ * REST controller for managing product reviews.
+ *
+ * <p>
+ * Provides endpoints to retrieve and create reviews associated with a
+ * specific product. Review creation is restricted to authenticated users.
+ * </p>
+ */
 @RestController
 @RequestMapping("/products/{productId}/reviews")
 public class ReviewController {
@@ -39,7 +46,17 @@ public class ReviewController {
     }
 
     /**
-     * GET endpoint to retrieve paginated reviews for a product.
+     * Retrieves a paginated list of reviews for a product.
+     *
+     * <p>Supports optional filtering by rating and sorting.</p>
+     *
+     * <p>Possible responses:</p>
+     * <ul>
+     *   <li>200 OK - reviews successfully retrieved</li>
+     *   <li>400 Bad Request - invalid query parameters</li>
+     * </ul>
+     *
+     * @return paginated list of reviews
      */
     @GetMapping("")
     public ResponseEntity<PageResponseDTO<ReviewDTO>> getProductReviews(
@@ -76,7 +93,20 @@ public class ReviewController {
 
 
     /**
-     * Create a new review for a product
+     * Creates a new review for a product.
+     *
+     * <p>Each user may only create one review per product.</p>
+     *
+     * <p>Possible responses:</p>
+     * <ul>
+     *   <li>201 Created - review successfully created</li>
+     *   <li>400 Bad Request - invalid review data</li>
+     *   <li>409 Conflict - user has already reviewed this product</li>
+     * </ul>
+     *
+     * @param productId identifier of the product
+     * @param createDTO review data to create
+     * @return the newly created review
      */
     @PostMapping("")
     public ResponseEntity<ReviewDTO> createReview(

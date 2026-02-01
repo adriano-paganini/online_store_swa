@@ -9,6 +9,7 @@ const fetchProducts = async (
     maxPrice?: number | null;
     inStock?: boolean;
     minRating?: number;
+    search?: string;
   }
 ): Promise<TPageResponseDTO<TProductDTO>> => {
   try {

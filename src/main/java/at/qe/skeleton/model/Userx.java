@@ -59,13 +59,6 @@ public class Userx implements Persistable<Long>, Serializable, Comparable<Userx>
   @Enumerated(EnumType.STRING)
   private Set<UserxRole> roles = new HashSet<>();
 
-  // EAGER because channel preferences are small, bounded and frequently needed
-  // outside transactional contexts
-  // initialize to empty hash set to avoid NullPointerException
-  @ElementCollection(fetch = FetchType.EAGER)
-  @CollectionTable(name = "Userx_NotificationType")
-  @Enumerated(EnumType.STRING)
-  private Set<NotificationType> channels = new HashSet<>();
 
   // initialize to empty array list to avoid NullPointerException
   @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -201,10 +194,6 @@ public class Userx implements Persistable<Long>, Serializable, Comparable<Userx>
 
   public void setAddresses(List<Address> addresses) {
       this.addresses = addresses;
-  }
-
-  public void setChannels(Set<NotificationType> channels) {
-      this.channels = channels;
   }
 
   @Override

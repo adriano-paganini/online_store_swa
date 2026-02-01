@@ -21,6 +21,12 @@ public class SmsNotificationService {
         this.notificationService = notificationService;
     }
 
+    /**
+     * Sends an SMS message
+     *
+     * @param notificationId the id of the notification to send
+     * @param payload the message payload to send
+     */
     public void sendSms(Long notificationId, Payload<?> payload) {
         // Retrieve the notification entity to access recipient details
         Notification notification = notificationService.getNotificationById(notificationId);
