@@ -14,6 +14,11 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
+/**
+ * Service for managing authentication.
+ * <p>
+ * This service handles the core business logic for authenticating users and creating JWT tokens.
+ */
 @Service
 public class AuthenticationService {
     private final AuthenticationManager authenticationManager;
@@ -30,6 +35,7 @@ public class AuthenticationService {
      * @param username the username
      * @param password the password
      * @return the authentication object
+     * @throws IllegalArgumentException if username or password are {@code null}
      */
     public Authentication authenticateLoginRequest(String username, String password) {
         if (username == null || password == null) {
@@ -42,6 +48,7 @@ public class AuthenticationService {
      * Generates a JWT token for the given authentication object.
      * @param authentication the authentication object
      * @return the generated JWT token
+     * @throws IllegalArgumentException if authentication is null
      */
     public String generateToken(Authentication authentication) {
         if (authentication == null) {

@@ -29,6 +29,16 @@ public class EmailNotificationService {
         this.userxService = userxService;
     }
 
+    /**
+     * Sends an email based on a notification event.
+     * <p>
+     * Resolves the recipient user, constructs the email message,
+     * performs SMTP delivery, and updates the notification status
+     * to {@link NotificationStatus#SENT} or {@link NotificationStatus#FAILED}
+     * depending on the outcome.
+     *
+     * @param event the notification event triggering the email delivery
+     */
     @Transactional
     public void sendEmail(NotificationEvent<?> event) {
         // Reload notification from the database to ensure data consistency in asynchronous contexts

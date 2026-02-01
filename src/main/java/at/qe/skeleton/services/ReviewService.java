@@ -16,7 +16,12 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.Objects;
 import java.util.Optional;
 
-
+/**
+ * Service for managing product reviews.
+ * <p>
+ * This service handles the core business logic for product reviews, including
+ * creation and filtered retrieval.
+ */
 @Service
 public class ReviewService {
 
@@ -36,6 +41,17 @@ public class ReviewService {
     }
 
 
+    /**
+     * Gets a paginated list of reviews of a product with optional filtering and sorting.
+     *
+     * @param productId the id of the product
+     * @param page the page index
+     * @param limit the maximum number of reviews per page
+     * @param minRating the minimal rating to filter by
+     * @param maxRating the maximal rating to filter by
+     * @param sort sort specification
+     * @return a page of review matching the given criteria
+     */
     public Page<Review> getProductReviews(
             Long productId,
             int page,
@@ -54,7 +70,21 @@ public class ReviewService {
         return reviewRepository.findByProductIdWithFilters(productId, minRating, maxRating, pageable);
     }
 
-
+    /**
+     * Creates a new review for a product.
+     * <p>
+     * Requires an authenticated user.
+     * A user may only create one review per product.
+     * The review score must be between 1 and 5.
+     *
+     * @param productId the id of the product
+     * @param review the review to create
+     * @return the saved review
+     * @throws ResponseStatusException
+     *         401 if the user is not authenticated
+     *         409 if the user already reviewed the product
+     *         400 if the review score is invalid
+     */
     @Transactional
     public Review createReview(Long productId, Review review) {
         Userx currentUser = authenticatedUserService.getAuthenticatedUser();
@@ -93,7 +123,11 @@ public class ReviewService {
         return savedReview;
     }
 
-
+    /**
+     * Updates the product's average review score.
+     *
+     * @param productId the id of the product
+     */
     private void updateProductAverageScore(Long productId) {
         Double averageScore = reviewRepository.getAverageScoreByProductId(productId);
         if (averageScore != null) {

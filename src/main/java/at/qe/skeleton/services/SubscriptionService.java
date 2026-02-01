@@ -35,21 +35,48 @@ public class SubscriptionService {
         this.sortHelper = sortHelper;
     }
 
-    // Retrieves a specific subscription by user ID and product ID
+    /**
+     * Retrieves a specific subscription by user ID and product ID
+     *
+     * @param userId the id of the user
+     * @param productId the id of the product
+     * @return the subscription of the user to the product or an empty {@code Optional}
+     */
     public Optional<Subscription> getSubscriptionByUserAndProduct(Long userId, Long productId){
         return subscriptionRepository.findByUserAndProduct(userId, productId);
     }
 
-    // Loads all subscriptions belonging to a specific user as an array
+    /**
+     * Loads all subscriptions belonging to a specific user as an array
+     *
+     * @param user the user to load subscriptions from
+     * @return the array of subscriptions
+     */
     public Subscription[] loadUserSubscriptions(Userx user) {
         return subscriptionRepository.findByUser(user).toArray(Subscription[]::new);
     }
 
-    // Loads all subscriptions associated with a specific product
+    /**
+     * Loads all subscriptions associated with a specific product
+     *
+     * @param product the product to load connected subscriptions
+     * @return an array of connected subscriptions
+     */
     public Subscription[] loadProductSubscriptions(Product product) {
         return subscriptionRepository.findByProduct(product).toArray(Subscription[]::new);
     }
 
+    /**
+     * Gets paginated subscriptions of a user
+     *
+     * @param user the user to get subscriptions from
+     * @param page the page index
+     * @param limit the maximum number of users per page
+     * @param types the types of subscriptions
+     * @param channels the subscription channels
+     * @param sort sort specification
+     * @return a page of subscriptions of the user
+     */
     public Page<Subscription> getUserSubscriptions(
             Userx user, int page, int limit, SubscriptionType[] types, NotificationType[] channels, String sort) {
 
@@ -65,6 +92,19 @@ public class SubscriptionService {
         return subscriptionRepository.findByUserWithFilter(user.getId(), types, channels, pageable);
     }
 
+    /**
+     * Creates a new subscription.
+     * <p>
+     * Requires an authenticated user.
+     * A user may only subscribe once per product.
+     *
+     * @param user the user who subscribes
+     * @param subscription the subscription to create
+     * @return the saved subscription
+     * @throws ResponseStatusException
+     *         401 if the user is not authenticated
+     *         409 if the user is already subscribed to the product
+     */
     @Transactional
     public Subscription createSubscription(Userx user, Subscription subscription) {
         // Check for existing subscriptions to prevent duplicate product tracking for the same user
@@ -87,6 +127,14 @@ public class SubscriptionService {
         return subscription;
     }
 
+    /**
+     * Updates a subscription.
+     *
+     * @param subscriptionId the id of the subscription to update
+     * @param updateDTO the UpdateDTO with the fields to update
+     * @return the updated subscription
+     * @throws ResponseStatusException 404 if the subscription does not exist
+     */
     @Transactional
     public Subscription updateSubscription(Long subscriptionId, SubscriptionUpdateDTO updateDTO) {
         // Retrieve the existing subscription or throw 404 if not found
@@ -104,6 +152,12 @@ public class SubscriptionService {
         return subscriptionRepository.save(subscription);
     }
 
+    /**
+     * Deletes a subscription.
+     *
+     * @param id the id of the subscription to delete
+     * @throws ResponseStatusException 404 if the subscription does not exist
+     */
     @Transactional
     public void deleteSubscription(Long id) {
         // Verify existence before attempting deletion
