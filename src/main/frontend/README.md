@@ -1,106 +1,43 @@
-# Frontend (Vite + React + TypeScript)
+# Frontend
 
----
+React and TypeScript frontend for the event-driven e-commerce platform.
 
-## Tech Stack
+## Purpose
 
-- **TypeScript**
-- **React 18**
-- **Vite**
-- **React Router**
-- **Tailwind CSS** + `tailwind-merge`
-- **ShadCn** using Radix UI primitives
-- **Axios** for HTTP
-- **ESLint** + **Prettier** + **Husky**
+The frontend provides:
 
----
+- public product browsing and product detail pages,
+- authenticated customer flows such as profile, addresses, notifications, subscriptions, checkout, payment, and orders,
+- manager-only product-management pages,
+- admin-only user-management pages.
 
-## Getting Started
+It is a client for the Spring Boot backend, not a standalone frontend mock.
 
-### Prerequisites
-
-- Node.js 18+
-- npm
-
-### Install dependencies
+## Local Development
 
 ```bash
 npm install
+npm start
 ```
 
-### Run the development server
+Default local URL: `http://localhost:3000`
 
-```bash
-npm run dev
-```
+## Tooling
 
-The app will be available at:
+- React 18
+- TypeScript
+- Vite
+- Tailwind CSS
+- React Router
+- Axios
+- ESLint
+- Prettier
+- Husky / lint-staged
+- Vitest setup
 
-```
-http://localhost:3000
-```
+## Notes
 
----
-
-## Available Scripts
-
-### Base
-
-```
-npm run dev        # Starts the Vite development server with hot reload.
-npm run build      # Runs TypeScript type-checking and builds the production bundle into /dist
-npm run preview    # Serves the production build locally for testing
-```
-
----
-
-### Type checking
-
-```
-npm run ts:check    # Runs a strict TypeScript type check without emitting files
-```
-
----
-
-### Linting
-
-```
-npm run lint          # Runs ESLint across the project.
-npm run lint:fix      # Automatically fixes lint issues where possible.
-```
-
----
-
-### Formatting
-
-```
-npm run prettier:check      # Checks code formatting using Prettier
-npm run prettier:write      # Formats all files using Prettier.
-```
-
----
-
-## Project file structure
-
-```
-src/
-├── Contexts/          # React context providers
-├── DTO/               # DTOs from the API spec
-├── components/        # UI components
-├── config/            # Axios config
-├── lib/               # Utilities and helpers
-├── mocks/             # Not used anymore, but kept just in case
-├── utilities/         # API clients and helpers
-├── views/             # Page components
-├── routes.ts          # Page url to component connection
-└── main.tsx           # App entry point
-```
-
----
-
-## Formatting & Commits
-
-- Code formatting is enforced via **Prettier**
-- Linting via **ESLint**
-- Type safety via **ts**
-- **Husky** + **lint-staged** run all 3 layers of checks on commit, aborts of anything fails
+- The frontend uses role-aware route guards for authenticated, manager, and admin sections.
+- Axios configuration lives in `src/config/config.ts`.
+- The checked-in frontend currently derives the backend base URL from `window.location.hostname`, so an environment file is not required for the default local setup.
+- API wrappers live in `src/utilities/`.

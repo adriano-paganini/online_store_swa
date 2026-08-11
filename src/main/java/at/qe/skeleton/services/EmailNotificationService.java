@@ -8,6 +8,7 @@ import jakarta.mail.*;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
 import jakarta.transaction.Transactional;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.Properties;
@@ -23,10 +24,28 @@ public class EmailNotificationService {
 
     private final NotificationService notificationService;
     private final UserxService userxService;
+    private final String smtpHost;
+    private final String smtpPort;
+    private final String smtpUsername;
+    private final String smtpPassword;
+    private final String smtpStarttlsEnable;
 
-    public EmailNotificationService(NotificationService notificationService, UserxService userxService) {
+    public EmailNotificationService(
+            NotificationService notificationService,
+            UserxService userxService,
+            @Value("${app.mail.smtp.host:}") String smtpHost,
+            @Value("${app.mail.smtp.port:587}") String smtpPort,
+            @Value("${app.mail.smtp.username:}") String smtpUsername,
+            @Value("${app.mail.smtp.password:}") String smtpPassword,
+            @Value("${app.mail.smtp.starttls.enable:true}") String smtpStarttlsEnable
+    ) {
         this.notificationService = notificationService;
         this.userxService = userxService;
+        this.smtpHost = smtpHost;
+        this.smtpPort = smtpPort;
+        this.smtpUsername = smtpUsername;
+        this.smtpPassword = smtpPassword;
+        this.smtpStarttlsEnable = smtpStarttlsEnable;
     }
 
     /**
@@ -54,20 +73,21 @@ public class EmailNotificationService {
                 return;
             }
 
-            // Define SMTP configuration and credentials
-            String sender = "software.architektur@gmx.at";
-            // NOTE: Hardcoded password is used intentionally here for project evaluation simplicity
-            // and team collaboration within this specific skeleton/educational context.
-            String password = "software.architektur@gmx.at";
+            if (smtpHost == null || smtpHost.isBlank()
+                    || smtpUsername == null || smtpUsername.isBlank()
+                    || smtpPassword == null || smtpPassword.isBlank()) {
+                notificationService.updateNotificationStatus(NotificationStatus.FAILED, notification);
+                return;
+            }
 
             Properties properties = new Properties();
             properties.put("mail.transport.protocol", "smtp");
-            properties.put("mail.smtp.host", "mail.gmx.net");
-            properties.put("mail.smtp.port", "587");
+            properties.put("mail.smtp.host", smtpHost);
+            properties.put("mail.smtp.port", smtpPort);
             properties.put("mail.smtp.auth", "true");
-            properties.put("mail.smtp.user", sender);
-            properties.put("mail.smtp.password", password);
-            properties.put("mail.smtp.starttls.enable", "true");
+            properties.put("mail.smtp.user", smtpUsername);
+            properties.put("mail.smtp.password", smtpPassword);
+            properties.put("mail.smtp.starttls.enable", smtpStarttlsEnable);
 
             // Create a mail session with the specified authenticator
             Session mailSession = Session.getInstance(properties, new Authenticator() {
@@ -82,7 +102,7 @@ public class EmailNotificationService {
 
             // Construct the MimeMessage
             Message message = new MimeMessage(mailSession);
-            message.setFrom(new InternetAddress(sender));
+            message.setFrom(new InternetAddress(smtpUsername));
             message.setRecipient(Message.RecipientType.TO, new InternetAddress(user.getEmail()));
 
             // Set the subject and body text from the notification and event payload
